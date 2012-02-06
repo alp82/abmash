@@ -1,0 +1,75 @@
+package com.abmash.core.browser;
+
+
+import com.abmash.api.Browser;
+import com.abmash.core.tools.IOTools;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxBinary;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+
+
+public class BrowserConfig {
+
+	private static final String DEFAULT_PROPERTY_FILE = "/default.properties";
+	
+	private WebDriver webDriver;
+
+	public BrowserConfig() {
+		this(DEFAULT_PROPERTY_FILE);
+	}
+	
+	/**
+	 * @param propertyFile
+	 * @throws IOException 
+	 */
+	public BrowserConfig(String propertyFile) {
+		Properties properties = new Properties();
+		try {
+			InputStream stream = getClass().getResourceAsStream(propertyFile);
+			properties.load(stream);
+			stream.close();
+			if(properties.getProperty("browserType").isEmpty() && (!properties.getProperty("browserType").equalsIgnoreCase("htmlunit") || properties.getProperty("browserBin").isEmpty())) throw new Exception();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		// headless mode 
+		if(properties.containsKey("headless")) System.setProperty("java.awt.headless", properties.getProperty("headless"));
+		
+		if(properties.getProperty("browserType").equalsIgnoreCase("firefox")) {
+			File binaryFile = new File(properties.getProperty("browserBin"));
+			FirefoxBinary binary = new FirefoxBinary(binaryFile);
+			FirefoxProfile profile = new FirefoxProfile();
+			// enable native events
+			profile.setEnableNativeEvents(true); 
+			 // single window mode
+//			firefoxProfile.setPreference("browser.link.open_newwindow", 3);
+			profile.setPreference("browser.link.open_newwindow.restriction", 2);
+//			firefoxProfile.setPreference("browser.link.open_external", 3);
+			//TODO install extensions
+			/*try {
+				profile.addExtension(IOTools.convertStreamToFile(BrowserConfig.class.getResourceAsStream("/xpi/firebug.xpi"), "xpi"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}*/
+			webDriver = new FirefoxDriver(binary, profile);
+		}
+		
+		// TODO htmlunit does not work yet (RemoteWebElement is Firefox specific, CSS selectors do not work properly)
+		if(properties.getProperty("browserType").equalsIgnoreCase("htmlunit")) {
+			webDriver = new HtmlUnitDriver();
+		}
+	}
+	
+	public WebDriver getWebDriver() {
+		return webDriver;
+	}
+}

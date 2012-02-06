@@ -1,0 +1,104 @@
+<class-diagram version="1.0.4" icons="true" automaticImage="PNG" always-add-relationships="false" generalizations="true" 
+  realizations="true" associations="true" dependencies="false" nesting-relationships="true">  
+  <class id="1" corner="BOTTOM_RIGHT" language="java" name="com.abmash.api.HtmlQuery" project="abmash" 
+    file="/abmash/src/main/java/com/abmash/api/HtmlQuery.java" binary="false">    
+    <position x="139" y="394" width="-1" height="-1"/>    
+    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="false" protected="false" private="false"/>      
+      <operations public="true" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="2" corner="BOTTOM_RIGHT" language="java" name="com.abmash.api.Browser" project="abmash" 
+    file="/abmash/src/main/java/com/abmash/api/Browser.java" binary="false">    
+    <position x="556" y="241" width="-1" height="-1"/>    
+    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="false" protected="false" private="false"/>      
+      <operations public="true" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="3" corner="BOTTOM_RIGHT" language="java" name="com.abmash.api.HtmlElement" project="abmash" 
+    file="/abmash/src/main/java/com/abmash/api/HtmlElement.java" binary="false">    
+    <position x="966" y="440" width="-1" height="-1"/>    
+    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="false" protected="false" private="false"/>      
+      <operations public="true" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="4" corner="BOTTOM_RIGHT" language="java" name="com.abmash.api.HtmlElements" project="abmash" 
+    file="/abmash/src/main/java/com/abmash/api/HtmlElements.java" binary="false">    
+    <position x="568" y="725" width="-1" height="-1"/>    
+    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="false" protected="false" private="false"/>      
+      <operations public="true" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <association>    
+    <end type="SOURCE" nodeId="1" navigable="false">      
+      <attribute name="notElements"/>      
+      <multiplicity minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" nodeId="4" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association>    
+    <end type="SOURCE" nodeId="1" navigable="false">      
+      <attribute name="browser"/>      
+      <multiplicity minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" nodeId="2" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association>    
+    <end type="SOURCE" nodeId="3" navigable="false">      
+      <attribute name="referenceElements"/>      
+      <multiplicity minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" nodeId="4" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association>    
+    <end type="SOURCE" nodeId="3" navigable="false">      
+      <attribute name="browser"/>      
+      <multiplicity minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" nodeId="2" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association>    
+    <end type="SOURCE" nodeId="1" navigable="false">      
+      <attribute name="rootElements"/>      
+      <multiplicity minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" nodeId="4" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association>    
+    <end type="SOURCE" nodeId="1" navigable="false">      
+      <attribute name="resultElements"/>      
+      <multiplicity minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" nodeId="4" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association>    
+    <end type="SOURCE" nodeId="3" navigable="false">      
+      <attribute name="frameElement"/>      
+      <multiplicity minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" nodeId="3" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association>    
+    <end type="SOURCE" nodeId="1" navigable="false">      
+      <attribute name="orQueries"/>      
+      <multiplicity minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" nodeId="1" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <classifier-display autosize="true" package="true" initial-value="false" signature="true" visibility="true">    
+    <attributes public="true" package="false" protected="false" private="false"/>    
+    <operations public="true" package="false" protected="false" private="false"/>  
+  </classifier-display>  
+  <association-display labels="true" multiplicity="true"/>
+</class-diagram>
