@@ -14,7 +14,7 @@
 			<name>Alper Ortac</name>
 			<email>alper@acama-systems.de</email>
 			<url>http://alperortac.de</url>
-			<organization>Acama Systems GbR</organization>
+			<organization>Acama Systems UG</organization>
 			<organizationUrl>http://acama-systems.de</organizationUrl>
 		</developer>
 	</developers>
@@ -130,7 +130,12 @@
 					<target>1.5</target>
 				</configuration>
 			</plugin>
-			<plugin>
+                        <plugin>
+                                <groupId>org.apache.maven.plugins</groupId>
+                                <artifactId>maven-release-plugin</artifactId>
+                                <version>2.2.2</version>
+                        </plugin>
+			<!--plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
 				<version>2.6</version>
@@ -141,7 +146,7 @@
 						<version>1.4</version>
 					</dependency>
 				</dependencies>
-			</plugin>
+			</plugin-->
 		</plugins>
 		<extensions>
 			<extension>
@@ -151,12 +156,17 @@
 			</extension>
 		</extensions>
 	</build>
-	<distributionManagement>
+        <scm>
+	        <connection>scm:git:git@github.com:alp82/abmash.git</connection>
+        	<url>scm:git:git@github.com:alp82/abmash.git</url>
+        	<developerConnection>scm:git:git@github.com:alp82/abmash.git</developerConnection>
+        </scm>
+	<!--distributionManagement>
 		<repository>
 			<id>com.abmash</id>
 			<url>svn:https://svn.camunda.com/fox/trunk/incubator/abmash/maven</url>
 		</repository>
-	</distributionManagement>
+	</distributionManagement-->
 	<modules>
 	</modules>
 </project>
