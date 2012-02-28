@@ -12,7 +12,7 @@ import com.abmash.api.HtmlElements;
  * 
  * @author Alper Ortac
  */
-public class BrowserDebug {
+public class Debug {
 	
 	private Browser browser;
 
@@ -21,7 +21,7 @@ public class BrowserDebug {
 	 * 
 	 * @param browser <code>Browser</code> instance to work with
 	 */
-	public BrowserDebug(Browser browser) {
+	public Debug(Browser browser) {
 		this.browser = browser;
 	}
 	

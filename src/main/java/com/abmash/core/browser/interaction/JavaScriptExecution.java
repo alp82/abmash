@@ -13,7 +13,7 @@ import com.abmash.api.HtmlElement;
 import com.abmash.api.data.JavaScriptResult;
 
 
-public class JavaScript extends ActionOnBrowser {
+public class JavaScriptExecution extends ActionOnBrowser {
 	
 	private String script = null;
 	
@@ -23,7 +23,7 @@ public class JavaScript extends ActionOnBrowser {
 
 	private JavaScriptResult result = null;
 
-	public JavaScript(Browser browser, String script, Boolean sync, Object... args) {
+	public JavaScriptExecution(Browser browser, String script, Boolean sync, Object... args) {
 		super(browser);
 		this.script = script;
 		this.sync = sync;

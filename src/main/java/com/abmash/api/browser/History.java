@@ -10,7 +10,7 @@ import com.abmash.api.Browser;
  * 
  * @author Alper Ortac
  */
-public class BrowserHistory {
+public class History {
 	
 	private Browser browser;
 
@@ -19,7 +19,7 @@ public class BrowserHistory {
 	 * 
 	 * @param browser <code>Browser</code> instance to work with
 	 */
-	public BrowserHistory(Browser browser) {
+	public History(Browser browser) {
 		this.browser = browser;
 	}
 	

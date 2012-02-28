@@ -9,12 +9,12 @@ import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.abmash.api.browser.BrowserDebug;
-import com.abmash.api.browser.BrowserFrame;
-import com.abmash.api.browser.BrowserHistory;
-import com.abmash.api.browser.BrowserJavaScript;
-import com.abmash.api.browser.BrowserWaitFor;
-import com.abmash.api.browser.BrowserWindow;
+import com.abmash.api.browser.Debug;
+import com.abmash.api.browser.Frame;
+import com.abmash.api.browser.History;
+import com.abmash.api.browser.JavaScript;
+import com.abmash.api.browser.WaitFor;
+import com.abmash.api.browser.Window;
 import com.abmash.api.data.JavaScriptResult;
 import com.abmash.api.data.List;
 import com.abmash.api.data.Table;
@@ -67,11 +67,11 @@ public class Browser implements Document {
 
 	private WebDriver webDriver;
 
-	private BrowserHistory history;
-	private BrowserWindow window;
-	private BrowserFrame frame;
-	private BrowserWaitFor waitFor;
-	private BrowserDebug debug;
+	private History history;
+	private Window window;
+	private Frame frame;
+	private WaitFor waitFor;
+	private Debug debug;
 
 
 	// TODO http://twill.idyll.org/
@@ -130,11 +130,11 @@ public class Browser implements Document {
 		// use browser config and instantiate all needed classes
 		webDriver = config.getWebDriver();
 		// TODO where to put detection of alerts and popups?
-		history = new BrowserHistory(this);
-		window = new BrowserWindow(this);
-		frame = new BrowserFrame(this);
-		waitFor = new BrowserWaitFor(this);
-		debug = new BrowserDebug(this);
+		history = new History(this);
+		window = new Window(this);
+		frame = new Frame(this);
+		waitFor = new WaitFor(this);
+		debug = new Debug(this);
 		openUrl(url);
 	}
 
@@ -167,7 +167,7 @@ public class Browser implements Document {
 	 * 
 	 * @return the browser history manager
 	 */
-	public BrowserHistory history() {
+	public History history() {
 		return history;
 	}
 
@@ -176,7 +176,7 @@ public class Browser implements Document {
 	 * 
 	 * @return the browser window manager
 	 */
-	public BrowserWindow window() {
+	public Window window() {
 		return window;
 	}
 
@@ -185,7 +185,7 @@ public class Browser implements Document {
 	 * 
 	 * @return the browser frame manager
 	 */
-	public BrowserFrame frame() {
+	public Frame frame() {
 		return frame;
 	}
 
@@ -194,7 +194,7 @@ public class Browser implements Document {
 	 * 
 	 * @return the browser wait manager
 	 */
-	public BrowserWaitFor waitFor() {
+	public WaitFor waitFor() {
 		return waitFor;
 	}
 
@@ -203,7 +203,7 @@ public class Browser implements Document {
 	 * 
 	 * @return the browser debug manager
 	 */
-	public BrowserDebug debug() {
+	public Debug debug() {
 		return debug;
 	}
 	
@@ -222,7 +222,7 @@ public class Browser implements Document {
 	 * @return JavaScriptResult result object to retrieve the return value and type
 	 */
 	public JavaScriptResult javaScript(String script, Object... args) {
-		return new BrowserJavaScript(this, script).evaluate(args);
+		return new JavaScript(this, script).evaluate(args);
 	}
 	
 	/**
@@ -236,7 +236,7 @@ public class Browser implements Document {
 	 * @return JavaScriptResult result object to retrieve the return value and type
 	 */
 	public JavaScriptResult javaScriptFromFile(String scriptFilename, Object... args) {
-		return new BrowserJavaScript(this, scriptFilename, true).evaluate(args);
+		return new JavaScript(this, scriptFilename, true).evaluate(args);
 	}
 	
 	/**
@@ -254,7 +254,7 @@ public class Browser implements Document {
 	 * @return JavaScriptResult result object to retrieve the return value and type
 	 */
 	public JavaScriptResult javaScriptAsync(String script, Object... args) {
-		return new BrowserJavaScript(this, script).evaluateAsync(args);
+		return new JavaScript(this, script).evaluateAsync(args);
 	}
 	
 	/**
@@ -268,7 +268,7 @@ public class Browser implements Document {
 	 * @return JavaScriptResult result object to retrieve the return value and type
 	 */
 	public JavaScriptResult javaScriptFromFileAsync(String scriptFilename, Object... args) {
-		return new BrowserJavaScript(this, scriptFilename, true).evaluateAsync(args);
+		return new JavaScript(this, scriptFilename, true).evaluateAsync(args);
 	}
 	
 	/**
@@ -296,12 +296,12 @@ public class Browser implements Document {
 			String extension = matcher.group(2);
 			lastMatchEndPosition = matcher.end();
 			matcher.appendReplacement(styleDefinitionsWithInlineImageData, "url(" + IOTools.convertImageToBinaryData(
-							BrowserJavaScript.class.getResourceAsStream("/images/" + filename + "." + extension), extension) + ")");
+							JavaScript.class.getResourceAsStream("/images/" + filename + "." + extension), extension) + ")");
 		}
 		// add all definitions from the last match until the end of the stylesheet
 		styleDefinitionsWithInlineImageData.append(styleDefinitions.substring(lastMatchEndPosition));
 		String script = "jQuery('<style type=\"text/css\">" + styleDefinitionsWithInlineImageData.toString() + "</style>').appendTo('html > head');";
-		new BrowserJavaScript(this, script).evaluate(args);
+		new JavaScript(this, script).evaluate(args);
 		return this;
 	}
 	
@@ -318,7 +318,7 @@ public class Browser implements Document {
 	 * @return this browser instance
 	 */
 	public Browser cssFromFile(String stylesheetFile, Boolean flatImageFolder, Object... args) {
-		InputStream stream = BrowserJavaScript.class.getResourceAsStream("/css/" + stylesheetFile + ".css");
+		InputStream stream = JavaScript.class.getResourceAsStream("/css/" + stylesheetFile + ".css");
 		// TODO the css is not allowed to have line breaks, why?
 		return css(IOTools.convertStreamToString(stream).replace("\n", " "), flatImageFolder, args);
 	}

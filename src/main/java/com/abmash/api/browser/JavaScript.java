@@ -4,7 +4,7 @@ import java.io.InputStream;
 
 import com.abmash.api.Browser;
 import com.abmash.api.data.JavaScriptResult;
-import com.abmash.core.browser.interaction.JavaScript;
+import com.abmash.core.browser.interaction.JavaScriptExecution;
 import com.abmash.core.tools.IOTools;
 
 
@@ -17,15 +17,15 @@ import com.abmash.core.tools.IOTools;
  * JavaScript can be executed or evaluated synchronously or asynchronously. The parameter is optional
  * and can be used to execute the script on a specific object instead of the whole document.
  * <ul>
- * <li>{@link BrowserJavaScript#execute(Object...)} executes the script synchronously</li>
- * <li>{@link BrowserJavaScript#executeAsync(Object...)} executes the script asynchronously</li>
- * <li>{@link BrowserJavaScript#evaluate(Object...)} evaluates the script synchronously</li>
- * <li>{@link BrowserJavaScript#evaluateAsync(Object...)} evaluates the script asynchronously</li>
+ * <li>{@link JavaScript#execute(Object...)} executes the script synchronously</li>
+ * <li>{@link JavaScript#executeAsync(Object...)} executes the script asynchronously</li>
+ * <li>{@link JavaScript#evaluate(Object...)} evaluates the script synchronously</li>
+ * <li>{@link JavaScript#evaluateAsync(Object...)} evaluates the script asynchronously</li>
  * <ul>
  * <p>
  * @author Alper Ortac
  */
-public class BrowserJavaScript {
+public class JavaScript {
 	
 	private Browser browser;
 	
@@ -37,13 +37,13 @@ public class BrowserJavaScript {
 	 * @param browser <code>Browser</code> instance to work with
 	 * @param script the JavaScript to execute or evaluate
 	 */
-	public BrowserJavaScript(Browser browser, String script) {
+	public JavaScript(Browser browser, String script) {
 		this.browser = browser;
 		this.script = script;
 		// load prerequisites
 		// TODO cache the string
 		// TODO custom prerequisites
-		(new JavaScript(browser, loadPrerequisites(), true)).execute();
+		(new JavaScriptExecution(browser, loadPrerequisites(), true)).execute();
 	}
 
 	/**
@@ -53,7 +53,7 @@ public class BrowserJavaScript {
 	 * @param script the JavaScript to execute or evaluate
 	 * @param isFile if true, the script parameter is taken as JavaScript filename which contains the script  
 	 */
-	public BrowserJavaScript(Browser browser, String script, Boolean isFile) {
+	public JavaScript(Browser browser, String script, Boolean isFile) {
 		this(browser, isFile ? getJsFromFile(script) : script);
 	}
 
@@ -64,7 +64,7 @@ public class BrowserJavaScript {
 	 * @return returned value of executed script
 	 */
 	public JavaScriptResult evaluate(Object... args) {
-		JavaScript js = new JavaScript(browser, script, true, args);
+		JavaScriptExecution js = new JavaScriptExecution(browser, script, true, args);
 		js.execute();
 		return js.getResult();
 	}
@@ -76,7 +76,7 @@ public class BrowserJavaScript {
 	 * @return returned value of executed script
 	 */
 	public JavaScriptResult evaluateAsync(Object... args) {
-		JavaScript js = new JavaScript(browser, script, false, args);
+		JavaScriptExecution js = new JavaScriptExecution(browser, script, false, args);
 		js.execute();
 		return js.getResult();
 	}
@@ -125,7 +125,7 @@ public class BrowserJavaScript {
 	}
 	
 	private static String getJsFromFile(String filename) {
-		InputStream stream = BrowserJavaScript.class.getResourceAsStream("/js/" + filename + ".js");
+		InputStream stream = JavaScript.class.getResourceAsStream("/js/" + filename + ".js");
 		return IOTools.convertStreamToString(stream);
 	}
 

@@ -11,7 +11,7 @@ import com.abmash.api.HtmlElement;
  * 
  * @author Alper Ortac
  */
-public class BrowserFrame {
+public class Frame {
 	
 	private Browser browser;
 
@@ -23,7 +23,7 @@ public class BrowserFrame {
 	 * 
 	 * @param browser <code>Browser</code> instance to work with
 	 */
-	public BrowserFrame(Browser browser) {
+	public Frame(Browser browser) {
 		this.browser = browser;
 	}
 	

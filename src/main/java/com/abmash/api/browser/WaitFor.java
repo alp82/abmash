@@ -22,7 +22,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  * 
  * @author Alper Ortac
  */
-public class BrowserWaitFor {
+public class WaitFor {
 	
 	private static final int DEFAULT_TIMEOUT_ON_WAIT = 20;
 	
@@ -36,7 +36,7 @@ public class BrowserWaitFor {
 	 * 
 	 * @param browser <code>Browser</code> instance to work with
 	 */
-	public BrowserWaitFor(Browser browser) {
+	public WaitFor(Browser browser) {
 		this(browser, DEFAULT_TIMEOUT_ON_WAIT);
 	}
 
@@ -46,7 +46,7 @@ public class BrowserWaitFor {
 	 * @param browser <code>Browser</code> instance to work with
 	 * @param timeout wait for this amount of seconds until a timeout exception is thrown
 	 */
-	public BrowserWaitFor(Browser browser, int timeout) {
+	public WaitFor(Browser browser, int timeout) {
 		this.browser = browser;
 		this.timeout = timeout;
 	}

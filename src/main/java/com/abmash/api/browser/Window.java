@@ -28,7 +28,7 @@ import org.openqa.selenium.Alert;
  * 
  * @author Alper Ortac
  */
-public class BrowserWindow {
+public class Window {
 	
 	private Browser browser;
 
@@ -41,7 +41,7 @@ public class BrowserWindow {
 	 * 
 	 * @param browser <code>Browser</code> instance to work with
 	 */
-	public BrowserWindow(Browser browser) {
+	public Window(Browser browser) {
 		this.browser = browser;
 //		detectPopups();
 //		detectAlerts();
