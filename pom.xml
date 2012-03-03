@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.abmash</groupId>
-	<version>0.1.6</version>
+	<version>0.1.7-SNAPSHOT</version>
 	<artifactId>abmash</artifactId>
 	<packaging>jar</packaging>
 	<name>Abmash</name>
@@ -14,12 +14,12 @@
 			<name>Alper Ortac</name>
 			<email>alper@acama-systems.de</email>
 			<url>http://alperortac.de</url>
-			<organization>Acama Systems UG</organization>
+			<organization>Acama Systems</organization>
 			<organizationUrl>http://acama-systems.de</organizationUrl>
 		</developer>
 	</developers>
 	<organization>
-		<name>Acama Systems GbR</name>
+		<name>Acama Systems</name>
 		<url>http://acama-systems.de</url>
 	</organization>
 	<repositories>
@@ -68,9 +68,7 @@
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-java</artifactId>
-			<version>2.17.0</version>
-			<type>jar</type>
-			<scope>compile</scope>
+			<version>2.20.0</version>
 		</dependency>
 	</dependencies>
 
@@ -83,11 +81,11 @@
 					<target>1.5</target>
 				</configuration>
 			</plugin>
-                        <plugin>
-                                <groupId>org.apache.maven.plugins</groupId>
-                                <artifactId>maven-release-plugin</artifactId>
-                                <version>2.2.2</version>
-                        </plugin>
+			<plugin>
+			        <groupId>org.apache.maven.plugins</groupId>
+			        <artifactId>maven-release-plugin</artifactId>
+			        <version>2.2.2</version>
+			</plugin>
 			<!--plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
@@ -109,17 +107,21 @@
 			</extension>
 		</extensions>
 	</build>
-        <scm>
-	        <connection>scm:git:git@github.com:alp82/abmash.git</connection>
-        	<url>scm:git:git@github.com:alp82/abmash.git</url>
-        	<developerConnection>scm:git:git@github.com:alp82/abmash.git</developerConnection>
-        </scm>
-	<!--distributionManagement>
+	<scm>
+		<connection>scm:git:git@github.com:alp82/abmash.git</connection>
+		<url>scm:git:git@github.com:alp82/abmash.git</url>
+		<developerConnection>scm:git:git@github.com:alp82/abmash.git</developerConnection>
+	</scm>
+	<distributionManagement>
 		<repository>
-			<id>com.abmash</id>
-			<url>svn:https://svn.camunda.com/fox/trunk/incubator/abmash/maven</url>
+			<id>repo</id>
+			<url>https://github.com/alp82/alp-mvn-repo/raw/master/releases</url>
 		</repository>
-	</distributionManagement-->
+		<snapshotRepository>
+			<id>snapshot-repo</id>
+			<url>https://github.com/alp82/alp-mvn-repo/raw/master/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
 	<modules>
 	</modules>
 </project>
