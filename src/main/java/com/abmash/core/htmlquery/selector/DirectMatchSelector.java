@@ -1,4 +1,4 @@
-package com.abmash.core.browser.htmlquery.selector;
+package com.abmash.core.htmlquery.selector;
 
 
 import com.abmash.api.Browser;
@@ -16,6 +16,16 @@ public class DirectMatchSelector extends Selector {
 		this.elements = elements;
 	}
 
+	@Override
+	public String getExpressionAsJQueryCommand() {
+		String script = "jQuery(abmash.getQueryElement());";
+		return script;
+	}
+
+	public HtmlElements getElements() {
+		return elements;
+	}
+	
 	@Override
 	public HtmlElements find(Browser browser) {
 		return elements;

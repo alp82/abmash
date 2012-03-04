@@ -1,4 +1,4 @@
-package com.abmash.core.browser.htmlquery.selector;
+package com.abmash.core.htmlquery.selector;
 
 
 import org.openqa.selenium.By;
@@ -15,6 +15,13 @@ public class TagnameSelector extends Selector {
 		super(expression);
 	}
 
+	@Override
+	public String getExpressionAsJQueryCommand() {
+		// TODO replace single quotes if necessary
+		String script = "jQuery(arguments[0]).find('" + expression/*.replaceAll("'", "\\\\'")*/ + "');";
+		return script;
+	}
+	
 	@Override
 	public HtmlElements find(Browser browser) {
 		return new HtmlElements(browser, browser.getWebDriver().findElements(By.tagName(expression)));

@@ -163,7 +163,7 @@ public class Window {
 	}
 	
 	/**
-	 * Tabs are not supported yet. Uses {@link #newWindow(String)}
+	 * Tabs are not supported yet. Uses {@link #newWindow(JavaScript)}
 	 * 
 	 * @param url
 	 * @return name of the new tab
@@ -174,7 +174,7 @@ public class Window {
 	}
 
 	/**
-	 * Tabs are not supported yet. Uses {@link #closeWindow(String)}
+	 * Tabs are not supported yet. Uses {@link #closeWindow(JavaScript)}
 	 * 
 	 * @param tabName
 	 */

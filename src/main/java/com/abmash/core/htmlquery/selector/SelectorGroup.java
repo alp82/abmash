@@ -1,4 +1,4 @@
-package com.abmash.core.browser.htmlquery.selector;
+package com.abmash.core.htmlquery.selector;
 
 
 import java.util.ArrayList;
@@ -11,8 +11,9 @@ public class SelectorGroup extends ArrayList<Selector> {
 		FALLBACK
 	}
 	
-	private Type type = Type.NORMAL; // normal or fallback group
 	private int limit = 50; // result limit for this group
+	private int weight = 0; // the higher the value the higher the weight 
+	private Type type = Type.NORMAL; // normal or fallback group
 	
 	public SelectorGroup() {
 		super();
@@ -32,6 +33,11 @@ public class SelectorGroup extends ArrayList<Selector> {
 		this(type);
 		this.limit = limit;
 	}
+
+	public SelectorGroup(Type type, int limit, int weight) {
+		this(type, limit);
+		this.weight = weight;
+	}
 	
 	public SelectorGroup(Selector selector, Type type) {
 		this(selector);
@@ -43,15 +49,30 @@ public class SelectorGroup extends ArrayList<Selector> {
 		this.limit = limit;
 	}
 
+	public SelectorGroup(Selector selector, int limit, int weight) {
+		this(selector, limit);
+		this.weight = weight;
+	}
+	
 	public SelectorGroup(SelectorGroup group, Type type, int limit) {
 		super();
 		addAll(group);
 		this.type = type;
 		this.limit = limit;
 	}
+
+	public SelectorGroup(SelectorGroup group, Type type, int limit, int weight) {
+		this(group, type, limit);
+		this.weight = weight;
+	}
 	
 	public SelectorGroup(Selector selector, Type type, int limit) {
 		this(new SelectorGroup(selector), type, limit);
+	}
+	
+	public SelectorGroup(Selector selector, Type type, int limit, int weight) {
+		this(selector, type, limit);
+		this.weight = weight;
 	}
 	
 	public boolean add(Selector selector) {
@@ -68,6 +89,15 @@ public class SelectorGroup extends ArrayList<Selector> {
 		return this;
 	}
 
+	public int getWeight() {
+		return weight;
+	}
+
+	public SelectorGroup setWeight(int weight) {
+		this.weight = weight;
+		return this;
+	}
+	
 	public Type getType() {
 		return type;
 	}

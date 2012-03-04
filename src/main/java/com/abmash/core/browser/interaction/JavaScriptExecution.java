@@ -2,15 +2,12 @@ package com.abmash.core.browser.interaction;
 
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebElement;
 
 import com.abmash.api.Browser;
-import com.abmash.api.HtmlElement;
 import com.abmash.api.data.JavaScriptResult;
+import com.abmash.core.tools.JavaScriptParameterConverter;
 
 
 public class JavaScriptExecution extends ActionOnBrowser {
@@ -30,12 +27,11 @@ public class JavaScriptExecution extends ActionOnBrowser {
 		this.args = convertArguments(args);
 	}
 	
-	// TODO check all argument classes
 	private Object[] convertArguments(Object... args) {
 		ArrayList<Object> arguments = new ArrayList<Object>();
 		for (Object arg: args) {
-			if(arg instanceof HtmlElement) arg = ((HtmlElement) arg).getSeleniumElement();
-			arguments.add(arg);
+			Object argument = new JavaScriptParameterConverter().apply(arg);
+			arguments.add(argument);
 		}
 		return arguments.toArray();
 	}
@@ -54,7 +50,13 @@ public class JavaScriptExecution extends ActionOnBrowser {
 				result = new JavaScriptResult(executeAsyncScript());
 			}
 		} catch(Exception e) {
-			String jsMessage = browser.query().xPathSelector("//body").findFirst().getAttribute("javaScriptErrorMessage");
+//			try {
+//				Thread.sleep(500);
+//			} catch (InterruptedException e1) {
+//				// TODO Auto-generated catch block
+//				e1.printStackTrace();
+//			}
+			String jsMessage = browser.query().tag("body").findFirst().getAttribute("javaScriptErrorMessage");
 			String errorMessage = "JavaScript execution failed: " + jsMessage;
 			errorMessage += "\n" + e.getMessage();
 			errorMessage += "\n >> for the following script:\n" + script;

@@ -1,4 +1,4 @@
-package com.abmash.core.browser.distance;
+package com.abmash.core.element.distance;
 
 
 

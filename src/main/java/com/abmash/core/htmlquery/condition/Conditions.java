@@ -1,4 +1,4 @@
-package com.abmash.core.browser.htmlquery.condition;
+package com.abmash.core.htmlquery.condition;
 
 import java.util.ArrayList;
 

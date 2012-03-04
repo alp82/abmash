@@ -1,10 +1,10 @@
-package com.abmash.core.browser.htmlquery.condition;
+package com.abmash.core.htmlquery.condition;
 
-import com.abmash.core.browser.htmlquery.selector.CssSelector;
-import com.abmash.core.browser.htmlquery.selector.JQuerySelector;
-import com.abmash.core.browser.htmlquery.selector.Selector;
-import com.abmash.core.browser.htmlquery.selector.SelectorGroup;
-import com.abmash.core.browser.htmlquery.selector.XpathSelector;
+import com.abmash.core.htmlquery.selector.CssSelector;
+import com.abmash.core.htmlquery.selector.JQuerySelector;
+import com.abmash.core.htmlquery.selector.Selector;
+import com.abmash.core.htmlquery.selector.SelectorGroup;
+import com.abmash.core.htmlquery.selector.XpathSelector;
 
 public class SelectorCondition extends Condition {
 	
@@ -42,11 +42,11 @@ public class SelectorCondition extends Condition {
 			selector = new CssSelector(query);
 			break;
 		}
-		selectors.add(new SelectorGroup(selector));
+		selectorGroups.add(new SelectorGroup(selector));
 	}
 
 	public String toString() {
-		return super.toString() + " with type \"" + queryType + "\" and query \"" + query + "\"";
+		return super.toString() + " with type [" + queryType + "] and query [" + query + "]";
 	}
 
 }

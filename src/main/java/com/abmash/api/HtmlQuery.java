@@ -3,21 +3,25 @@ package com.abmash.api;
 
 import java.util.ArrayList;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.abmash.api.data.List;
 import com.abmash.api.data.Table;
-import com.abmash.core.browser.htmlquery.condition.ClosenessCondition;
-import com.abmash.core.browser.htmlquery.condition.ClosenessCondition.Direction;
-import com.abmash.core.browser.htmlquery.condition.Condition;
-import com.abmash.core.browser.htmlquery.condition.Conditions;
-import com.abmash.core.browser.htmlquery.condition.ElementCondition;
-import com.abmash.core.browser.htmlquery.condition.ElementCondition.ElementType;
-import com.abmash.core.browser.htmlquery.condition.SelectorCondition;
-import com.abmash.core.browser.htmlquery.condition.SelectorCondition.QueryType;
-import com.abmash.core.browser.htmlquery.condition.TagnameCondition;
-import com.abmash.core.browser.htmlquery.selector.Selector;
-import com.abmash.core.browser.htmlquery.selector.SelectorGroup;
-import com.abmash.core.browser.htmlquery.selector.SelectorGroup.Type;
-import com.abmash.core.browser.htmlquery.selector.Selectors;
+import com.abmash.core.htmlquery.condition.ClosenessCondition;
+import com.abmash.core.htmlquery.condition.ClosenessCondition.Direction;
+import com.abmash.core.htmlquery.condition.Condition;
+import com.abmash.core.htmlquery.condition.Conditions;
+import com.abmash.core.htmlquery.condition.ElementCondition;
+import com.abmash.core.htmlquery.condition.ElementCondition.ElementType;
+import com.abmash.core.htmlquery.condition.SelectorCondition;
+import com.abmash.core.htmlquery.condition.SelectorCondition.QueryType;
+import com.abmash.core.htmlquery.condition.TagnameCondition;
+import com.abmash.core.htmlquery.selector.Selector;
+import com.abmash.core.htmlquery.selector.SelectorGroup;
+import com.abmash.core.htmlquery.selector.SelectorGroup.Type;
+import com.abmash.core.htmlquery.selector.SelectorGroups;
 
 
 /**
@@ -76,7 +80,6 @@ public class HtmlQuery {
 	public HtmlQuery(Browser browser) {
 		this.browser = browser;
 	}
-
 	
 	// filter by reference elements
 	
@@ -161,9 +164,9 @@ public class HtmlQuery {
 	//
 	
 	/**
-	 * Finds elements which contain the specified text or having an attribute value containing the query.
+	 * Finds elements which contain the specified text or having an attribute value containing the query string.
 	 * <p>
-	 * Exact matches have more weight than partial matches. In most cases the query is case-sensitive.
+	 * Exact matches have more weight than partial matches. In most cases the query is case-insensitive.
 	 * <p>
 	 * <strong>Examples:</strong>
 	 * <ul>
@@ -171,12 +174,32 @@ public class HtmlQuery {
 	 * <li>{@code browser.query().isInList().has("April").find()} finds all elements in a list which contain the text <em>April</em></li>
 	 * </ul>
 	 * 
-	 * @param query text or attribute value to search for, case-sensitive
+	 * @param text text or attribute value to search for
 	 * @return this {@link HtmlQuery} instance, which can be used to add more search criteria like this or to finally
 	 * execute the query with {@link #find()} or {@link #findFirst()}
 	 */
-	public HtmlQuery has(String query) {
-		queryStrings.add(query);
+	public HtmlQuery has(String text) {
+		queryStrings.add(text);
+		return this;
+	}
+	
+	/**
+	 * Finds elements which contain all of the specified texts or having attribute values containing all of the query strings.
+	 * <p>
+	 * Exact matches have more weight than partial matches. In most cases the query is case-insensitive.
+	 * <p>
+	 * <strong>Examples:</strong>
+	 * <ul>
+	 * <li>{@code browser.query().isInList().has(["April", "July", "August"]).find()} finds all elements in a list which contain
+	 * the texts <em>April</em>, <em>July</em> and <em>August</em></li>
+	 * </ul>
+	 * 
+	 * @param textList text or attribute values to search for
+	 * @return this {@link HtmlQuery} instance, which can be used to add more search criteria like this or to finally
+	 * execute the query with {@link #find()} or {@link #findFirst()}
+	 */
+	public HtmlQuery has(ArrayList<String> textList) {
+		queryStrings.addAll(textList);
 		return this;
 	}
 	
@@ -330,7 +353,7 @@ public class HtmlQuery {
 	}
 
 	/**
-	 * Finds selectable elements, which are usually drop-down boxes or input boxes with multiple selectable items.
+	 * Finds choosable elements, which are usually drop-down boxes or input boxes with multiple selectable items.
 	 * <p>
 	 * <strong>Examples:</strong>
 	 * <ul>
@@ -347,6 +370,21 @@ public class HtmlQuery {
 		return is(ElementType.CHOOSABLE);
 	}
 
+	/**
+	 * Finds date picker elements, which are usually drop-down boxes or calendar widgets.
+	 * <p>
+	 * <strong>Examples:</strong>
+	 * <ul>
+	 * <li>TODO</li>
+	 * </ul>
+	 * 
+	 * @return this {@link HtmlQuery} instance, which can be used to add more search criteria like this or to finally
+	 * execute the query with {@link #find()} or {@link #findFirst()}
+	 */
+	public HtmlQuery isDatepicker() {
+		return is(ElementType.DATEPICKER);
+	}
+	
 	/**
 	 * Finds image elements. Images defined as background image can not be found properly at the moment.
 	 * <p>
@@ -1108,7 +1146,7 @@ public class HtmlQuery {
 	 * <p>
 	 * <strong>Example:</strong>
 	 * <pre>
-	 * jQuerySelector("div button:only-child")
+	 * jQuerySelector("find(div button:only-child)")
 	 * </pre>
 	 * 
 	 * @param query the jQuery selector expression
@@ -1156,6 +1194,55 @@ public class HtmlQuery {
 	 */
 	public HtmlElements find() {
 		if(!(resultElements instanceof HtmlElements)) {
+			JSONArray jsonQueries = new JSONArray();
+			
+			// building queries
+			try {
+				for(Condition condition: conditions) {
+					if(condition.isElementFinder()) {
+						if(condition instanceof ElementCondition) {
+							if(!queryStrings.isEmpty()) {
+								// TODO queries for frame is framename
+								((ElementCondition) condition).setQueries(queryStrings);
+							}
+						}
+						
+						JSONObject jsonCondition = new JSONObject();
+						JSONArray jsonSelectorGroups = new JSONArray();
+						SelectorGroups selectorGroups = condition.getSelectors();
+						
+						for(SelectorGroup selectorGroup: selectorGroups) {
+							JSONObject jsonSelectorGroup = new JSONObject();
+							JSONArray jsonSelectors = new JSONArray();
+							for(Selector selector: selectorGroup) {
+								JSONObject jsonSelector = new JSONObject();
+								jsonSelector.put("type", selector.getType());
+								jsonSelector.put("command", selector.getExpressionAsJQueryCommand());
+								jsonSelectors.put(jsonSelector);
+							}
+							jsonSelectorGroup.put("type", selectorGroup.getType());
+							jsonSelectorGroup.put("selectors", jsonSelectors);
+							jsonSelectorGroups.put(jsonSelectorGroup);
+						}
+						
+						jsonCondition.put("type", condition.toString());
+						jsonCondition.put("selectorGroups", jsonSelectorGroups);
+						jsonQueries.put(jsonCondition);
+					}
+				}
+				System.out.println(jsonQueries.toString(2));
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			// sending queries to jquery executor
+			// fetch results
+			// sort results
+		}
+		return resultElements;
+	}
+	
+	public HtmlElements findOld() {
+		if(!(resultElements instanceof HtmlElements)) {
 			// find elements
 			browser.log().debug("Query: Searching...");
 			HtmlElements unsortedElements = doFind();
@@ -1196,6 +1283,8 @@ public class HtmlQuery {
 		if(!(resultElements instanceof HtmlElements) || resultElements.isEmpty()) {
 			browser.log().debug("Query: No element found for " + this);
 			resultElements = null;
+		} else {
+			resultElements.fetchDataForCache();
 		}
 		
 		return resultElements;
@@ -1256,11 +1345,11 @@ public class HtmlQuery {
 				for (String query: queryStrings) {
 					// TODO queries for frame is framename
 					if(condition instanceof ElementCondition) {
-						((ElementCondition) condition).setQuery(query);
+						((ElementCondition) condition).addQuery(query);
 					}
 					
 					// get selectors
-					Selectors selectors = condition.getSelectors();
+					SelectorGroups selectors = condition.getSelectors();
 
 					// get matching elements
 					HtmlElements matchingElementsForConditionQuery = matchingElementsForConditionQuery(condition, selectors);
@@ -1288,10 +1377,10 @@ public class HtmlQuery {
 		return matchingElements;
 	}
 	
-	private HtmlElements matchingElementsForConditionQuery(Condition condition, Selectors selectors) {
+	private HtmlElements matchingElementsForConditionQuery(Condition condition, SelectorGroups selectorGroups) {
 		// selectors are processed OR-wise
 		HtmlElements matchingElementsForConditionQuery = new HtmlElements();
-		for (SelectorGroup selectorGroup: selectors) {
+		for (SelectorGroup selectorGroup: selectorGroups) {
 			// process each group
 			HtmlElements groupElements = new HtmlElements();
 			for (Selector selector: selectorGroup) {

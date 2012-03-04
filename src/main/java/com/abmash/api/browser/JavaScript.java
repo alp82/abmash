@@ -9,7 +9,7 @@ import com.abmash.core.tools.IOTools;
 
 
 /**
- * Execute or evaluate custom JavaScript, used by calling {@link Browser#javaScript(String)}.
+ * Execute or evaluate custom JavaScript, used by calling {@link Browser#javaScript(JavaScript)}.
  * <p>
  * Executing a script returns either true if the result was non-false, or false if it was empty.
  * Evaluating a script returns the return value of the script.
@@ -27,43 +27,39 @@ import com.abmash.core.tools.IOTools;
  */
 public class JavaScript {
 	
-	private Browser browser;
-	
 	private String script;
 
 	/**
 	 * Constructs new BrowserJavaScript instance for running JavaScript.
 	 * 
-	 * @param browser <code>Browser</code> instance to work with
 	 * @param script the JavaScript to execute or evaluate
 	 */
-	public JavaScript(Browser browser, String script) {
-		this.browser = browser;
+	public JavaScript(String script) {
 		this.script = script;
 		// load prerequisites
 		// TODO cache the string
 		// TODO custom prerequisites
-		(new JavaScriptExecution(browser, loadPrerequisites(), true)).execute();
 	}
 
 	/**
 	 * Constructs new BrowserJavaScript instance for running JavaScript.
 	 * 
-	 * @param browser <code>Browser</code> instance to work with
 	 * @param script the JavaScript to execute or evaluate
 	 * @param isFile if true, the script parameter is taken as JavaScript filename which contains the script  
 	 */
-	public JavaScript(Browser browser, String script, Boolean isFile) {
-		this(browser, isFile ? getJsFromFile(script) : script);
+	public JavaScript(String script, Boolean isFile) {
+		this(isFile ? getJsFromFile(script) : script);
 	}
 
 	/**
 	 * Evaluates JavaScript synchronously.
 	 * 
+	 * @param browser <code>Browser</code> instance to work with
 	 * @param args optional list of objects which are passed to the script as arguments, accessable with arguments[0] etc.
 	 * @return returned value of executed script
 	 */
-	public JavaScriptResult evaluate(Object... args) {
+	public JavaScriptResult evaluate(Browser browser, Object... args) {
+		loadPrerequisites(browser);
 		JavaScriptExecution js = new JavaScriptExecution(browser, script, true, args);
 		js.execute();
 		return js.getResult();
@@ -72,16 +68,18 @@ public class JavaScript {
 	/**
 	 * Evaluates JavaScript asynchronously.
 	 * 
+	 * @param browser <code>Browser</code> instance to work with
 	 * @param args optional list of objects which are passed to the script as arguments, accessable with arguments[0] etc.
 	 * @return returned value of executed script
 	 */
-	public JavaScriptResult evaluateAsync(Object... args) {
+	public JavaScriptResult evaluateAsync(Browser browser, Object... args) {
+		loadPrerequisites(browser);
 		JavaScriptExecution js = new JavaScriptExecution(browser, script, false, args);
 		js.execute();
 		return js.getResult();
 	}
 	
-	private String loadPrerequisites() {
+	private void loadPrerequisites(Browser browser) {
 		String prerequisiteScripts = "";
 
 		// load jquery
@@ -95,11 +93,30 @@ public class JavaScript {
 		
 		prerequisiteScripts += "abmashCustomScripts = { 'loaded': true };\n";
 			
+		// Prototypes for base objects
+		prerequisiteScripts += getJsFromFile("javascript-prototypes");
+			
+		// xpath support for jquery
+		// Usage in JavaScript:
+		//   var paragraphs = jQuery().xpath('//p');
+		prerequisiteScripts += getJsFromFile("jquery.xpath");
+
+		// get unique css selector from elements in jQuery
+		// Usage in JavaScript:
+		//    var path = $('#foo').getPath();
+		prerequisiteScripts += getJsFromFile("jquery-getpath");
+		
 		// custom attribute selector which is case insensitive in jQuery
 		// Usage in JavaScript:
-		//   var searchInputs = jQuery('input:attr(value, "submit")');
-		prerequisiteScripts += getJsFromFile("jquery-attr-caseinsensitive");
+		//   var addressElements = jQuery('div:containsCaseInsensitive("AdDresS")');
+		//   var searchInputs = jQuery('input:attrCaseInsensitive(value, "SUBMIT")');
+		prerequisiteScripts += getJsFromFile("jquery-caseinsensitive");
 		
+		// custom attribute names getter
+		// Usage in JavaScript:
+		//   var attributes = jQuery('div#header').getAttributeNames();
+		prerequisiteScripts += getJsFromFile("jquery-attributes");
+
 		// custom visual closeness/direction selector in jQuery
 		// Usage in JavaScript:
 		//   var divs = jQuery('div:above("selector")');
@@ -110,23 +127,18 @@ public class JavaScript {
 		//   selector: any jQuery selector which finds exactly one element
 		prerequisiteScripts += getJsFromFile("jquery-visual");
 		
-		// get unique css selector from elements in jQuery
-		// Usage in JavaScript:
-		//    var path = $('#foo').getPath();
-		prerequisiteScripts += getJsFromFile("jquery-getpath");
-		
-		// Prototypes for base objects
-		prerequisiteScripts += getJsFromFile("javascript-prototypes");
-			
+		// abmash control scripts
+		prerequisiteScripts += getJsFromFile("abmash-control");
+
 		prerequisiteScripts += "}\n";
 		
-		// execute all needed scripts
-		return prerequisiteScripts;
+		// execute all needed scripts at once
+		(new JavaScriptExecution(browser, prerequisiteScripts, true)).execute();
 	}
 	
 	private static String getJsFromFile(String filename) {
 		InputStream stream = JavaScript.class.getResourceAsStream("/js/" + filename + ".js");
-		return IOTools.convertStreamToString(stream);
+		return IOTools.convertStreamToString(stream) + "\n";
 	}
 
 }

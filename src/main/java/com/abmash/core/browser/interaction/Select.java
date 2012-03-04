@@ -28,7 +28,7 @@ public class Select extends ActionOnHtmlElement {
 		super(browser, element);
 		this.element = element;
 		this.select = new org.openqa.selenium.support.ui.Select(element.getSeleniumElement());
-		this.optionValue = getOptionValue(optionQuery);
+		this.optionValue = getOptionValue(optionQuery.toLowerCase());
 		this.method = method;
 	}
 	
@@ -43,14 +43,16 @@ public class Select extends ActionOnHtmlElement {
 	
 	private WebElement hasFittingOption(List<WebElement> options, String query, CompareMethod compare) {
 		for (WebElement option: options) {
+			String optionAttrVal = option.getAttribute("value").toLowerCase();
+			String optionText = option.getText().toLowerCase();
 			switch (compare) {
 			case EQUAL:
-				if(option.getAttribute("value").equals(query) || option.getText().equals(query)) {
+				if(optionAttrVal.equals(query) || optionText.equals(query)) {
 					return option;
 				}
 				break;
 			case CONTAINS:
-				if(option.getAttribute("value").contains(query) || option.getText().contains(query)) {
+				if(optionAttrVal.contains(query) || optionText.contains(query)) {
 					return option;
 				}
 				break;

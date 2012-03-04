@@ -1,4 +1,4 @@
-package com.abmash.element;
+package com.abmash.core.element;
 
 import com.abmash.api.data.Date;
 

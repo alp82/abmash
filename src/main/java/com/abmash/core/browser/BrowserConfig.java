@@ -14,13 +14,14 @@ import org.openqa.selenium.firefox.FirefoxBinary;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 
 public class BrowserConfig {
 
 	private static final String DEFAULT_PROPERTY_FILE = "/default.properties";
 	
-	private WebDriver webDriver;
+	private RemoteWebDriver webDriver;
 
 	public BrowserConfig() {
 		this(DEFAULT_PROPERTY_FILE);
@@ -45,6 +46,7 @@ public class BrowserConfig {
 		if(properties.containsKey("headless")) System.setProperty("java.awt.headless", properties.getProperty("headless"));
 		
 		if(properties.getProperty("browserType").equalsIgnoreCase("firefox")) {
+			// TODO use Firefox3Locator
 			File binaryFile = new File(properties.getProperty("browserBin"));
 			FirefoxBinary binary = new FirefoxBinary(binaryFile);
 			FirefoxProfile profile = new FirefoxProfile();
@@ -60,16 +62,16 @@ public class BrowserConfig {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}*/
-			webDriver = new FirefoxDriver(binary, profile);
+			webDriver = (RemoteWebDriver) new FirefoxDriver(binary, profile);
 		}
 		
 		// TODO htmlunit does not work yet (RemoteWebElement is Firefox specific, CSS selectors do not work properly)
-		if(properties.getProperty("browserType").equalsIgnoreCase("htmlunit")) {
-			webDriver = new HtmlUnitDriver();
-		}
+//		if(properties.getProperty("browserType").equalsIgnoreCase("htmlunit")) {
+//			webDriver = (RemoteWebDriver) new HtmlUnitDriver();
+//		}
 	}
 	
-	public WebDriver getWebDriver() {
+	public RemoteWebDriver getWebDriver() {
 		return webDriver;
 	}
 }

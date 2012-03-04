@@ -1,4 +1,4 @@
-package com.abmash.core.browser.htmlquery.selector;
+package com.abmash.core.htmlquery.selector;
 
 
 import java.util.List;
@@ -19,6 +19,13 @@ public class JQuerySelector extends Selector {
 
 	public JQuerySelector(String expression) {
 		super(expression);
+		if(this.expression.isEmpty()) throw new RuntimeException("JQuery expression cannot be null or empty");
+	}
+
+	@Override
+	public String getExpressionAsJQueryCommand() {
+		// TODO replace single quotes if necessary
+		return "jQuery(abmash.getTempElement())." + expression/*.replaceAll("'", "\\\\'")*/;
 	}
 
 	@Override
@@ -28,10 +35,7 @@ public class JQuerySelector extends Selector {
 
 	@Override
 	public HtmlElements find(Browser browser, HtmlElement rootElement) {
-		// TODO replace single quotes if necessary
-		String script =
-			"var abmashQueryResult = jQuery(arguments[0])." + expression/*.replaceAll("'", "\\\\'")*/ + ";"
-			+ "return abmashQueryResult.get();";
+		String script = "abmash.setTempElement(arguments[0]); var abmashQueryResult = " + getExpressionAsJQueryCommand() + "; return abmashQueryResult.get();";
 		Object result = browser.javaScript(script, rootElement).getReturnValue();
 		return result != null ? new HtmlElements(browser, (List<WebElement>) result) : null;
 	}

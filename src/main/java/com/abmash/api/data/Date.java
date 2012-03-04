@@ -34,14 +34,32 @@ public class Date {
 	public Date(java.util.Date date) {
 		calendar = new GregorianCalendar();
 		calendar.setTime(date);
-		day = calendar.get(Calendar.DAY_OF_MONTH);
-		month = calendar.get(Calendar.MONTH) + 1;
 		year = calendar.get(Calendar.YEAR);
+		month = calendar.get(Calendar.MONTH) + 1;
+		day = calendar.get(Calendar.DAY_OF_MONTH);
 		hour = calendar.get(Calendar.HOUR);
 		if(hour == 0) hour = 12;
 		minute = calendar.get(Calendar.MINUTE);
 		second = calendar.get(Calendar.SECOND);
 		ampm = calendar.get(Calendar.AM_PM);
+	}
+	
+	/**
+	 * Constructor which takes a specific date.
+	 * 
+	 * TODO
+	 */
+	public Date(int year, int month, int day, int hour, int minute, int second) {
+		calendar = new GregorianCalendar();
+		calendar.set(year, month, day, hour, minute, second);
+		this.year = calendar.get(Calendar.YEAR);
+		this.month = calendar.get(Calendar.MONTH) - 1;
+		this.day = calendar.get(Calendar.DAY_OF_MONTH);
+		this.hour = calendar.get(Calendar.HOUR);
+		if(this.hour == 0) this.hour = 12;
+		this.minute = calendar.get(Calendar.MINUTE);
+		this.second = calendar.get(Calendar.SECOND);
+		this.ampm = calendar.get(Calendar.AM_PM);
 	}
 
 	/**

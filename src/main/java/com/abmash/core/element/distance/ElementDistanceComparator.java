@@ -1,16 +1,14 @@
-package com.abmash.core.browser.distance;
+package com.abmash.core.element.distance;
 
 
 
 import com.abmash.api.HtmlElement;
-import com.abmash.core.browser.htmlquery.condition.ElementCondition.ElementType;
+import com.abmash.core.element.Location;
+import com.abmash.core.element.Size;
+import com.abmash.core.htmlquery.condition.ElementCondition.ElementType;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.Point;
-
 
 public class ElementDistanceComparator implements Comparator<HtmlElement> {
 	
@@ -78,10 +76,10 @@ public class ElementDistanceComparator implements Comparator<HtmlElement> {
 	private Double getDistance(HtmlElement element, HtmlElement referenceElement) {
 		Double distance;
 		
-		Point location = element.getLocation();
-		Point referenceLocation = referenceElement.getLocation();
-		Dimension size = element.getSize();
-		Dimension referenceSize = referenceElement.getSize();
+		Location location = element.getLocation();
+		Location referenceLocation = referenceElement.getLocation();
+		Size size = element.getSize();
+		Size referenceSize = referenceElement.getSize();
 		
 		ElementDistance elementDistance = new ElementDistance(referenceLocation, location, referenceSize, size);
 		switch (distanceType) {
@@ -136,6 +134,8 @@ public class ElementDistanceComparator implements Comparator<HtmlElement> {
 		for (ElementType elementType: element.getTypes()) {
 			switch (elementType) {
 			case TYPABLE:
+			case CHOOSABLE:
+			case DATEPICKER:
 				if (element.getTagName().equals("label")) {
 					weight *= 3;
 				}

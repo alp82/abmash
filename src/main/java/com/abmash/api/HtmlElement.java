@@ -1,28 +1,13 @@
 package com.abmash.api;
 
 
-import com.abmash.api.data.Date;
-import com.abmash.api.data.Table;
-import com.abmash.core.browser.htmlquery.condition.ElementCondition.ElementType;
-import com.abmash.core.browser.interaction.Clear;
-import com.abmash.core.browser.interaction.Click;
-import com.abmash.core.browser.interaction.DragTo;
-import com.abmash.core.browser.interaction.Hover;
-import com.abmash.core.browser.interaction.KeyHold;
-import com.abmash.core.browser.interaction.KeyPress;
-import com.abmash.core.browser.interaction.KeyRelease;
-import com.abmash.core.browser.interaction.Select;
-import com.abmash.core.browser.interaction.Submit;
-import com.abmash.core.browser.interaction.Type;
-import com.abmash.core.browser.interaction.Click.ClickType;
-import com.abmash.core.browser.interaction.Select.SelectMethod;
-import com.abmash.core.browser.interaction.Submit.SubmitMethod;
-import com.abmash.element.Element;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,6 +15,28 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.remote.RemoteWebElement;
+
+import com.abmash.api.data.Date;
+import com.abmash.api.data.Table;
+import com.abmash.core.browser.interaction.Clear;
+import com.abmash.core.browser.interaction.Click;
+import com.abmash.core.browser.interaction.Click.ClickType;
+import com.abmash.core.browser.interaction.DragTo;
+import com.abmash.core.browser.interaction.Hover;
+import com.abmash.core.browser.interaction.KeyHold;
+import com.abmash.core.browser.interaction.KeyPress;
+import com.abmash.core.browser.interaction.KeyRelease;
+import com.abmash.core.browser.interaction.Select;
+import com.abmash.core.browser.interaction.Select.SelectMethod;
+import com.abmash.core.browser.interaction.Submit;
+import com.abmash.core.browser.interaction.Submit.SubmitMethod;
+import com.abmash.core.browser.interaction.Type;
+import com.abmash.core.element.Element;
+import com.abmash.core.element.Location;
+import com.abmash.core.element.Size;
+import com.abmash.core.htmlquery.condition.ElementCondition.ElementType;
+import com.abmash.core.htmlquery.selector.JQuerySelector;
+import com.abmash.core.tools.SimpleDataTypeConversion;
 
 
 /**
@@ -74,8 +81,8 @@ public class HtmlElement extends Element {
 	// TODO attribute values cache
 //	private Object jsonRepresentation;
 	
-	private Point location;
-	private Dimension size;
+	private Location location;
+	private Size size;
 	private String tagName;
 	private String text;
 	private String sourceText;
@@ -100,11 +107,44 @@ public class HtmlElement extends Element {
 		//this.jsonRepresentation = browser.getJsonRepresentationOfWebElement(element);
 
 		// TODO pre-cache important data
-		getTagName();
-		getText();
-		getTextWithSource();
-		getUniqueSelector();
-		getAttributeNames();
+//		getTagName();
+//		getText();
+//		getTextWithSource();
+//		getUniqueSelector();
+//		getAttributeNames();
+	}
+	
+	
+	// default getters
+	
+	/**
+	 * Gets the associated browser instance for this element.
+	 * 
+	 * @return associated browser instance
+	 */
+	public Browser getBrowser() {
+		return browser;
+	}
+
+	/**
+	 * Gets the internal id of this element. The same element will have a different id when the page is reloaded.
+	 * 
+	 * The id is looking like in this example: {390f457d-406b-458a-b4a6-dfebb24aae36}
+	 *
+	 * @return internal id
+	 */
+	public String getId() {
+		return id;
+	}
+
+	/**
+	 * Gets the associated Selenium element for this element.
+	 * 
+	 * @return selenium WebElement
+	 */
+	public RemoteWebElement getSeleniumElement() {
+		switchToElementWindow();
+		return seleniumElement;
 	}
 	
 	// actions
@@ -257,14 +297,40 @@ public class HtmlElement extends Element {
 	 * <strong>Example:</strong>
 	 * <pre>{@code
 	 * HtmlElement select = browser.query().isSelectable().has("ingredients").findFirst();
-	 * input.deselect("tomatoes");
+	 * input.unchoose("tomatoes");
 	 * }</pre>
 	 * 
 	 * @param optionQuery text which represents the select option/item
 	 * @return this {@link HtmlElement}
 	 */
-	public HtmlElement deselect(String optionQuery) {
+	public HtmlElement unchoose(String optionQuery) {
 		new Select(browser, this, optionQuery, SelectMethod.DESELECT).execute();
+		return this;
+	}
+
+	/**
+	 * Selects the specified date.
+	 * 
+	 * TODO
+	 * 
+	 * @param date
+	 * @return
+	 */
+	public HtmlElement chooseDate(Date date) {
+		// TODO detect datepicker type
+		// TODO detect date format in input field
+		// TODO detect time format and input field
+		// TODO detect if sendkeys work for one or the other
+		
+		// TODO convert date to string 08/22/2013 and check if sendkeys worked
+		//type(date.getDateString());
+		click();
+		// TODO Ajax Wait condition
+		// TODO year
+		browser.query().isChoosable().has("datepicker").findFirst().choose(date.getMonth());
+		browser.query().isClickable().has(date.getDay()).findFirst().click();
+		// TODO time
+//		browser.query().isChoosable().has("time").findFirst().choose(date.getTime());
 		return this;
 	}
 	
@@ -447,7 +513,43 @@ public class HtmlElement extends Element {
 	 */
 	public HtmlQuery rightTo() {
 		return browser.query().rightTo(this);
-	}	
+	}
+	
+	// cache handling
+	
+	public static Map<String, JQuerySelector> getJQueryCommandsForCache() {
+		Map<String, JQuerySelector> javaScripts = new HashMap<String, JQuerySelector>();
+		
+		// TODO tag name does not work, javascript hangs completely
+//		javaScripts.put("tagName", new JQuerySelector("get(0).nodeName.toLowerCase()"));
+		javaScripts.put("uniqueSelector", new JQuerySelector("getPath()"));
+		javaScripts.put("attributeNames", new JQuerySelector("getAttributeNames()"));
+		javaScripts.put("text", new JQuerySelector("text()"));
+		javaScripts.put("sourceText", new JQuerySelector("html()"));
+		javaScripts.put("location", new JQuerySelector("offset()"));
+		javaScripts.put("size", new JQuerySelector("dimension()"));
+		
+		return javaScripts;
+	}
+	
+	public void storeCacheData(Map<String, Object> data) {
+//		tagName = (String) data.get("tagName");
+		uniqueSelector = (String) data.get("uniqueSelector");
+		attributeNames = (ArrayList<String>) data.get("attributeNames");
+		text = (String) data.get("text");
+		sourceText = (String) data.get("sourceText");
+		
+		// coordinates and dimension
+		Map<String, Object> location = (Map<String, Object>) data.get("location");
+		Double left = SimpleDataTypeConversion.longOrDoubleToDouble(location.get("left"));
+		Double top = SimpleDataTypeConversion.longOrDoubleToDouble(location.get("top"));
+		this.location = new Location(left, top);
+		
+		List<Object> size = (List<Object>) data.get("size");
+		Double width = SimpleDataTypeConversion.longOrDoubleToDouble(size.get(0));
+		Double height = SimpleDataTypeConversion.longOrDoubleToDouble(size.get(1));
+		this.size = new Size(width, height);
+	}
 	
 	// TODO jquery command ?
 	
@@ -524,13 +626,7 @@ public class HtmlElement extends Element {
 	public ArrayList<String> getAttributeNames() {
 		if(attributeNames == null) {
 			switchToElementWindow();
-			String script =  
-				"var el = jQuery(arguments[0]).get(0);" +
-				"var arr = [];" +
-				"for (var i=0, attrs=el.attributes, l=attrs.length; i<l; i++) {" +
-				"    arr.push(attrs.item(i).nodeName);" +
-				"};" +
-				"return arr;";
+			String script =  "return jQuery(arguments[0]).getAttributeNames();";
 			try {
 				attributeNames = (ArrayList<String>) evaluateJavaScript(script);
 			} catch (Exception e) {
@@ -541,57 +637,15 @@ public class HtmlElement extends Element {
 	}
 	
 	/**
-	 * Gets value of a CSS attribute.
-	 * 
-	 * @param cssAttribute the name of the CSS attribute
-	 * @return the value of the CSS attribute
-	 */
-	public String getCssValue(String cssAttribute) {
-		return seleniumElement.getCssValue(cssAttribute);
-//		String script = "return jQuery(arguments[0]).css('" + cssAttribute + "');";
-//		// TODO error handling if result is empty
-//		return (String) evaluateJavaScript(script);
-	}
-	
-	// default getters
-	
-	/**
-	 * Get associated browser instance for this element.
-	 * 
-	 * @return associated browser instance
-	 */
-	public Browser getBrowser() {
-		return browser;
-	}
-
-	/**
-	 * Gets internal id of this element. The same element will have a different id if the page is reloaded.
-	 * 
-	 * @return internal id
-	 */
-	public String getId() {
-		return id;
-	}
-
-	/**
-	 * Gets associated Selenium element for this element.
-	 * 
-	 * @return selenium WebElement
-	 */
-	public RemoteWebElement getSeleniumElement() {
-		switchToElementWindow();
-		return seleniumElement;
-	}
-	
-	/**
 	 * Gets the location of this element. The location has an X and a Y coordinate.
 	 * 
 	 * @return element location
 	 */
-	public Point getLocation() {
+	public Location getLocation() {
 		if(location == null) {
 			switchToElementWindow();
-			location = seleniumElement.getLocation();
+			Point loc = seleniumElement.getLocation();
+			location = new Location(loc.x, loc.y);
 		}
 		return location;
 	}
@@ -601,10 +655,11 @@ public class HtmlElement extends Element {
 	 * 
 	 * @return element size
 	 */
-	public Dimension getSize() {
+	public Size getSize() {
 		if(size == null) {
 			switchToElementWindow();
-			size = seleniumElement.getSize();
+			Dimension sz = seleniumElement.getSize();
+			size = new Size(sz.width, sz.height);
 		}
 		return size;
 	}
@@ -614,7 +669,7 @@ public class HtmlElement extends Element {
 	 * <p>
 	 * <strong>Example:</strong> Given the following HTML source
 	 * <pre>{@code
-	 * <a href="path/to/index.html">Link text</a>
+	 * <a href="index.html">Link text</a>
 	 * }</pre>
 	 * <code>getText()</code> returns "a".
 	 * <p>
@@ -705,7 +760,7 @@ public class HtmlElement extends Element {
 	
 
 	/**
-	 * Extracts an URL out of this element, which can basically used on {@code <a>} and {@code <img>} elements.
+	 * Extracts an URL out of this element, which are mostly used in {@code <a>} and {@code <img>} elements.
 	 * 
 	 * @return String of the extracted URL, null if no URL was found
 	 */
@@ -737,6 +792,21 @@ public class HtmlElement extends Element {
 	}
 	
 	/**
+	 * Gets value of a CSS attribute.
+	 * 
+	 * @param cssAttribute the name of the CSS attribute
+	 * @return the value of the CSS attribute
+	 */
+	public String getCssValue(String cssAttribute) {
+		return seleniumElement.getCssValue(cssAttribute);
+//		String script = "return jQuery(arguments[0]).css('" + cssAttribute + "');";
+//		// TODO error handling if result is empty
+//		return (String) evaluateJavaScript(script);
+	}
+	
+	// additional element references
+
+	/**
 	 * Get the table representation of this HTML element. Works only for {@code <table>} elements.
 	 * Throws an exception if element is not a table.
 	 * 
@@ -747,8 +817,6 @@ public class HtmlElement extends Element {
 		return new Table(this);
 	}
 	
-	// additional element references
-
 	/**
 	 * Gets reference elements, which are needed for internal closeness calculations.
 	 * 
@@ -1007,7 +1075,7 @@ public class HtmlElement extends Element {
 	/**
 	 * Outputs string representation of element.
 	 * 
-	 * @see com.abmash.element.Element#toString()
+	 * @see com.abmash.core.element.Element#toString()
 	 */
 	@Override
 	public String toString() {

@@ -1,14 +1,14 @@
-package com.abmash.core.browser.distance;
+package com.abmash.core.element.distance;
 
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.Point;
+import com.abmash.core.element.Location;
+import com.abmash.core.element.Size;
 
 public class ElementDistance {
 	
-	private Point sourceLocation;
-	private Point targetLocation;
-	private Dimension sourceSize;
-	private Dimension targetSize;
+	private Location sourceLocation;
+	private Location targetLocation;
+	private Size sourceSize;
+	private Size targetSize;
 	
 	private Double distanceTopLeft;
 	private Double distanceTop;
@@ -20,7 +20,7 @@ public class ElementDistance {
 	private Double distanceBottom;
 	private Double distanceBottomRight;
 	
-	public ElementDistance(Point sourceLocation, Point targetLocation, Dimension sourceSize, Dimension targetSize) {
+	public ElementDistance(Location sourceLocation, Location targetLocation, Size sourceSize, Size targetSize) {
 		this.sourceLocation = sourceLocation;
 		this.targetLocation = targetLocation;
 		this.sourceSize = sourceSize;
@@ -85,19 +85,19 @@ public class ElementDistance {
 	private void computeDistances() {
 		// TODO always center from source element?
 		// get coordinates
-		Double xLeftSource = (double) sourceLocation.getX();
-		Double xCenterSource = (double) sourceLocation.getX() + sourceSize.getWidth() / 2;
-		Double xRightSource = (double) sourceLocation.getX() + sourceSize.getWidth();
-		Double yTopSource = (double) sourceLocation.getY();
-		Double yCenterSource = (double) sourceLocation.getY() + sourceSize.getHeight() / 2;
-		Double yBottomSource = (double) sourceLocation.getY() + sourceSize.getHeight();
+		Double xLeftSource = sourceLocation.getX();
+		Double xCenterSource = sourceLocation.getX() + sourceSize.getWidth() / 2;
+		Double xRightSource = sourceLocation.getX() + sourceSize.getWidth();
+		Double yTopSource = sourceLocation.getY();
+		Double yCenterSource = sourceLocation.getY() + sourceSize.getHeight() / 2;
+		Double yBottomSource = sourceLocation.getY() + sourceSize.getHeight();
 		
-		Double xLeftTarget = (double) targetLocation.getX();
-		Double xCenterTarget = (double) targetLocation.getX() + targetSize.getWidth() / 2;
-		Double xRightTarget = (double) targetLocation.getX() + targetSize.getWidth();
-		Double yTopTarget = (double) targetLocation.getY();
-		Double yCenterTarget = (double) targetLocation.getY() + targetSize.getHeight() / 2;
-		Double yBottomTarget = (double) targetLocation.getY() + targetSize.getHeight();
+		Double xLeftTarget = targetLocation.getX();
+		Double xCenterTarget = targetLocation.getX() + targetSize.getWidth() / 2;
+		Double xRightTarget = targetLocation.getX() + targetSize.getWidth();
+		Double yTopTarget = targetLocation.getY();
+		Double yCenterTarget = targetLocation.getY() + targetSize.getHeight() / 2;
+		Double yBottomTarget = targetLocation.getY() + targetSize.getHeight();
 		
 		// calculate difference of x and y coordinates at the edges and the center of the elements
 		Double xDiffLeft = xLeftTarget - xLeftSource;

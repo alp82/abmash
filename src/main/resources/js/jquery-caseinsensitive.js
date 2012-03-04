@@ -1,3 +1,11 @@
+jQuery.expr[':'].equallyCaseInsensitive = function(node, stackIndex, properties) { 
+  return jQuery.trim(jQuery(node).text().toLowerCase()) ===  jQuery.trim(properties[3].toLowerCase());
+};
+
+jQuery.expr[':'].containsCaseInsensitive = function(node, stackIndex, properties) { 
+  return (node.textContent || node.innerText || "").toLowerCase().indexOf((properties[3] || "").toLowerCase()) >= 0; 
+};
+
 jQuery.expr[':'].attrCaseInsensitive = function(node, stackIndex, properties) {
     var args = properties[3].split(',').map(function(arg) {
         return arg.replace(/^\\s*[\"']|[\"']\\s*$/g, '');

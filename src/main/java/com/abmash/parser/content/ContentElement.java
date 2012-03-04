@@ -1,15 +1,16 @@
 package com.abmash.parser.content;
 
-import java.awt.Dimension;
-import java.awt.Point;
 import java.util.HashMap;
+
+import com.abmash.core.element.Location;
+import com.abmash.core.element.Size;
 
 public class ContentElement {
 	
 	private String tagName;
 	private String text;
-	private Point location;
-	private Dimension size;
+	private Location location;
+	private Size size;
 	private HashMap<String, String> attributes = new HashMap<String, String>();
 	
 	public String getTagName() {
@@ -24,16 +25,16 @@ public class ContentElement {
 	public void setText(String text) {
 		this.text = text;
 	}
-	public Point getLocation() {
+	public Location getLocation() {
 		return location;
 	}
-	public void setLocation(Point location) {
+	public void setLocation(Location location) {
 		this.location = location;
 	}
-	public Dimension getSize() {
+	public Size getSize() {
 		return size;
 	}
-	public void setSize(Dimension size) {
+	public void setSize(Size size) {
 		this.size = size;
 	}
 	public void addAttribute(String attribute, String value) {

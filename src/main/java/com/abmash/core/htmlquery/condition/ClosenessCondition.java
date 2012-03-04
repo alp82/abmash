@@ -1,24 +1,20 @@
-package com.abmash.core.browser.htmlquery.condition;
+package com.abmash.core.htmlquery.condition;
 
-
-import com.abmash.api.HtmlElement;
-import com.abmash.api.HtmlElements;
-import com.abmash.core.browser.distance.ElementDistanceComparator;
-import com.abmash.core.browser.distance.ElementDistanceComparator.CalculationType;
-import com.abmash.core.browser.distance.ElementDistanceComparator.DistanceType;
-import com.abmash.core.browser.htmlquery.selector.JQuerySelector;
-import com.abmash.core.browser.htmlquery.selector.SelectorGroup;
-import com.abmash.core.browser.htmlquery.selector.SelectorGroup.Type;
 
 import java.util.TreeSet;
 
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.Point;
+import com.abmash.api.HtmlElement;
+import com.abmash.api.HtmlElements;
+import com.abmash.core.element.Location;
+import com.abmash.core.element.Size;
+import com.abmash.core.element.distance.ElementDistanceComparator;
+import com.abmash.core.element.distance.ElementDistanceComparator.CalculationType;
+import com.abmash.core.element.distance.ElementDistanceComparator.DistanceType;
 
 
 public class ClosenessCondition extends Condition {
 	
-	final static int MAX_REFERENCE_ELEMENTS = 5;
+	final static int MAX_REFERENCE_ELEMENTS = 10;
 	
 	/**
 	 * Direction for closeness conditions
@@ -76,7 +72,7 @@ public class ClosenessCondition extends Condition {
 		int numReferenceElements = 0;
 		for (HtmlElement referenceElement: referenceElements) {
 			// do not allow more than specific amount of source elements
-			if(numReferenceElements + 1 > MAX_REFERENCE_ELEMENTS);
+			if(numReferenceElements + 1 > MAX_REFERENCE_ELEMENTS) break;
 			// add reference element (i.e. the parent of inline elements)
 			this.referenceElements.add(getNextAncestorBlockElement(referenceElement));
 			numReferenceElements++;
@@ -85,7 +81,8 @@ public class ClosenessCondition extends Condition {
 	}
 
 	private HtmlElement getNextAncestorBlockElement(HtmlElement referenceElement) {
-		if(referenceElement.getCssValue("display").equals("inline")) return getNextAncestorBlockElement(referenceElement.getParent());
+		// TODO wrong in most cases (for example http://www.avis.com "Return" datepicker)
+		//if(referenceElement.getCssValue("display").equals("inline")) return getNextAncestorBlockElement(referenceElement.getParent());
 		return referenceElement;
 	}
 
@@ -141,7 +138,10 @@ public class ClosenessCondition extends Condition {
 		}
 		
 		TreeSet<HtmlElement> elementSet = new TreeSet<HtmlElement>(new ElementDistanceComparator(distanceType, calculationType));
-
+		
+		// TODO higher weight for reference elements in the beginning of the list
+		
+//		System.out.println("reference elements: " + referenceElements);
 		for (HtmlElement foundElement: unsortedElements) {
 			if(!referenceElements.contains(foundElement) && elementValid(foundElement)) {
 				foundElement.setReferenceElements(referenceElements);
@@ -154,7 +154,7 @@ public class ClosenessCondition extends Condition {
 		// build sorted element result set
 		for (HtmlElement element: elementSet) {
 			sortedElements.addAndIgnoreDuplicates(element);
-		}		
+		}
 		
 		return sortedElements;
 	}
@@ -171,8 +171,8 @@ public class ClosenessCondition extends Condition {
 //			System.out.println("VERTI BOUNDS: " + inVerticalBounds(foundElement, referenceElement));
 			switch (direction) {
 			case INPUT:
-				// only allow elements in the top or left of the reference element
-				if(above(foundElement, referenceElement) || left(foundElement, referenceElement)) {
+				// only allow elements below or right of the reference element
+				if(below(foundElement, referenceElement) || right(foundElement, referenceElement)) {
 					return true;
 				}
 				break;
@@ -234,33 +234,33 @@ public class ClosenessCondition extends Condition {
 	}
 	
 	private boolean above(HtmlElement foundElement, HtmlElement referenceElement) {
-		Point foundLocation = foundElement.getLocation();
-		Point referenceLocation = referenceElement.getLocation();
-		Dimension foundSize = foundElement.getSize();
+		Location foundLocation = foundElement.getLocation();
+		Location referenceLocation = referenceElement.getLocation();
+		Size foundSize = foundElement.getSize();
 
 		return foundLocation.getY() + foundSize.getHeight() <= referenceLocation.getY();
 	}
 	
 	private boolean below(HtmlElement foundElement, HtmlElement referenceElement) {
-		Point foundLocation = foundElement.getLocation();
-		Point referenceLocation = referenceElement.getLocation();
-		Dimension referenceSize = referenceElement.getSize();
+		Location foundLocation = foundElement.getLocation();
+		Location referenceLocation = referenceElement.getLocation();
+		Size referenceSize = referenceElement.getSize();
 
 		return foundLocation.getY() >= referenceLocation.getY() + referenceSize.getHeight();
 	}
 	
 	private boolean left(HtmlElement foundElement, HtmlElement referenceElement) {
-		Point foundLocation = foundElement.getLocation();
-		Point referenceLocation = referenceElement.getLocation();
-		Dimension foundSize = foundElement.getSize();
+		Location foundLocation = foundElement.getLocation();
+		Location referenceLocation = referenceElement.getLocation();
+		Size foundSize = foundElement.getSize();
 
 		return foundLocation.getX() + foundSize.getWidth() <= referenceLocation.getX();
 	}
 	
 	private boolean right(HtmlElement foundElement, HtmlElement referenceElement) {
-		Point foundLocation = foundElement.getLocation();
-		Point referenceLocation = referenceElement.getLocation();
-		Dimension referenceSize = referenceElement.getSize();
+		Location foundLocation = foundElement.getLocation();
+		Location referenceLocation = referenceElement.getLocation();
+		Size referenceSize = referenceElement.getSize();
 
 		return foundLocation.getX() >= referenceLocation.getX() + referenceSize.getWidth();
 	}
@@ -274,7 +274,7 @@ public class ClosenessCondition extends Condition {
 	}
 
 	public String toString() {
-		return super.toString() + " with direction \"" + direction + "\" and reference elements " + referenceElements;
+		return super.toString() + " with direction [" + direction + "] and reference elements [" + referenceElements + "]";
 	}
 
 }

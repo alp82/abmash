@@ -1,3 +1,9 @@
+(function($) {
+	$.fn.dimension = function() {
+		return [this.outerWidth(), this.outerHeight()];
+	}
+})(jQuery);
+
 jQuery.expr[':'].above = function(node, stackIndex, properties) {
     return inDirection(node, "above", properties[3]);
 };

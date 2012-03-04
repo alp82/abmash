@@ -35,4 +35,4 @@ window.onerror = function(msg, url, linenumber) {
 	var error = document.createAttribute("javaScriptErrorMessage");
 	error.nodeValue = msg + "\n  at line number " + linenumber + " (URL: " + url + ")";
 	document.getElementsByTagName("body")[0].setAttributeNode(error);
-}
+};
