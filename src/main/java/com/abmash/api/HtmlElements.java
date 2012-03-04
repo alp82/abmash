@@ -291,7 +291,7 @@ public class HtmlElements extends ArrayList<HtmlElement> {
 	}
 	
 	/**
-	 * Adds all {@link HtmlElements} to the list. If you want to ignore duplicates use {@link #addAllAndIgnoreDuplicates(HtmlElement)}.
+	 * Adds all {@link HtmlElements} to the list. If you want to ignore duplicates use {@link #addAllAndIgnoreDuplicates(Collection)}.
 	 * 
 	 * @see java.util.ArrayList#addAll(java.util.Collection)
 	 */

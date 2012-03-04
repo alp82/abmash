@@ -320,7 +320,7 @@ public class HtmlQuery {
 	 * see also {@link Browser#click(String)}</li>
 	 * <li>{@code HtmlElements clickablesInTable = browser.query().isClickable().isInTable().find()} finds all clickable elements in table cells</li>
 	 * <li>{@code ArrayList<String> urls = clickablesInTable.getUrls()} extracts all URLs from the clickable items, see also
-	 * {@link HtmlElement#getUrl(String)} and {@link HtmlElements#getUrls()}.</li>
+	 * {@link HtmlElement#getUrl()} and {@link HtmlElements#getUrls()}.</li>
 	 * </ul>
 	 * 
 	 * @return this {@link HtmlQuery} instance, which can be used to add more search criteria like this or to finally
@@ -1209,7 +1209,7 @@ public class HtmlQuery {
 						
 						JSONObject jsonCondition = new JSONObject();
 						JSONArray jsonSelectorGroups = new JSONArray();
-						SelectorGroups selectorGroups = condition.getSelectors();
+						SelectorGroups selectorGroups = condition.getSelectorGroups();
 						
 						for(SelectorGroup selectorGroup: selectorGroups) {
 							JSONObject jsonSelectorGroup = new JSONObject();
@@ -1349,7 +1349,7 @@ public class HtmlQuery {
 					}
 					
 					// get selectors
-					SelectorGroups selectors = condition.getSelectors();
+					SelectorGroups selectors = condition.getSelectorGroups();
 
 					// get matching elements
 					HtmlElements matchingElementsForConditionQuery = matchingElementsForConditionQuery(condition, selectors);

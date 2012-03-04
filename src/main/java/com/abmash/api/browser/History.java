@@ -39,8 +39,6 @@ public class History {
 	
 	/**
 	 * Goes back in the browser history.
-	 * 
-	 * @see Browser#back(int)
 	 */
 	public void back() {
 		back(1);
@@ -62,8 +60,6 @@ public class History {
 
 	/**
 	 * Goes forward in the browser history
-	 * 
-	 * @see #forward(int)
 	 */
 	public void forward() {
 		forward(1);

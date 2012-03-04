@@ -24,7 +24,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  */
 public class WaitFor {
 	
-	private static final int DEFAULT_TIMEOUT_ON_WAIT = 20;
+	public static final int DEFAULT_TIMEOUT_ON_WAIT = 20;
 	
 	private Browser browser;
 	private int timeout;
@@ -32,7 +32,7 @@ public class WaitFor {
 	/**
 	 * Constructs new BrowserWait instance to be able to define wait conditions.
 	 * <p>
-	 * The default timeout length is {@value DEFAULT_TIMEOUT_ON_WAIT} seconds.
+	 * The default timeout length is {@value #DEFAULT_TIMEOUT_ON_WAIT} seconds.
 	 * 
 	 * @param browser <code>Browser</code> instance to work with
 	 */

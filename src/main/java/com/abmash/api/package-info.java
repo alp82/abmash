@@ -27,7 +27,7 @@
  * <li>{@link com.abmash.api.HtmlQuery} is used to find HTML elements on the current page.</li>
  * </ul>
  * <p>
- * An {@link HtmlElement} object is a representation of an HTML element on the current web page. It
+ * An {@link com.abmash.api.HtmlElement} object is a representation of an HTML element on the current web page. It
  * can be used to interact with them, to parameterize other browser interaction tasks or to get the contents of that element.
  * {@link com.abmash.api.HtmlQuery#findFirst()} returns an <code>HtmlElement</code>.
  * <p>

@@ -74,7 +74,7 @@ public class Window {
 	
 	/**
 	 * Detects alerts, not fully supported yet. 
-	 * @return 
+	 * @return {@link Alert} object if an alert was detected, or null if not 
 	 */
 	// TODO as event listener
 	public Alert getAlert() {
@@ -163,7 +163,7 @@ public class Window {
 	}
 	
 	/**
-	 * Tabs are not supported yet. Uses {@link #newWindow(JavaScript)}
+	 * Tabs are not supported yet. Uses {@link Window#newWindow(String)}
 	 * 
 	 * @param url
 	 * @return name of the new tab
@@ -174,7 +174,7 @@ public class Window {
 	}
 
 	/**
-	 * Tabs are not supported yet. Uses {@link #closeWindow(JavaScript)}
+	 * Tabs are not supported yet. Uses {@link Window#closeWindow(String)}
 	 * 
 	 * @param tabName
 	 */

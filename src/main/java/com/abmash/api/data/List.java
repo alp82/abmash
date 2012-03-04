@@ -8,7 +8,7 @@ import com.abmash.api.HtmlElement;
 import com.abmash.api.HtmlElements;
 
 /**
- * Represents a list on a webpage, use it by calling {@link Browser#getList(String))} or {@link Browser#getList(HtmlElement)}.
+ * Represents a list on a webpage, use it by calling {@link Browser#getList(String)} or {@link Browser#getList(HtmlElement)}.
  * <p>
  * <strong>Example:</strong>
  * <ul>

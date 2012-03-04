@@ -50,9 +50,10 @@ public abstract class Condition {
 	
 	/**
 	 * Get all selectors for this condition
-	 * @return
+	 * @return all {@link SelectorGroups} for this condition
 	 */
-	public SelectorGroups getSelectors() {
+	public SelectorGroups getSelectorGroups() {
+		// if not already done, build all selector groups
 		if(selectorGroups == null) {
 			selectorGroups = new SelectorGroups();
 			buildSelectors();
@@ -86,7 +87,7 @@ public abstract class Condition {
 	/**
 	 * Check for a specific element attribute. The method looks for different types of matches.
 	 * If an attributeName equals to "*" an xpath selector is used instead of a css selector.
-	 * @return 
+	 * @return {@link Selector}
 	 */
 	protected Selector checkElementAttributes(String mainSelector, List<String> queries, String attributeName, List<AttributeMatcher> attributeMatchers, String mainSelectorNot) {
 		// build main selector

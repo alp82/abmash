@@ -314,7 +314,7 @@ public class HtmlElement extends Element {
 	 * TODO
 	 * 
 	 * @param date
-	 * @return
+	 * @return this {@link HtmlElement}
 	 */
 	public HtmlElement chooseDate(Date date) {
 		// TODO detect datepicker type
@@ -858,7 +858,7 @@ public class HtmlElement extends Element {
 	/**
 	 * Sets name of window which contains this element.
 	 * 
-	 * @param frameElement
+	 * @param windowName
 	 */
 	// TODO detect automatically
 	public void setWindowName(String windowName) {

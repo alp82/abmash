@@ -9,7 +9,7 @@ import com.abmash.core.tools.IOTools;
 
 
 /**
- * Execute or evaluate custom JavaScript, used by calling {@link Browser#javaScript(JavaScript)}.
+ * Execute or evaluate custom JavaScript, used by calling {@link Browser#javaScript(String, Object...)}.
  * <p>
  * Executing a script returns either true if the result was non-false, or false if it was empty.
  * Evaluating a script returns the return value of the script.
@@ -17,10 +17,8 @@ import com.abmash.core.tools.IOTools;
  * JavaScript can be executed or evaluated synchronously or asynchronously. The parameter is optional
  * and can be used to execute the script on a specific object instead of the whole document.
  * <ul>
- * <li>{@link JavaScript#execute(Object...)} executes the script synchronously</li>
- * <li>{@link JavaScript#executeAsync(Object...)} executes the script asynchronously</li>
- * <li>{@link JavaScript#evaluate(Object...)} evaluates the script synchronously</li>
- * <li>{@link JavaScript#evaluateAsync(Object...)} evaluates the script asynchronously</li>
+ * <li>{@link JavaScript#evaluate(Browser, Object...)} evaluates the script synchronously</li>
+ * <li>{@link JavaScript#evaluateAsync(Browser, Object...)} evaluates the script asynchronously</li>
  * <ul>
  * <p>
  * @author Alper Ortac

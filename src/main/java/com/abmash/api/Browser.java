@@ -42,13 +42,13 @@ import com.abmash.core.tools.IOTools;
  * <p>
  * Elements can be searched by queries to get their values and text, and to interact with them. Search queries are <strong>case-sensitive</strong>.
  * <p>
- * Use {@link Browser#click(JavaScript)} to search for elements with the specified name or label and click the best match.
+ * Use {@link Browser#click(String)} to search for elements with the specified name or label and click the best match.
  * <p>
- * Use {@link Browser#type(JavaScript, JavaScript)} to search for input elements (usually {@code <input>} or {@code <textarea>}, but also
+ * Use {@link Browser#type(String, String)} to search for input elements (usually {@code <input>} or {@code <textarea>}, but also
  * rich text editors used by many CMS, forums or blog applications) with the specified name or label, get the best match
  * and enter the given text.
  * <p>
- * Use {@link Browser#choose(JavaScript, JavaScript)} to search for {@code <select>} elements (usually a dropdown selection or a box with a list
+ * Use {@link Browser#choose(String, String)} to search for {@code <select>} elements (usually a dropdown selection or a box with a list
  * of options) with the specified name or label, get the best match and select the given option from the list.
  * <p>
  * Use {@link Browser#query()} to create an {@link HtmlQuery} instance and to search for {@link HtmlElement} instances. Search conditions
@@ -86,13 +86,13 @@ public class Browser implements Document {
 	 * Starts new browser session. Opens the browser and waits until it is ready.
 	 * <p>
 	 * The default browser configuration is the use of Firefox 4 and can be overwritten by creating a default.properties file.
-	 * TODO explanation properties. For further customization see also {@link #Browser(JavaScript, BrowserConfig)}.
+	 * TODO explanation properties. For further customization see also {@link #Browser(String, BrowserConfig)}.
 	 * <p>
 	 * Each browser instance needs to be closed at the end of the program by calling the {@link #close()} method.
-	 * Use {@link #openUrl(JavaScript)} to open another URL in the browser.
+	 * Use {@link #openUrl(String)} to open another URL in the browser.
 	 * 
 	 * @see #close()
-	 * @see #openUrl(JavaScript)
+	 * @see #openUrl(String)
 	 */
 	public Browser() {
 		// create new browser config and instantiate all needed classes
@@ -103,14 +103,14 @@ public class Browser implements Document {
 	 * Starts new browser session. Opens the browser, loads the given URL and waits until it is ready.
 	 * <p>
 	 * The default browser configuration is the use of Firefox 4 and can be overwritten by creating a default.properties file.
-	 * TODO explanation properties. For further customization see also {@link #Browser(JavaScript, BrowserConfig)}.
+	 * TODO explanation properties. For further customization see also {@link #Browser(String, BrowserConfig)}.
 	 * <p>
 	 * Each browser instance needs to be closed at the end of the program by calling the {@link #close()} method.
-	 * Use {@link #openUrl(JavaScript)} to open another URL in the browser.
+	 * Use {@link #openUrl(String)} to open another URL in the browser.
 	 * 
 	 * @param url The URL to open, set to null to prevent loading a page
 	 * @see #close()
-	 * @see #openUrl(JavaScript)
+	 * @see #openUrl(String)
 	 */
 	public Browser(String url) {
 		// create new browser config and instantiate all needed classes
@@ -121,12 +121,12 @@ public class Browser implements Document {
 	 * Starts new browser session with specified {@link BrowserConfig}. Opens the browser, loads the given URL and waits until it is ready.
 	 * <p>
 	 * Each browser instance needs to be closed at the end of the program by calling the {@link #close()} method.
-	 * Use {@link #openUrl(JavaScript)} to open another URL in the browser.
+	 * Use {@link #openUrl(String)} to open another URL in the browser.
 	 * 
 	 * @param url The URL to open, set to null to prevent loading a page
 	 * @param config BrowserConfig instance
 	 * @see #close()
-	 * @see #openUrl(JavaScript)
+	 * @see #openUrl(String)
 	 */
 	public Browser(String url, BrowserConfig config) {
 		// use browser config and instantiate all needed classes
@@ -234,7 +234,7 @@ public class Browser implements Document {
 	 * <p>
 	 * If needed, the jQuery library is automatically loaded.
 	 * 
-	 * @param script The script to load (without the file extension .js)
+	 * @param scriptFilename The script to load (without the file extension .js)
 	 * @return JavaScriptResult result object to retrieve the return value and type
 	 */
 	public JavaScriptResult javaScriptFromFile(String scriptFilename, Object... args) {
@@ -266,7 +266,7 @@ public class Browser implements Document {
 	 * <p>
 	 * If needed, the jQuery library is automatically loaded.
 	 * 
-	 * @param script The script to load (without the file extension .js)
+	 * @param scriptFilename The script to load (without the file extension .js)
 	 * @return JavaScriptResult result object to retrieve the return value and type
 	 */
 	public JavaScriptResult javaScriptFromFileAsync(String scriptFilename, Object... args) {
@@ -458,14 +458,14 @@ public class Browser implements Document {
 	 * <p>
 	 * Elements having an attribute value or visible text containing the query string will
 	 * be added to the result set. The first result will be used for typing in the text. If you already have an
-	 * {@link HtmlElement} instance use {@link HtmlElement#type(JavaScript)} instead. Use {@link HtmlElement#submit()}
+	 * {@link HtmlElement} instance use {@link HtmlElement#type(String)} instead. Use {@link HtmlElement#submit()}
 	 * on the returned object to submit the form.
 	 * 
 	 * @param query element attribute value or inner text containing this string
 	 * @param text the text to type in
 	 * @return HtmlElement to further interact with the form element, for instance to {@link HtmlElement#submit()} the form,
 	 * or {@code null} if element could not be found
-	 * @see HtmlElement#type(JavaScript)
+	 * @see HtmlElement#type(String)
 	 */
 	public HtmlElement type(String query, String text) {
 		HtmlElement element = query().has(query).isTypable().findFirst();
