@@ -6,9 +6,9 @@ Webdriver, Firefox and JQuery. The goal is that programmers do not need any
 knowledge about the HTML/CSS source code of the web pages. Instead, elements
 can be found by querying for visual attributes and visible text.
 
-Abmash is human-oriented imitation of browser interactions.
+**Abmash is human-oriented imitation of browser interactions.**
 
-Example:
+*Example:*
 
 	// open new browser window
 	Browser browser = new Browser("http://google.com");
@@ -29,4 +29,4 @@ bigger font-size than the average on the current page.
 
 Abmash is still under heavy development. Please let me know if you are interested in this project.
 
-TODO more information
+*TODO more information*
