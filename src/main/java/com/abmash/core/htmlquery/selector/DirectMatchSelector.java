@@ -18,7 +18,7 @@ public class DirectMatchSelector extends Selector {
 
 	@Override
 	public String getExpressionAsJQueryCommand() {
-		String script = "jQuery(abmash.getQueryElement());";
+		String script = "jQuery(abmash.getTempElement());";
 		return script;
 	}
 

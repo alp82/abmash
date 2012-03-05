@@ -56,7 +56,12 @@ public class JavaScriptExecution extends ActionOnBrowser {
 //				// TODO Auto-generated catch block
 //				e1.printStackTrace();
 //			}
-			String jsMessage = browser.query().tag("body").findFirst().getAttribute("javaScriptErrorMessage");
+			String jsMessage = "null";
+			try {
+//				jsMessage = browser.query().cssSelector("body").findFirst().getAttribute("javaScriptErrorMessage");
+			} catch (Exception e2) {
+				// TODO error handling?
+			}
 			String errorMessage = "JavaScript execution failed: " + jsMessage;
 			errorMessage += "\n" + e.getMessage();
 			errorMessage += "\n >> for the following script:\n" + script;

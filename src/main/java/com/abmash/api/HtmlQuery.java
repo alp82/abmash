@@ -2,6 +2,7 @@ package com.abmash.api;
 
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -1230,11 +1231,16 @@ public class HtmlQuery {
 						jsonQueries.put(jsonCondition);
 					}
 				}
-				System.out.println(jsonQueries.toString(2));
+//				System.out.println(jsonQueries.toString(2));
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
+			
 			// sending queries to jquery executor
+			String script = "return abmash.query(arguments[0], arguments[1]);";
+			Object results = browser.javaScript(script, jsonQueries.toString(), rootElements).getReturnValue();
+			System.out.println(results.getClass() + ": " + results);
+
 			// fetch results
 			// sort results
 		}

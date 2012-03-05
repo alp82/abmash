@@ -18,7 +18,7 @@ public class CssSelector extends Selector {
 	@Override
 	public String getExpressionAsJQueryCommand() {
 		// TODO replace single quotes if necessary
-		String script = "jQuery(abmash.getQueryElement()).find(\"" + expression/*.replaceAll("'", "\\\\'")*/ + "\");";
+		String script = "jQuery(abmash.getTempElement()).find(\"" + expression/*.replaceAll("'", "\\\\'")*/ + "\");";
 		return script;
 	}
 	

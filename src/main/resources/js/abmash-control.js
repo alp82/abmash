@@ -46,6 +46,38 @@
 		});
 		return response;
 	}
+	
+	abmash.query = function(queries, rootElements) {
+		var response = {};
+		// TODO how do multiple root elements work?
+		abmash.setTempElement(rootElements.length > 0 ? rootElements.join(',') : document.body);
+		jQuery.each(jQuery.parseJSON(queries), function() {
+			condition = this;
+			//condition.type
+			response[condition.type] = {}
+			jQuery.each(condition.selectorGroups, function() {
+				selectorGroup = this;
+				//selectorGroup.type
+				response[condition.type][selectorGroup.type] = {}
+				jQuery.each(selectorGroup.selectors, function() {
+					selector = this;
+					//selector.type
+//					alert(abmash.getTempElement());
+//					alert(selector.command);
+//					jQuery.globalEval("abmash.setTempData(" + selector.command + ");");
+					abmash.setTempElement('*');
+					abmash.setTempData(jQuery(abmash.getTempElement()).find("*:contains['Bilder']"));
+					var queryResult = abmash.getTempData();
+//					alert(queryResult);
+					if(queryResult) {
+						alert(selector.type);
+//						response[condition.type][selectorGroup.type][selector.type] = queryResult;
+					}
+				});
+			});
+		});
+		return response;
+	}
 
 })(window.abmash = window.abmash || {});
 
