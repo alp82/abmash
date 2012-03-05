@@ -22,9 +22,9 @@ Example:
 	// click it
 	firstResult.click();
 
-Query conditions like "below" are based on the visual representation of the web
+Query conditions like `below()` are based on the visual representation of the web
 page, independently from the page source and DOM structure. Correspondingly,
-"isTitle" not only selects <h1>, <h2>, ... elements, but also elements with a
+`isTitle()` not only selects `<h1>`, `<h2>`, ... elements, but also elements with a
 bigger font-size than the average on the current page.
 
 Abmash is still under heavy development. Please let me know if you are interested in this project.
