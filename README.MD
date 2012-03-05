@@ -1,3 +1,6 @@
+Abmash
+------
+
 Abmash is a Java framework to automate web applications, based on Selenium/
 Webdriver, Firefox and JQuery. The goal is that programmers do not need any
 knowledge about the HTML/CSS source code of the web pages. Instead, elements
@@ -7,17 +10,17 @@ Abmash is human-oriented imitation of browser interactions.
 
 Example:
 
-  // open new browser window
-  Browser browser = new Browser("http://google.com");
+	// open new browser window
+	Browser browser = new Browser("http://google.com");
   
-  // type text in search query input field and submit the search
-  HtmlElement searchBox = browser.type("Browser Automation").submit();
+	// type text in search query input field and submit the search
+	HtmlElement searchBox = browser.type("Browser Automation").submit();
   
-  // find the first result (conditions can be arbitrarily chained)
-  HtmlElement firstResult = browser.query().isTitle().isLink().below(searchBox).findFirst();
+	// find the first result (conditions can be arbitrarily chained)
+	HtmlElement firstResult = browser.query().isTitle().isLink().below(searchBox).findFirst();
   
-  // click it
-  firstResult.click();
+	// click it
+	firstResult.click();
 
 Query conditions like "below" are based on the visual representation of the web
 page, independently from the page source and DOM structure. Correspondingly,
