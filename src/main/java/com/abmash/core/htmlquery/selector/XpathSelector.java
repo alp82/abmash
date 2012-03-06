@@ -12,13 +12,17 @@ import com.abmash.api.HtmlElements;
 public class XpathSelector extends Selector {
 
 	public XpathSelector(String expression) {
-		super(expression);
+		this(expression, 0);
 	}
 
+	public XpathSelector(String expression, int weight) {
+		super(expression, weight);
+	}
+	
 	@Override
 	public String getExpressionAsJQueryCommand() {
 		// TODO replace single quotes if necessary
-		String script = "jQuery(abmash.getTempElement()).xpath(\"" + expression/*.replaceAll("'", "\\\\'")*/ + "\");";
+		String script = "jQuery(abmash.getTempElement()).xpath(\"" + expression/*.replaceAll("'", "\\\\'")*/ + "\")";
 		return script;
 	}
 	

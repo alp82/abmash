@@ -56,12 +56,12 @@ public class BrowserConfig {
 //			firefoxProfile.setPreference("browser.link.open_newwindow", 3);
 			profile.setPreference("browser.link.open_newwindow.restriction", 2);
 //			firefoxProfile.setPreference("browser.link.open_external", 3);
-			//TODO install extensions
-			/*try {
-				profile.addExtension(IOTools.convertStreamToFile(BrowserConfig.class.getResourceAsStream("/xpi/firebug.xpi"), "xpi"));
+			// install extensions
+			try {
+				profile.addExtension(IOTools.convertStreamToFile(BrowserConfig.class.getResourceAsStream("/firefox/JSErrorCollector.xpi"), "xpi"));
 			} catch (IOException e) {
 				e.printStackTrace();
-			}*/
+			}
 			webDriver = (RemoteWebDriver) new FirefoxDriver(binary, profile);
 		}
 		

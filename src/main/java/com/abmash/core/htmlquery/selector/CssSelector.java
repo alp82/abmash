@@ -12,13 +12,17 @@ import com.abmash.api.HtmlElements;
 public class CssSelector extends Selector {
 
 	public CssSelector(String expression) {
-		super(expression);
+		this(expression, 0);
+	}
+	
+	public CssSelector(String expression, int weight) {
+		super(expression, weight);
 	}
 
 	@Override
 	public String getExpressionAsJQueryCommand() {
 		// TODO replace single quotes if necessary
-		String script = "jQuery(abmash.getTempElement()).find(\"" + expression/*.replaceAll("'", "\\\\'")*/ + "\");";
+		String script = "jQuery(abmash.getTempElement()).find(\"" + expression/*.replaceAll("'", "\\\\'")*/ + "\")";
 		return script;
 	}
 	

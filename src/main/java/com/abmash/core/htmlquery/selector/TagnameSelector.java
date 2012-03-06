@@ -12,13 +12,17 @@ import com.abmash.api.HtmlElements;
 public class TagnameSelector extends Selector {
 
 	public TagnameSelector(String expression) {
-		super(expression);
+		this(expression, 0);
 	}
-
+	
+	public TagnameSelector(String expression, int weight) {
+		super(expression, weight);
+	}
+	
 	@Override
 	public String getExpressionAsJQueryCommand() {
 		// TODO replace single quotes if necessary
-		String script = "jQuery(arguments[0]).find('" + expression/*.replaceAll("'", "\\\\'")*/ + "');";
+		String script = "jQuery(arguments[0]).find('" + expression/*.replaceAll("'", "\\\\'")*/ + "')";
 		return script;
 	}
 	

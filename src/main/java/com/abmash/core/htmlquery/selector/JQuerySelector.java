@@ -15,10 +15,12 @@ import com.abmash.api.HtmlElements;
 
 public class JQuerySelector extends Selector {
 	
-	String selector;
-
 	public JQuerySelector(String expression) {
-		super(expression);
+		this(expression, 0);
+	}
+	
+	public JQuerySelector(String expression, int weight) {
+		super(expression, weight);
 		if(this.expression.isEmpty()) throw new RuntimeException("JQuery expression cannot be null or empty");
 	}
 

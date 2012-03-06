@@ -2,6 +2,9 @@ package com.abmash.core.browser.interaction;
 
 
 import java.util.ArrayList;
+import java.util.List;
+
+import net.jsourcerer.webdriver.jserrorcollector.JavaScriptError;
 
 import org.openqa.selenium.JavascriptExecutor;
 
@@ -56,16 +59,20 @@ public class JavaScriptExecution extends ActionOnBrowser {
 //				// TODO Auto-generated catch block
 //				e1.printStackTrace();
 //			}
-			String jsMessage = "null";
+			String jsMessage = ""/* + (String) browser.javaScript("return window.jsErrors").getReturnValue()*/;
+			List<JavaScriptError> jsErrors = new ArrayList<JavaScriptError>();
 			try {
-//				jsMessage = browser.query().cssSelector("body").findFirst().getAttribute("javaScriptErrorMessage");
+				jsErrors = JavaScriptError.readErrors(browser.getWebDriver());
 			} catch (Exception e2) {
-				// TODO error handling?
+				System.err.println("Warning: fetching JavaScriptErrors failed");
+				e2.printStackTrace();
 			}
 			String errorMessage = "JavaScript execution failed: " + jsMessage;
+			errorMessage += "\n" + jsErrors;
 			errorMessage += "\n" + e.getMessage();
 			errorMessage += "\n >> for the following script:\n" + script;
 			errorMessage += "\n >> with the following arguments:\n" + args.toString();
+			
 			System.err.println(errorMessage + "\n");
 			e.printStackTrace();
 		}

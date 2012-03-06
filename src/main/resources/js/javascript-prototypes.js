@@ -1,5 +1,18 @@
 String.prototype.contains = function(it) { return this.indexOf(it) != -1; };
 
+Array.prototype.unique = function() {
+    var a = this.concat();
+    for(var i=0; i<a.length; ++i) {
+        for(var j=i+1; j<a.length; ++j) {
+            if(a[i] === a[j])
+                a.splice(j, 1);
+        }
+    }
+
+    return a;
+};
+
+
 // Only add setZeroTimeout to the window object, and hide everything
 // else in a closure.
 (function() {
@@ -31,8 +44,14 @@ String.prototype.contains = function(it) { return this.indexOf(it) != -1; };
 })();
 	
 // error handling
+/*
+window.jsErrors = [];
+window.onerror = function(errorMessage) {
+  window.jsErrors[window.jsErrors.length] = errorMessage;
+}
 window.onerror = function(msg, url, linenumber) {
 	var error = document.createAttribute("javaScriptErrorMessage");
 	error.nodeValue = msg + "\n  at line number " + linenumber + " (URL: " + url + ")";
 	document.getElementsByTagName("body")[0].setAttributeNode(error);
 };
+*/

@@ -1,51 +1,154 @@
-(function($) {
-	$.fn.dimension = function() {
+(function(jQuery) {
+	jQuery.fn.dimension = function() {
 		return [this.outerWidth(), this.outerHeight()];
 	}
 })(jQuery);
 
+jQuery.expr[':'].hasLabel = function(node, stackIndex, properties) {
+	return jQuery().elementIsInDirection("hasLabel", node, properties[3]);
+}
+
 jQuery.expr[':'].above = function(node, stackIndex, properties) {
-    return inDirection(node, "above", properties[3]);
+    return jQuery().elementIsInDirection("above", node, properties[3]);
 };
 
 jQuery.expr[':'].below = function(node, stackIndex, properties) {
-    return inDirection(node, "below", properties[3]);
+    return jQuery().elementIsInDirection("below", node, properties[3]);
 };
 
 jQuery.expr[':'].leftTo = function(node, stackIndex, properties) {
-    return inDirection(node, "leftTo", properties[3]);
+    return jQuery().elementIsInDirection("leftTo", node, properties[3]);
 };
 
 jQuery.expr[':'].rightTo = function(node, stackIndex, properties) {
-    return inDirection(node, "rightTo", properties[3]);
+    return jQuery().elementIsInDirection("rightTo", node, properties[3]);
 };
 
-inDirection = function(node, direction, selector) {
-    var topSource = jQuery(selector).offset().top;
-    var leftSource = jQuery(selector).offset().left;
-    var bottomSource = topSource + jQuery(selector).height();
-    var rightSource = leftSource + jQuery(selector).width();
-
-    var topTarget = jQuery(node).offset().top;
-    var leftTarget = jQuery(node).offset().left;
-    var bottomTarget = topTarget + jQuery(node).height();
-    var rightTarget = leftTarget + jQuery(node).width();
-
-    if(direction == "above") {
-        return bottomSource > bottomTarget && leftSource <= rightTarget && rightSource >= leftTarget;
-    }
-
-    if(direction == "below") {
-        return topSource < topTarget && leftSource <= rightTarget && rightSource >= leftTarget;
-    }
-
-    if(direction == "leftTo") {
-        return rightSource > rightTarget && topSource <= bottomTarget && bottomSource >= topTarget;
-    }
-
-    if(direction == "rightTo") {
-        return leftSource < leftTarget && topSource <= bottomTarget && bottomSource >= topTarget;
-    }
-
-    return false;
+jQuery.expr[':'].aboveAll = function(node, stackIndex, properties) {
+    return jQuery().elementIsInDirection("above", node, properties[3], {
+    	directionHasToMatchAllTargets: true,
+    });
 };
+
+jQuery.expr[':'].belowAll = function(node, stackIndex, properties) {
+    return jQuery().elementIsInDirection("below", node, properties[3], {
+    	directionHasToMatchAllTargets: true,
+    });
+};
+
+jQuery.expr[':'].leftToAll = function(node, stackIndex, properties) {
+    return jQuery().elementIsInDirection("leftTo", node, properties[3], {
+    	directionHasToMatchAllTargets: true,
+    });
+};
+
+jQuery.expr[':'].rightToAll = function(node, stackIndex, properties) {
+    return jQuery().elementIsInDirection("rightTo", node, properties[3], {
+    	directionHasToMatchAllTargets: true,
+    });
+};
+
+
+(function(jQuery) {
+	// source and target coordinates
+	var topSource;
+    var leftSource;
+    var bottomSource;
+    var rightSource;
+	var topTarget;
+    var leftTarget;
+    var bottomTarget;
+    var rightTarget;
+	
+	jQuery.elementIsInDirection = function(direction, source, targets, options) {
+		topSource = jQuery(source).offset().top;
+	    leftSource = jQuery(source).offset().left;
+	    bottomSource = topSource + jQuery(source).height();
+	    rightSource = leftSource + jQuery(source).width();
+	    
+	    // default options
+	    options = jQuery.extend({
+	    	directionHasToMatchAllTargets: false,
+	    }, options);
+	    
+	    jQuery.each(function() {
+	    	var target = this;
+	    	topTarget = jQuery(target).offset().top;
+	        leftTarget = jQuery(target).offset().left;
+	        bottomTarget = topTarget + jQuery(target).height();
+	        rightTarget = leftTarget + jQuery(target).width();
+	        
+	        if(direction == "hasLabel") {
+	        	var hasLabel = isBelow() || isRightTo();
+	        	if(options.directionHasToMatchAllTargets && !hasLabel) {
+	        		return false;
+	        	} else if(hasLabel) {
+	        		return true;
+	        	}
+	        }
+	        
+	        if(direction == "above") {
+	        	var isAbove = isAbove() && isInHorizontalBounds();
+	        	if(options.directionHasToMatchAllTargets && !isAbove) {
+	        		return false;
+	        	} else if(isAbove) {
+	        		return true;
+	        	}
+	        }
+
+	        if(direction == "below") {
+	            var isBelow = isBelow() && isInHorizontalBounds();
+	        	if(options.directionHasToMatchAllTargets && !isBelow) {
+	        		return false;
+	        	} else if(isBelow) {
+	        		return true;
+	        	}
+	        }
+
+	        if(direction == "leftTo") {
+	        	var isLeftTo = isLeftTo() && isInVerticalBounds();
+	        	if(options.directionHasToMatchAllTargets && !isLeftTo) {
+	        		return false;
+	        	} else if(isLeftTo) {
+	        		return true;
+	        	}
+	        }
+
+	        if(direction == "rightTo") {
+	        	var isRightTo = isRightTo() && isInVerticalBounds();
+	        	if(options.directionHasToMatchAllTargets && !isRightTo) {
+	        		return false;
+	        	} else if(isRightTo) {
+	        		return true;
+	        	}
+	        }
+	    });
+
+	    return false;
+	};
+	
+	function isAbove() {
+		return bottomSource <= topTarget;
+	}
+	
+	function isBelow() {
+		return topSource >= bottomTarget;
+	}
+	
+	function isLeftTo() {
+		return rightSource <= leftTarget;
+	}
+	
+	function isRightTo() {
+		return leftSource >= rightTarget;
+	}
+	
+	function isInHorizontalBounds() {
+		return !isLeftTo() && !isRightTo();
+	}
+	
+	function isInVerticalBounds() {
+		return !isAbove() && !isBelow();
+	}
+	
+})(jQuery);

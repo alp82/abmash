@@ -12,13 +12,13 @@ public class DirectMatchSelector extends Selector {
 	private HtmlElements elements;
 	
 	public DirectMatchSelector(HtmlElements elements) {
-		super(null);
+		super(null, 0);
 		this.elements = elements;
 	}
 
 	@Override
 	public String getExpressionAsJQueryCommand() {
-		String script = "jQuery(abmash.getTempElement());";
+		String script = "jQuery()";
 		return script;
 	}
 

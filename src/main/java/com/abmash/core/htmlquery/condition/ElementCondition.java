@@ -290,7 +290,7 @@ public class ElementCondition extends Condition {
 		
 		// find inputs by searching for closest fitting label
 		// TODO find with rootelements
-		if(queryStrings.isEmpty()) {
+		if(!queryStrings.isEmpty()) {
 			try {
 				HtmlElements labelElements = browser.query().isText().has(queryStrings).limit(2).find();
 				if(!labelElements.isEmpty()) {
@@ -367,15 +367,16 @@ public class ElementCondition extends Condition {
 
 		// find datepickers by searching for closest fitting label
 		// TODO find with rootelements
-		if(queryStrings.isEmpty()) {
+		if(!queryStrings.isEmpty()) {
 			try {
 				HtmlElements labelElements = browser.query().isText().has(queryStrings).limit(2).find();
 				if(!labelElements.isEmpty()) {
+					selectorGroups.add(new SelectorGroup(new JQuerySelector("find('*:hasLabel(" + labelElements + ")')")));
 					// has() not allowed so that no loops can occur
-					HtmlElement directMatch = browser.query().isDatepicker().closestTo(labelElements, Direction.INPUT).findFirst();
-					if(directMatch instanceof HtmlElement) {
-						selectorGroups.add(new SelectorGroup(new DirectMatchSelector(new HtmlElements(directMatch))));
-					}
+//					HtmlElement directMatch = browser.query().isDatepicker().closestTo(labelElements, Direction.INPUT).findFirst();
+//					if(directMatch instanceof HtmlElement) {
+//						selectorGroups.add(new SelectorGroup(new DirectMatchSelector(new HtmlElements(directMatch))));
+//					}
 				}
 			} catch (Exception e) {
 				// if no element was found, just continue with next selectors

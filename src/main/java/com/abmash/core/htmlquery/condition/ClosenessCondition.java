@@ -5,11 +5,11 @@ import java.util.TreeSet;
 
 import com.abmash.api.HtmlElement;
 import com.abmash.api.HtmlElements;
-import com.abmash.core.element.Location;
-import com.abmash.core.element.Size;
 import com.abmash.core.element.distance.ElementDistanceComparator;
 import com.abmash.core.element.distance.ElementDistanceComparator.CalculationType;
 import com.abmash.core.element.distance.ElementDistanceComparator.DistanceType;
+import com.abmash.core.htmlquery.selector.JQuerySelector;
+import com.abmash.core.htmlquery.selector.SelectorGroup;
 
 
 public class ClosenessCondition extends Condition {
@@ -89,15 +89,41 @@ public class ClosenessCondition extends Condition {
 	// condition
 
 	@Override
-	public boolean isElementFinder() {
-//		return !direction.equals(Direction.CLOSE);
-		return false;
-	}
-	
-	@Override
 	protected void buildSelectors() {
-		// TODO jquery closeness everywhere
-//		selectors.add(new SelectorGroup(new JQuerySelector("find('*:above(" + attributeQuery + ")')")));
+		// jquery closeness selectors
+		SelectorGroup group = new SelectorGroup();
+		
+		switch (direction) {
+			case INPUT:
+				group.add(new JQuerySelector("find('*:hasLabel(" + referenceElements + ")')"));
+				break;
+			case ABOVE:
+				group.add(new JQuerySelector("find('*:above(" + referenceElements + ")')"));
+				break;
+			case BELOW:
+				group.add(new JQuerySelector("find('*:below(" + referenceElements + ")')"));
+				break;
+			case LEFT:
+				group.add(new JQuerySelector("find('*:leftTo(" + referenceElements + ")')"));
+				break;
+			case RIGHT:
+				group.add(new JQuerySelector("find('*:rightTo(" + referenceElements + ")')"));
+				break;
+			case ABOVE_ALL:
+				group.add(new JQuerySelector("find('*:aboveAll(" + referenceElements + ")')"));
+				break;
+			case BELOW_ALL:
+				group.add(new JQuerySelector("find('*:belowAll(" + referenceElements + ")')"));
+				break;
+			case LEFT_ALL:
+				group.add(new JQuerySelector("find('*:leftToAll(" + referenceElements + ")')"));
+				break;
+			case RIGHT_ALL:
+				group.add(new JQuerySelector("find('*:rightToAll(" + referenceElements + ")')"));
+				break;
+		}
+		
+		if(!group.isEmpty()) selectorGroups.add(group);
 	}
 	
 	@Override
@@ -143,6 +169,7 @@ public class ClosenessCondition extends Condition {
 		
 //		System.out.println("reference elements: " + referenceElements);
 		for (HtmlElement foundElement: unsortedElements) {
+			// TODO allow reference elements in result
 			if(!referenceElements.contains(foundElement) && elementValid(foundElement)) {
 				foundElement.setReferenceElements(referenceElements);
 //				System.out.println("ADDED valid found element: " + foundElement);
@@ -159,119 +186,119 @@ public class ClosenessCondition extends Condition {
 		return sortedElements;
 	}
 	
-	public boolean elementValid(HtmlElement foundElement) {
-		if(!super.elementValid(foundElement)) return false;
-		
-		for (HtmlElement referenceElement: referenceElements) {
-			
-//			System.out.println("CLOSENESS: " + foundElement + " vs. " + referenceElement);
-//			System.out.println("FOUND location: [" + foundElement.getLocation() + "] + size: [" + foundElement.getSize());
-//			System.out.println("REFER location: [" + referenceElement.getLocation() + "] + size: [" + referenceElement.getSize());
-//			System.out.println("HORIZ BOUNDS: " + inHorizontalBounds(foundElement, referenceElement));
-//			System.out.println("VERTI BOUNDS: " + inVerticalBounds(foundElement, referenceElement));
-			switch (direction) {
-			case INPUT:
-				// only allow elements below or right of the reference element
-				if(below(foundElement, referenceElement) || right(foundElement, referenceElement)) {
-					return true;
-				}
-				break;
-			case ABOVE:
-//				System.out.println("ABOVE: " + above(foundElement, referenceElement));
-			case ABOVE_ALL:
-				// only allow elements above the reference element
-				if(above(foundElement, referenceElement) && inHorizontalBounds(foundElement, referenceElement)) {
-					if(direction == Direction.ABOVE) return true;
-				} else if(direction == Direction.ABOVE_ALL) {
-					return false;
-				}
-				break;
-			case BELOW:
-//				System.out.println("BELOW: " + below(foundElement, referenceElement));
-			case BELOW_ALL:
-				// only allow elements below the reference element
-				if(below(foundElement, referenceElement) && inHorizontalBounds(foundElement, referenceElement)) {
-					if(direction == Direction.BELOW) return true;
-				} else if(direction == Direction.BELOW_ALL) {
-					return false;
-				}
-				break;
-			case LEFT:
-//				System.out.println("CLOSENESS: " + foundElement + " vs. " + referenceElement);
-//				System.out.println("LEFTTO: " + left(foundElement, referenceElement));
-//				System.out.println("VERTIC BOUNDS: " + inVerticalBounds(foundElement, referenceElement));
-			case LEFT_ALL:
-				// only allow elements in the left of the reference element
-				if(left(foundElement, referenceElement) && inVerticalBounds(foundElement, referenceElement)) { 
-					if(direction == Direction.LEFT) return true;
-				} else if(direction == Direction.LEFT_ALL) {
-					return false;
-				}
-				break;
-			case RIGHT:
-//				System.out.println("RIGHTTO: " + right(foundElement, referenceElement));
-			case RIGHT_ALL:
-				// only allow elements in the right of the reference element
-				if(right(foundElement, referenceElement) && inVerticalBounds(foundElement, referenceElement)) {
-					if(direction == Direction.RIGHT) return true;
-				} else if(direction == Direction.RIGHT_ALL) {
-					return false;
-				}
-				break;
-			case CLOSE:
-			default:
-				return true;
-			}
-		}
-		
-		// location is valid if all reference elements were checked
-		boolean isValidLocation = false;
-		if(direction == Direction.ABOVE_ALL || direction == Direction.BELOW_ALL || direction == Direction.LEFT_ALL || direction == Direction.RIGHT_ALL) {
-			isValidLocation = true;
-		}
-
-		return isValidLocation;
-	}
-	
-	private boolean above(HtmlElement foundElement, HtmlElement referenceElement) {
-		Location foundLocation = foundElement.getLocation();
-		Location referenceLocation = referenceElement.getLocation();
-		Size foundSize = foundElement.getSize();
-
-		return foundLocation.getY() + foundSize.getHeight() <= referenceLocation.getY();
-	}
-	
-	private boolean below(HtmlElement foundElement, HtmlElement referenceElement) {
-		Location foundLocation = foundElement.getLocation();
-		Location referenceLocation = referenceElement.getLocation();
-		Size referenceSize = referenceElement.getSize();
-
-		return foundLocation.getY() >= referenceLocation.getY() + referenceSize.getHeight();
-	}
-	
-	private boolean left(HtmlElement foundElement, HtmlElement referenceElement) {
-		Location foundLocation = foundElement.getLocation();
-		Location referenceLocation = referenceElement.getLocation();
-		Size foundSize = foundElement.getSize();
-
-		return foundLocation.getX() + foundSize.getWidth() <= referenceLocation.getX();
-	}
-	
-	private boolean right(HtmlElement foundElement, HtmlElement referenceElement) {
-		Location foundLocation = foundElement.getLocation();
-		Location referenceLocation = referenceElement.getLocation();
-		Size referenceSize = referenceElement.getSize();
-
-		return foundLocation.getX() >= referenceLocation.getX() + referenceSize.getWidth();
-	}
-	
-	private boolean inVerticalBounds(HtmlElement foundElement, HtmlElement referenceElement) {
-		return !above(foundElement, referenceElement) && !below(foundElement, referenceElement);
-	}
-	
-	private boolean inHorizontalBounds(HtmlElement foundElement, HtmlElement referenceElement) {
-		return !left(foundElement, referenceElement) && !right(foundElement, referenceElement);
-	}
+//	public boolean elementValid(HtmlElement foundElement) {
+//		if(!super.elementValid(foundElement)) return false;
+//		
+//		for (HtmlElement referenceElement: referenceElements) {
+//			
+////			System.out.println("CLOSENESS: " + foundElement + " vs. " + referenceElement);
+////			System.out.println("FOUND location: [" + foundElement.getLocation() + "] + size: [" + foundElement.getSize());
+////			System.out.println("REFER location: [" + referenceElement.getLocation() + "] + size: [" + referenceElement.getSize());
+////			System.out.println("HORIZ BOUNDS: " + inHorizontalBounds(foundElement, referenceElement));
+////			System.out.println("VERTI BOUNDS: " + inVerticalBounds(foundElement, referenceElement));
+//			switch (direction) {
+//			case INPUT:
+//				// only allow elements below or right of the reference element
+//				if(below(foundElement, referenceElement) || right(foundElement, referenceElement)) {
+//					return true;
+//				}
+//				break;
+//			case ABOVE:
+////				System.out.println("ABOVE: " + above(foundElement, referenceElement));
+//			case ABOVE_ALL:
+//				// only allow elements above the reference element
+//				if(above(foundElement, referenceElement) && inHorizontalBounds(foundElement, referenceElement)) {
+//					if(direction == Direction.ABOVE) return true;
+//				} else if(direction == Direction.ABOVE_ALL) {
+//					return false;
+//				}
+//				break;
+//			case BELOW:
+////				System.out.println("BELOW: " + below(foundElement, referenceElement));
+//			case BELOW_ALL:
+//				// only allow elements below the reference element
+//				if(below(foundElement, referenceElement) && inHorizontalBounds(foundElement, referenceElement)) {
+//					if(direction == Direction.BELOW) return true;
+//				} else if(direction == Direction.BELOW_ALL) {
+//					return false;
+//				}
+//				break;
+//			case LEFT:
+////				System.out.println("CLOSENESS: " + foundElement + " vs. " + referenceElement);
+////				System.out.println("LEFTTO: " + left(foundElement, referenceElement));
+////				System.out.println("VERTIC BOUNDS: " + inVerticalBounds(foundElement, referenceElement));
+//			case LEFT_ALL:
+//				// only allow elements in the left of the reference element
+//				if(left(foundElement, referenceElement) && inVerticalBounds(foundElement, referenceElement)) { 
+//					if(direction == Direction.LEFT) return true;
+//				} else if(direction == Direction.LEFT_ALL) {
+//					return false;
+//				}
+//				break;
+//			case RIGHT:
+////				System.out.println("RIGHTTO: " + right(foundElement, referenceElement));
+//			case RIGHT_ALL:
+//				// only allow elements in the right of the reference element
+//				if(right(foundElement, referenceElement) && inVerticalBounds(foundElement, referenceElement)) {
+//					if(direction == Direction.RIGHT) return true;
+//				} else if(direction == Direction.RIGHT_ALL) {
+//					return false;
+//				}
+//				break;
+//			case CLOSE:
+//			default:
+//				return true;
+//			}
+//		}
+//		
+//		// location is valid if all reference elements were checked
+//		boolean isValidLocation = false;
+//		if(direction == Direction.ABOVE_ALL || direction == Direction.BELOW_ALL || direction == Direction.LEFT_ALL || direction == Direction.RIGHT_ALL) {
+//			isValidLocation = true;
+//		}
+//
+//		return isValidLocation;
+//	}
+//	
+//	private boolean above(HtmlElement foundElement, HtmlElement referenceElement) {
+//		Location foundLocation = foundElement.getLocation();
+//		Location referenceLocation = referenceElement.getLocation();
+//		Size foundSize = foundElement.getSize();
+//
+//		return foundLocation.getY() + foundSize.getHeight() <= referenceLocation.getY();
+//	}
+//	
+//	private boolean below(HtmlElement foundElement, HtmlElement referenceElement) {
+//		Location foundLocation = foundElement.getLocation();
+//		Location referenceLocation = referenceElement.getLocation();
+//		Size referenceSize = referenceElement.getSize();
+//
+//		return foundLocation.getY() >= referenceLocation.getY() + referenceSize.getHeight();
+//	}
+//	
+//	private boolean left(HtmlElement foundElement, HtmlElement referenceElement) {
+//		Location foundLocation = foundElement.getLocation();
+//		Location referenceLocation = referenceElement.getLocation();
+//		Size foundSize = foundElement.getSize();
+//
+//		return foundLocation.getX() + foundSize.getWidth() <= referenceLocation.getX();
+//	}
+//	
+//	private boolean right(HtmlElement foundElement, HtmlElement referenceElement) {
+//		Location foundLocation = foundElement.getLocation();
+//		Location referenceLocation = referenceElement.getLocation();
+//		Size referenceSize = referenceElement.getSize();
+//
+//		return foundLocation.getX() >= referenceLocation.getX() + referenceSize.getWidth();
+//	}
+//	
+//	private boolean inVerticalBounds(HtmlElement foundElement, HtmlElement referenceElement) {
+//		return !above(foundElement, referenceElement) && !below(foundElement, referenceElement);
+//	}
+//	
+//	private boolean inHorizontalBounds(HtmlElement foundElement, HtmlElement referenceElement) {
+//		return !left(foundElement, referenceElement) && !right(foundElement, referenceElement);
+//	}
 
 	public String toString() {
 		return super.toString() + " with direction [" + direction + "] and reference elements [" + referenceElements + "]";

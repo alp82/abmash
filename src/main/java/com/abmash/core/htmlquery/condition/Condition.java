@@ -43,6 +43,14 @@ public abstract class Condition {
 	}
 	
 	protected SelectorGroups selectorGroups = null;
+	
+	public String toString() {
+		return getType();
+	}
+
+	public String getType() {
+		return getClass().getSimpleName().toLowerCase().replace("condition", "");
+	}
 
 	public boolean isElementFinder() {
 		return true;
@@ -165,11 +173,14 @@ public abstract class Condition {
 	
 			}
 			
+			// TODO compute weight of this selector
+			int weight = 0;
+			
 			// finally add the selector with the given parameters
 			if(useCssSelector) {
-				selector = new CssSelector(mainSelectorCSS + attributeSelectors);
+				selector = new CssSelector(mainSelectorCSS + attributeSelectors, weight);
 			} else {
-				selector = new XpathSelector("//" + mainSelectorXPath + attributeSelectors);
+				selector = new XpathSelector("//" + mainSelectorXPath + attributeSelectors, weight);
 			}
 			
 			// TODO use always jquery selector
@@ -314,7 +325,10 @@ public abstract class Condition {
 			"})";
 		}
 		
-		selector = new JQuerySelector(expression);
+		// TODO compute weight of this selector
+		int weight = 0;
+		
+		selector = new JQuerySelector(expression, weight);
 		
 		return selector;
 	}
@@ -332,24 +346,27 @@ public abstract class Condition {
 //			mainSelectorXPath += "[not(" + mainSelectorNot + ")]";
 		}
 		
+		// TODO compute weight of this selector
+		int weight = 0;
+		
 		Selector selector = null;
 		for (TextMatcher textMatcher: textMatchers) {
 			if(queries.isEmpty()) {
 				// Warning: mainSelector * and an empty query returns all html elements
-				selector = new CssSelector(mainSelectorCSS);
+				selector = new CssSelector(mainSelectorCSS, weight);
 			} else {
 				String querySelectors = "";
 				switch (textMatcher) {
 				case EXACT:
 					// element text matches exactly the query string
 					for (String query: queries) querySelectors += ":equallyCaseInsensitive(\"" + query + "\")";
-					selector = new JQuerySelector("find('" + mainSelectorCSS + querySelectors + "')");
+					selector = new JQuerySelector("find('" + mainSelectorCSS + querySelectors + "')", weight);
 					break;
 				case CONTAINS:
 				default:
 					// element text contains the query string
 					for (String query: queries) querySelectors += ":containsCaseInsensitive(\"" + query + "\")";
-					selector = new JQuerySelector("find('" + mainSelectorCSS + querySelectors + "')");
+					selector = new JQuerySelector("find('" + mainSelectorCSS + querySelectors + "')", weight);
 					break;
 				}
 			}
@@ -416,10 +433,6 @@ public abstract class Condition {
 		SelectorGroup selectorGroup = new SelectorGroup();
 		selectorGroup.addAll(checkElementText(Arrays.asList(mainSelector), queries, textMatcher));
 		return selectorGroup;
-	}
-
-	public String toString() {
-		return this.getClass().getSimpleName();
 	}
 	
 }

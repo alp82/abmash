@@ -7,6 +7,7 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.openqa.selenium.remote.RemoteWebElement;
 
 import com.abmash.api.data.List;
 import com.abmash.api.data.Table;
@@ -19,6 +20,7 @@ import com.abmash.core.htmlquery.condition.ElementCondition.ElementType;
 import com.abmash.core.htmlquery.condition.SelectorCondition;
 import com.abmash.core.htmlquery.condition.SelectorCondition.QueryType;
 import com.abmash.core.htmlquery.condition.TagnameCondition;
+import com.abmash.core.htmlquery.selector.DirectMatchSelector;
 import com.abmash.core.htmlquery.selector.Selector;
 import com.abmash.core.htmlquery.selector.SelectorGroup;
 import com.abmash.core.htmlquery.selector.SelectorGroup.Type;
@@ -61,7 +63,7 @@ public class HtmlQuery {
 	private HtmlElements resultElements = null;
 	private HtmlElements rootElements = new HtmlElements();
 	private Conditions conditions = new Conditions();
-	private HtmlElements notElements = new HtmlElements();
+	private ArrayList<HtmlQuery> notQueries = new ArrayList<HtmlQuery>();
 	private ArrayList<HtmlQuery> orQueries = new ArrayList<HtmlQuery>();
 	private ArrayList<String> queryStrings = new ArrayList<String>();
 //	private ArrayList<String> textQueries = new ArrayList<String>();
@@ -82,6 +84,14 @@ public class HtmlQuery {
 		this.browser = browser;
 	}
 	
+	public String toString() {
+		String queryString = "HtmlQuery with following conditions:";
+		for (Condition condition: conditions) {
+			queryString += "\n  [" + condition + "]";
+		}
+		return queryString;
+	}
+	
 	// filter by reference elements
 	
 	/**
@@ -100,7 +110,7 @@ public class HtmlQuery {
 	}
 	
 	/**
-	 * Defines a root element from which to search on.
+	 * Defines a root element from which to search on. All other elements in the document are ignored.
 	 * <p>
 	 * Only descendants will be searched whereas ancestors will be ignored.
 	 * 
@@ -118,9 +128,10 @@ public class HtmlQuery {
 	
 	/**
 	 * Defines a "NOT" subquery. The position of the subquery in the condition chain does not matter and is ignored.
+	 * {@link #childOf(HtmlElement)} elements are automatically passed to the subquery.
 	 * <p>
-	 * Note that the {@link #find()} method of the subquery it automatically called. If only one (or another amount) of the result
-	 * elements shall be returned, use {@code limit(1)}.
+	 * Note that the {@link #find()} method of the subquery it automatically called. If only one (or any other amount) of the result
+	 * elements shall be returned, use {@code #limit(Integer)}.
 	 * 
 	 * @param notQuery the {@link HtmlQuery} to be combined as NOT condition
 	 * @return this {@link HtmlQuery} instance, which can be used to add more search criteria like this or to finally
@@ -129,23 +140,16 @@ public class HtmlQuery {
 	 */
 	public HtmlQuery not(HtmlQuery notQuery) {
 		if(!(notQuery instanceof HtmlQuery)) throw new RuntimeException("Error: NOT query cannot be null.");
-		try {
-			HtmlElements elements = notQuery.find();
-			// TODO NOT later and with this query conditions
-//			System.out.println("NOT result: " + elements);
-			notElements.addAll(elements);
-		} catch (Exception e) {
-			// TODO: handle exception
-			browser.log().warn("NOT subquery returned no results: [" + notQuery + "]");
-		}
+		notQueries.add(notQuery);
 		return this;
 	}
 	
 	/**
 	 * Defines an "OR" subquery. The position of the subquery in the condition chain does not matter and is ignored.
+	 * {@link #childOf(HtmlElement)} elements are automatically passed to the subquery.
 	 * <p>
-	 * Note that the {@link #find()} method of the subquery it automatically called. If only one (or another amount) of the result
-	 * elements shall be returned, use {@code limit(1)}.
+	 * Note that the {@link #find()} method of the subquery it automatically called. If only one (or any other amount) of the result
+	 * elements shall be returned, use {@code #limit(Integer)}.
 	 * 
 	 * @param orQuery the {@link HtmlQuery} to be combined as OR condition
 	 * @return this {@link HtmlQuery} instance, which can be used to add more search criteria like this or to finally
@@ -1187,116 +1191,6 @@ public class HtmlQuery {
 	// find logic
 	
 	/**
-	 * Finds all elements which match the given search conditions.
-	 * <p>
-	 * Returns {@code null} if no element was found.
-	 * 
-	 * @return the {@link HtmlElements} result set
-	 */
-	public HtmlElements find() {
-		if(!(resultElements instanceof HtmlElements)) {
-			JSONArray jsonQueries = new JSONArray();
-			
-			// building queries
-			try {
-				for(Condition condition: conditions) {
-					if(condition.isElementFinder()) {
-						if(condition instanceof ElementCondition) {
-							if(!queryStrings.isEmpty()) {
-								// TODO queries for frame is framename
-								((ElementCondition) condition).setQueries(queryStrings);
-							}
-						}
-						
-						JSONObject jsonCondition = new JSONObject();
-						JSONArray jsonSelectorGroups = new JSONArray();
-						SelectorGroups selectorGroups = condition.getSelectorGroups();
-						
-						for(SelectorGroup selectorGroup: selectorGroups) {
-							JSONObject jsonSelectorGroup = new JSONObject();
-							JSONArray jsonSelectors = new JSONArray();
-							for(Selector selector: selectorGroup) {
-								JSONObject jsonSelector = new JSONObject();
-								jsonSelector.put("type", selector.getType());
-								jsonSelector.put("command", selector.getExpressionAsJQueryCommand());
-								jsonSelectors.put(jsonSelector);
-							}
-							jsonSelectorGroup.put("type", selectorGroup.getType());
-							jsonSelectorGroup.put("selectors", jsonSelectors);
-							jsonSelectorGroups.put(jsonSelectorGroup);
-						}
-						
-						jsonCondition.put("type", condition.toString());
-						jsonCondition.put("selectorGroups", jsonSelectorGroups);
-						jsonQueries.put(jsonCondition);
-					}
-				}
-//				System.out.println(jsonQueries.toString(2));
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-			
-			// sending queries to jquery executor
-			String script = "return abmash.query(arguments[0], arguments[1]);";
-			Object results = browser.javaScript(script, jsonQueries.toString(), rootElements).getReturnValue();
-			System.out.println(results.getClass() + ": " + results);
-
-			// fetch results
-			// sort results
-		}
-		return resultElements;
-	}
-	
-	public HtmlElements findOld() {
-		if(!(resultElements instanceof HtmlElements)) {
-			// find elements
-			browser.log().debug("Query: Searching...");
-			HtmlElements unsortedElements = doFind();
-			
-//			System.out.println("elements after ANDs: " + unsortedElements);
-
-			// sort result
-			HtmlElements sortedElements = sortElements(unsortedElements);
-
-//			System.out.println("elements after filtering and sorting: " + sortedElements);
-
-			if(unsortedElements.size() > 0) browser.log().debug("Query: Result found" +
-				(sortedElements.size() > 1 ? " and sorted" : ""));
-			
-			// check OR queries to add them to the result set
-			for (HtmlQuery orQuery: orQueries) {
-				for (HtmlElement orElement: orQuery.find()) {
-					// do not add the element if it is contained in the elements that need to be filtered out
-					if(!notElements.contains(orElement)) sortedElements.addAndIgnoreDuplicates(orElement);
-				}
-			}
-			
-//			System.out.println("elements after ORs: " + unsortedElements);
-			
-			// limit result
-			HtmlElements limitedElements = new HtmlElements();
-			if(limit > 0 && sortedElements.size() > limit) {
-				for (int i = 0; i < limit; i++) {
-					limitedElements.add(sortedElements.get(i));
-				}
-			} else {
-				limitedElements = sortedElements;
-			}
-			resultElements = limitedElements;
-		}
-		
-		// log if result is empty
-		if(!(resultElements instanceof HtmlElements) || resultElements.isEmpty()) {
-			browser.log().debug("Query: No element found for " + this);
-			resultElements = null;
-		} else {
-			resultElements.fetchDataForCache();
-		}
-		
-		return resultElements;
-	}
-	
-	/**
 	 * Finds best matching element which match the given search conditions.
 	 * <p>
 	 * Returns {@code null} if no element was found.
@@ -1308,198 +1202,391 @@ public class HtmlQuery {
 		resultElements = find();
 		return resultElements instanceof HtmlElements && !resultElements.isEmpty() ? resultElements.first() : null;
 	}
-
+	
 	/**
-	 * Searches for all matching elements
+	 * Finds all elements which match the given search conditions.
+	 * <p>
+	 * Returns {@code null} if no element was found.
 	 * 
-	 * @return
+	 * @return the {@link HtmlElements} result set
 	 */
-	private HtmlElements doFind() {
-		HtmlElements matchingElements = new HtmlElements();
-		
-		// if query specified without element type, tag or selector, search for any element
-		boolean selectAnyElement = true;
-		for (Condition condition: conditions) {
-			// TODO tag() or select() with has() does not work properly
-			if(queryStrings.isEmpty()) {
-				if(condition instanceof ElementCondition || condition instanceof TagnameCondition || condition instanceof SelectorCondition) {
-					selectAnyElement = false;
-					break;
-				}
-			} else {
-				if(condition instanceof ElementCondition) {
-					selectAnyElement = false;
-					break;
-				}
-			}
-		}
-		
-		// if no condition specified search for any text element
-		if(selectAnyElement || conditions.isEmpty()) {
-			conditions.add(new ElementCondition(browser, ElementType.ALL));
-		}
-		
-		// if no query specified search for anything
-		if(queryStrings.isEmpty()) queryStrings.add("");
-		
-		// TODO when fallback conditions needed, use them one after another, or for all (inclusively the already processed conditions)
-		for (Condition condition: conditions) {
-			if(condition.isElementFinder()) {
-				HtmlElements matchingElementsForCondition = new HtmlElements();
+	public HtmlElements find() {
+		if(!(resultElements instanceof HtmlElements)) {
+			// if no condition is set, add the "all elements" matcher
+			if(conditions.isEmpty() || !conditions.hasElementFinder()) conditions.add(new ElementCondition(browser, ElementType.ALL));
 				
-				// check all regular selectors
-				for (String query: queryStrings) {
-					// TODO queries for frame is framename
-					if(condition instanceof ElementCondition) {
-						((ElementCondition) condition).addQuery(query);
-					}
-					
-					// get selectors
-					SelectorGroups selectors = condition.getSelectorGroups();
-
-					// get matching elements
-					HtmlElements matchingElementsForConditionQuery = matchingElementsForConditionQuery(condition, selectors);
-					matchingElementsForCondition.addAll(matchingElementsForConditionQuery);
-					matchingElements = matchingElements(matchingElements, matchingElementsForConditionQuery);
-//					System.out.println("Checking condition: " + condition);
-//					System.out.println(" with selectors: " + selectors);
-//					System.out.println("All elements only for condition: " + matchingElementsForConditionQuery);
-//					System.out.println("All ANDed elements after condition: " + matchingElements);
-					
-					// skip to fallback selectors if result is already empty
-					if(matchingElements.isEmpty()) break;
-				}
-			}
-//			browser.log().debug("Elements for " + condition + ": {}", matchingElements);
-		}
-		
-		// set element types if specified by query
-		if(!elementTypes.isEmpty()) {
-			matchingElements.setTypes(elementTypes);
-		}
-		
-		
-		// return matching elements or empty list
-		return matchingElements;
-	}
-	
-	private HtmlElements matchingElementsForConditionQuery(Condition condition, SelectorGroups selectorGroups) {
-		// selectors are processed OR-wise
-		HtmlElements matchingElementsForConditionQuery = new HtmlElements();
-		for (SelectorGroup selectorGroup: selectorGroups) {
-			// process each group
-			HtmlElements groupElements = new HtmlElements();
-			for (Selector selector: selectorGroup) {
-				// if elements found, do not use fallback selectors
-				// TODO ensure correct order of non-fallback and fallback selectors
-				if(matchingElementsForConditionQuery.size() > 0 && selectorGroup.getType() == Type.FALLBACK) break;
-				
-				HtmlElements selectorElements = selectAndFilterElements(selector, condition);
-				groupElements.addAllAndIgnoreDuplicates(selectorElements); // selector matches
-				
-				// continue with next group if enough elements are matching already
-				if(groupElements.size() >= selectorGroup.getLimit()) break;
-			}
-			matchingElementsForConditionQuery.addAllAndIgnoreDuplicates(groupElements); // selector matches
-		}
-		
-//		System.out.println("Elements for condition: " + matchingElementsForConditionQuery);
-		return matchingElementsForConditionQuery;
-	}
-		
-	private HtmlElements matchingElements(HtmlElements matchingElements, HtmlElements matchingElementsForConditionQuery) {
-		if(matchingElements.isEmpty()) {
-			// first condition result is taken as reference
-			matchingElements = matchingElementsForConditionQuery;
-		} else {
-			// next results are compared AND-wise to last result
-			HtmlElements temporaryElements = new HtmlElements();
-			for (HtmlElement matchingElementForCondition: matchingElementsForConditionQuery) {
-				// throw away elements which are not returned in at least one condition
-				// also ignore elements that need to be filtered out
-				if(matchingElements.contains(matchingElementForCondition)) {
-					temporaryElements.add(matchingElementForCondition);
-				}
-			}
-			matchingElements = temporaryElements;
-		}
-		return matchingElements;
-	}
-	
-	private HtmlElements selectAndFilterElements(Selector selector, Condition condition) {
-		HtmlElements foundElements = new HtmlElements();
-		
-		HtmlElements conditionElements = new HtmlElements();
-		if(!rootElements.isEmpty()) {
-			for (HtmlElement rootElement: rootElements) {
-				try {
-					conditionElements.addAll(selector.find(browser, rootElement));
-				} catch (Exception e) {
-					System.err.println("Find error: skipped selector [" + selector + "] for condition [" + condition + "] on root element [" + rootElement + "]: " + e.getMessage());
-//					e.printStackTrace();
-//					System.exit(0);
-				}
-			}
-		} else {
+			JSONArray jsonConditions = new JSONArray();
+			
+			// building queries
 			try {
-				conditionElements.addAll(selector.find(browser));
-			} catch (RuntimeException e) {
-				System.err.println("Find error: skipped selector [" + selector + "] for condition [" + condition + "]: " + e.getMessage());
-//				e.printStackTrace();
-//				System.exit(0);
-			}
-		}
-		
-		if(!conditionElements.isEmpty()) {
-//			System.out.println(" ### FOUND ELEMENTS: " + conditionElements.size() + " for " + selector + " in " + condition);
-			for (HtmlElement foundElement: conditionElements) {
-				// TODO set label of typables
-				// TODO make sure that the attribute is set in foundElement which is finally returned after filtering out duplicates
-//					if(condition instanceof ElementCondition &&  ((ElementCondition) condition).getElementType() == ElementType.TYPABLE) foundElement.setLabel();
-				if(condition.elementValid(foundElement) && !notElements.contains(foundElement)) {
-					foundElement.setWindowName(browser.window().getCurrentWindowName());
-					foundElements.add(foundElement);
+				for(Condition condition: conditions) {
+					// TODO remove isElementFinder
+					if(condition.isElementFinder()) {
+						if(condition instanceof ElementCondition) {
+							if(!queryStrings.isEmpty()) {
+								// TODO queries for frame is "frame name"
+								((ElementCondition) condition).setQueries(queryStrings);
+							}
+						}
+						
+						JSONObject jsonCondition = new JSONObject();
+						JSONArray jsonSelectorGroups = new JSONArray();
+						JSONArray jsonFallbackSelectorGroups = new JSONArray();
+						SelectorGroups selectorGroups = condition.getSelectorGroups();
+						
+						for(SelectorGroup selectorGroup: selectorGroups) {
+							Type selectorGroupType = selectorGroup.getType(); 
+							JSONObject jsonSelectorGroup = new JSONObject();
+							JSONArray jsonSelectors = new JSONArray();
+							for(Selector selector: selectorGroup) {
+								JSONObject jsonSelector = new JSONObject();
+								jsonSelector.put("type", selector.getType());
+								jsonSelector.put("weight", selector.getWeight());
+								jsonSelector.put("command", selector.getExpressionAsJQueryCommand());
+								jsonSelectors.put(jsonSelector);
+							}
+							jsonSelectorGroup.put("weight", selectorGroup.getWeight());
+							jsonSelectorGroup.put("limit", selectorGroup.getLimit());
+							jsonSelectorGroup.put("selectors", jsonSelectors);
+							
+							if(selectorGroupType.equals(Type.NORMAL)) {
+								jsonSelectorGroups.put(jsonSelectorGroup);
+							} else if(selectorGroupType.equals(Type.FALLBACK)) {
+								jsonFallbackSelectorGroups.put(jsonSelectorGroup);
+							}
+						}
+						
+						if(condition instanceof ElementCondition) {
+							jsonCondition.put("elementType", ((ElementCondition) condition).getElementType().toString().toLowerCase());
+						}
+						jsonCondition.put("type", condition.getType());
+						jsonCondition.put("selectorGroups", jsonSelectorGroups);
+						jsonCondition.put("fallbackSelectorGroups", jsonFallbackSelectorGroups);
+						jsonConditions.put(jsonCondition);
+					}
 				}
+//				System.out.println(jsonConditions.toString(2));
+			} catch (JSONException e) {
+				e.printStackTrace();
 			}
-		}
-		
-		return foundElements;
-	}
-	
-	private HtmlElements sortElements(HtmlElements unsortedElements) {
-		// if unsorted elements are empty fill it with all elements if no other conditions were specified
-		boolean closenessWithAllElements = false;
-		if(unsortedElements.isEmpty()) {
-			closenessWithAllElements = true;
-			for (Condition condition: conditions) {
-				if(!(condition instanceof ClosenessCondition)) closenessWithAllElements = false;
+			
+			// sending queries to jquery executor
+			String script = "return abmash.query(arguments[0], arguments[1], arguments[2]);";
+			ArrayList<RemoteWebElement> seleniumElements = (ArrayList<RemoteWebElement>) browser.javaScript(
+					script,
+					jsonConditions.toString(),
+					rootElements,
+					0/*limit*/
+			).getReturnValue();
+			System.out.println("seleniumElements: " + seleniumElements);
+			
+			// converting selenium elements to abmash elements
+			HtmlElements tempElements = new HtmlElements();
+			for(RemoteWebElement seleniumElement: seleniumElements) {
+				tempElements.add(new HtmlElement(browser, seleniumElement));
 			}
-		}
-		
-		HtmlElements sortedElements = unsortedElements;
-		if(conditions.size() > 0) {
-			for (Condition condition: conditions) {
-//				System.out.println("unsorted elements: " + sortedElements + " (condition: " + condition + ")");
-				if(condition instanceof ClosenessCondition) {
-					if(closenessWithAllElements && sortedElements.isEmpty()) {
-						sortedElements = browser.query().cssSelector("*").find();
+//			System.out.println("tempElements: " + tempElements);
+			
+			// or queries
+			for(HtmlQuery orQuery: orQueries) {
+				orQuery.childOf(rootElements);
+				tempElements.addAll(orQuery.find());
+			}
+			
+			// not queries
+			for(HtmlQuery notQuery: notQueries) {
+				// process not query if result is not empty already
+				if(!tempElements.isEmpty()) {
+					notQuery.childOf(rootElements);
+					HtmlElements notElements = notQuery.find();
+					
+					HtmlElements subQueryElements = new HtmlElements();
+					for (HtmlElement tempElement: tempElements) {
+						// add only elements which are not returned by last not query
+						if(notElements.contains(tempElement)) {
+							subQueryElements.add(tempElement);
+						}
 					}
 					
-					// TODO what to do if there are several and/or different sorts?
-					sortedElements = condition.sortElements(sortedElements);
+					// set temp elements to narrowed down results
+					tempElements = subQueryElements;
 				}
-//				System.out.println("sorted elements: " + sortedElements + " (condition: " + condition + ")");
 			}
+			
+			// filter out invalid matches
+			HtmlElements unsortedElements = new HtmlElements();
+			for (HtmlElement tempElement: tempElements) {
+				if(conditions.elementValid(tempElement)) {
+					tempElement.setWindowName(browser.window().getCurrentWindowName());
+					unsortedElements.add(tempElement);
+				}
+			}
+			
+			// fetch and store data for elements
+			// this needs to be done before sorting because of better performance
+			unsortedElements.fetchDataForCache();
+			
+			if(!elementTypes.isEmpty()) {
+				// set element types if specified by query
+				unsortedElements.setTypes(elementTypes);
+			}
+			
+			// sort results
+			HtmlElements sortedElements = new HtmlElements(); 
+			for (Condition condition: conditions) {
+				// TODO what to do if there are several and/or different sorts?
+				sortedElements = condition.sortElements(unsortedElements);
+			}
+			
+			// limit results
+			HtmlElements limitedElements = new HtmlElements();
+			for (HtmlElement sortedElement: sortedElements) {
+				if(limit == 0 || limitedElements.size() < limit) {
+					sortedElement.setWindowName(browser.window().getCurrentWindowName());
+					limitedElements.add(sortedElement);
+				}
+			}
+			
+			// finalize results
+			// TODO maybe there are still duplicates in the result
+			resultElements = limitedElements;
 		}
-		return sortedElements;
+		System.out.println(resultElements);
+		return resultElements;
 	}
 	
-	public String toString() {
-		String queryString = "HtmlQuery with following conditions:";
-		for (Condition condition: conditions) {
-			queryString += "\n  [" + condition + "]";
-		}
-		return queryString;
-	}
+//	public HtmlElements findOld() {
+//		if(!(resultElements instanceof HtmlElements)) {
+//			// find elements
+//			browser.log().debug("Query: Searching...");
+//			HtmlElements unsortedElements = doFind();
+//			
+////			System.out.println("elements after ANDs: " + unsortedElements);
+//
+//			// sort result
+//			HtmlElements sortedElements = sortElements(unsortedElements);
+//
+////			System.out.println("elements after filtering and sorting: " + sortedElements);
+//
+//			if(unsortedElements.size() > 0) browser.log().debug("Query: Result found" +
+//				(sortedElements.size() > 1 ? " and sorted" : ""));
+//			
+//			// check OR queries to add them to the result set
+//			for (HtmlQuery orQuery: orQueries) {
+//				for (HtmlElement orElement: orQuery.find()) {
+//					// do not add the element if it is contained in the elements that need to be filtered out
+//					if(!notElements.contains(orElement)) sortedElements.addAndIgnoreDuplicates(orElement);
+//				}
+//			}
+//			
+////			System.out.println("elements after ORs: " + unsortedElements);
+//			
+//			// limit result
+//			HtmlElements limitedElements = new HtmlElements();
+//			if(limit > 0 && sortedElements.size() > limit) {
+//				for (int i = 0; i < limit; i++) {
+//					limitedElements.add(sortedElements.get(i));
+//				}
+//			} else {
+//				limitedElements = sortedElements;
+//			}
+//			resultElements = limitedElements;
+//		}
+//		
+//		// log if result is empty
+//		if(!(resultElements instanceof HtmlElements) || resultElements.isEmpty()) {
+//			browser.log().debug("Query: No element found for " + this);
+//			resultElements = null;
+//		} else {
+//			resultElements.fetchDataForCache();
+//		}
+//		
+//		return resultElements;
+//	}
+//
+//
+//	/**
+//	 * Searches for all matching elements
+//	 * 
+//	 * @return
+//	 */
+//	private HtmlElements doFind() {
+//		HtmlElements matchingElements = new HtmlElements();
+//		
+//		// if query specified without element type, tag or selector, search for any element
+//		boolean selectAnyElement = true;
+//		for (Condition condition: conditions) {
+//			// TODO tag() or select() with has() does not work properly
+//			if(queryStrings.isEmpty()) {
+//				if(condition instanceof ElementCondition || condition instanceof TagnameCondition || condition instanceof SelectorCondition) {
+//					selectAnyElement = false;
+//					break;
+//				}
+//			} else {
+//				if(condition instanceof ElementCondition) {
+//					selectAnyElement = false;
+//					break;
+//				}
+//			}
+//		}
+//		
+//		// if no condition specified search for any text element
+//		if(selectAnyElement || conditions.isEmpty()) {
+//			conditions.add(new ElementCondition(browser, ElementType.ALL));
+//		}
+//		
+//		// if no query specified search for anything
+//		if(queryStrings.isEmpty()) queryStrings.add("");
+//		
+//		// TODO when fallback conditions needed, use them one after another, or for all (inclusively the already processed conditions)
+//		for (Condition condition: conditions) {
+//			if(condition.isElementFinder()) {
+//				HtmlElements matchingElementsForCondition = new HtmlElements();
+//				
+//				// check all regular selectors
+//				for (String query: queryStrings) {
+//					// TODO queries for frame is framename
+//					if(condition instanceof ElementCondition) {
+//						((ElementCondition) condition).addQuery(query);
+//					}
+//					
+//					// get selectors
+//					SelectorGroups selectors = condition.getSelectorGroups();
+//
+//					// get matching elements
+//					HtmlElements matchingElementsForConditionQuery = matchingElementsForConditionQuery(condition, selectors);
+//					matchingElementsForCondition.addAll(matchingElementsForConditionQuery);
+//					matchingElements = matchingElements(matchingElements, matchingElementsForConditionQuery);
+////					System.out.println("Checking condition: " + condition);
+////					System.out.println(" with selectors: " + selectors);
+////					System.out.println("All elements only for condition: " + matchingElementsForConditionQuery);
+////					System.out.println("All ANDed elements after condition: " + matchingElements);
+//					
+//					// skip to fallback selectors if result is already empty
+//					if(matchingElements.isEmpty()) break;
+//				}
+//			}
+////			browser.log().debug("Elements for " + condition + ": {}", matchingElements);
+//		}
+//		
+//		// set element types if specified by query
+//		if(!elementTypes.isEmpty()) {
+//			matchingElements.setTypes(elementTypes);
+//		}
+//		
+//		
+//		// return matching elements or empty list
+//		return matchingElements;
+//	}
+//	
+//	private HtmlElements matchingElementsForConditionQuery(Condition condition, SelectorGroups selectorGroups) {
+//		// selectors are processed OR-wise
+//		HtmlElements matchingElementsForConditionQuery = new HtmlElements();
+//		for (SelectorGroup selectorGroup: selectorGroups) {
+//			// process each group
+//			HtmlElements groupElements = new HtmlElements();
+//			for (Selector selector: selectorGroup) {
+//				// if elements found, do not use fallback selectors
+//				// TODO ensure correct order of non-fallback and fallback selectors
+//				if(matchingElementsForConditionQuery.size() > 0 && selectorGroup.getType() == Type.FALLBACK) break;
+//				
+//				HtmlElements selectorElements = selectAndFilterElements(selector, condition);
+//				groupElements.addAllAndIgnoreDuplicates(selectorElements); // selector matches
+//				
+//				// continue with next group if enough elements are matching already
+//				if(groupElements.size() >= selectorGroup.getLimit()) break;
+//			}
+//			matchingElementsForConditionQuery.addAllAndIgnoreDuplicates(groupElements); // selector matches
+//		}
+//		
+////		System.out.println("Elements for condition: " + matchingElementsForConditionQuery);
+//		return matchingElementsForConditionQuery;
+//	}
+//		
+//	private HtmlElements matchingElements(HtmlElements matchingElements, HtmlElements matchingElementsForConditionQuery) {
+//		if(matchingElements.isEmpty()) {
+//			// first condition result is taken as reference
+//			matchingElements = matchingElementsForConditionQuery;
+//		} else {
+//			// next results are compared AND-wise to last result
+//			HtmlElements temporaryElements = new HtmlElements();
+//			for (HtmlElement matchingElementForCondition: matchingElementsForConditionQuery) {
+//				// throw away elements which are not returned in at least one condition
+//				// also ignore elements that need to be filtered out
+//				if(matchingElements.contains(matchingElementForCondition)) {
+//					temporaryElements.add(matchingElementForCondition);
+//				}
+//			}
+//			matchingElements = temporaryElements;
+//		}
+//		return matchingElements;
+//	}
+//	
+//	private HtmlElements selectAndFilterElements(Selector selector, Condition condition) {
+//		HtmlElements foundElements = new HtmlElements();
+//		
+//		HtmlElements conditionElements = new HtmlElements();
+//		if(!rootElements.isEmpty()) {
+//			for (HtmlElement rootElement: rootElements) {
+//				try {
+//					conditionElements.addAll(selector.find(browser, rootElement));
+//				} catch (Exception e) {
+//					System.err.println("Find error: skipped selector [" + selector + "] for condition [" + condition + "] on root element [" + rootElement + "]: " + e.getMessage());
+////					e.printStackTrace();
+////					System.exit(0);
+//				}
+//			}
+//		} else {
+//			try {
+//				conditionElements.addAll(selector.find(browser));
+//			} catch (RuntimeException e) {
+//				System.err.println("Find error: skipped selector [" + selector + "] for condition [" + condition + "]: " + e.getMessage());
+////				e.printStackTrace();
+////				System.exit(0);
+//			}
+//		}
+//		
+//		if(!conditionElements.isEmpty()) {
+////			System.out.println(" ### FOUND ELEMENTS: " + conditionElements.size() + " for " + selector + " in " + condition);
+//			for (HtmlElement foundElement: conditionElements) {
+//				// TODO set label of typables
+//				// TODO make sure that the attribute is set in foundElement which is finally returned after filtering out duplicates
+////					if(condition instanceof ElementCondition &&  ((ElementCondition) condition).getElementType() == ElementType.TYPABLE) foundElement.setLabel();
+//				if(condition.elementValid(foundElement) && !notElements.contains(foundElement)) {
+//					foundElement.setWindowName(browser.window().getCurrentWindowName());
+//					foundElements.add(foundElement);
+//				}
+//			}
+//		}
+//		
+//		return foundElements;
+//	}
+//	
+//	private HtmlElements sortElements(HtmlElements unsortedElements) {
+//		// if unsorted elements are empty fill it with all elements if no other conditions were specified
+//		boolean closenessWithAllElements = false;
+//		if(unsortedElements.isEmpty()) {
+//			closenessWithAllElements = true;
+//			for (Condition condition: conditions) {
+//				if(!(condition instanceof ClosenessCondition)) closenessWithAllElements = false;
+//			}
+//		}
+//		
+//		HtmlElements sortedElements = unsortedElements;
+//		for (Condition condition: conditions) {
+////			System.out.println("unsorted elements: " + sortedElements + " (condition: " + condition + ")");
+//			if(condition instanceof ClosenessCondition) {
+//				if(closenessWithAllElements && sortedElements.isEmpty()) {
+//					sortedElements = browser.query().cssSelector("*").find();
+//				}
+//				
+//				// TODO what to do if there are several and/or different sorts?
+//				sortedElements = condition.sortElements(sortedElements);
+//			}
+////			System.out.println("sorted elements: " + sortedElements + " (condition: " + condition + ")");
+//		}
+//		return sortedElements;
+//	}
+
 
 }

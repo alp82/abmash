@@ -14,9 +14,11 @@ public abstract class Selector {
 	
 	protected String expression;
 	protected Boolean expressionValid = true;
+	protected int weight = 0;
 
-	public Selector(String expression) {
+	public Selector(String expression, int weight) {
 		this.expression = expression instanceof String ? expression : "";
+		setWeight(weight);
 	}
 	
 	public String toString() {
@@ -28,6 +30,14 @@ public abstract class Selector {
 	
 	public String getType() {
 		return this.getClass().getSimpleName();
+	}
+	
+	public int getWeight() {
+		return weight;
+	}
+
+	public void setWeight(int weight) {
+		this.weight = weight;
 	}
 	
 	public abstract String getExpressionAsJQueryCommand();
