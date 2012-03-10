@@ -1,6 +1,5 @@
 Abmash
-------
-
+======
 Abmash is a Java framework to automate web applications, based on Selenium/
 Webdriver, Firefox and JQuery. The goal is that programmers do not need any
 knowledge about the HTML/CSS source code of the web pages. Instead, elements
@@ -28,5 +27,30 @@ page, independently from the page source and DOM structure. Correspondingly,
 bigger font-size than the average on the current page.
 
 Abmash is still under heavy development. Please let me know if you are interested in this project.
+
+Maven
+-----
+Abmash snapshots are available as Maven repositories.
+
+Put this dependency in your `pom.xml`:
+
+	<dependencies>
+		<dependency>
+			<groupId>com.abmash</groupId>
+			<artifactId>abmash</artifactId>
+			<version>0.1.7-SNAPSHOT</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
+
+Also, add this repository:
+
+	<repositories>
+		<repository>
+			<id>alp-snapshots</id>
+			<url>https://github.com/alp82/alp-mvn-repo/raw/master/snapshots</url>
+		</repository>
+	</repositories>
 
 *TODO more information*
