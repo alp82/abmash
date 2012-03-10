@@ -2,7 +2,7 @@ Abmash
 ======
 Abmash is a Java framework to automate web applications, based on Selenium/
 Webdriver, Firefox and JQuery. The goal is that programmers do not need any
-knowledge about the HTML/CSS source code of the web pages. Instead, elements
+knowledge about the HTML/CSS source code of web pages. Instead, elements
 can be found by querying for visual attributes and visible text.
 
 **Abmash is human-oriented imitation of browser interactions.**
@@ -32,7 +32,7 @@ Maven
 -----
 Abmash snapshots are available as Maven repositories.
 
-First, add this repository:
+First, add the following repository:
 
 	<repositories>
 		<repository>
