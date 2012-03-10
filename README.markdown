@@ -32,7 +32,16 @@ Maven
 -----
 Abmash snapshots are available as Maven repositories.
 
-Put this dependency in your `pom.xml`:
+First, add this repository:
+
+	<repositories>
+		<repository>
+			<id>alp-snapshots</id>
+			<url>https://github.com/alp82/alp-mvn-repo/raw/master/snapshots</url>
+		</repository>
+	</repositories>
+
+Then, put this dependency in your `pom.xml`:
 
 	<dependencies>
 		<dependency>
@@ -43,14 +52,5 @@ Put this dependency in your `pom.xml`:
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
-
-Also, add this repository:
-
-	<repositories>
-		<repository>
-			<id>alp-snapshots</id>
-			<url>https://github.com/alp82/alp-mvn-repo/raw/master/snapshots</url>
-		</repository>
-	</repositories>
 
 *TODO more information*
