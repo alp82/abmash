@@ -6,9 +6,9 @@ Getting Started
 ---------------
 TODO Screencast
 
-Abmash is all about interacting with browser as humans would do. Including AJAX and forms. 
+Abmash is all about interacting with a browser as humans would do. Including AJAX and forms. 
 
-*Example:*
+*Example (Java):*
 
 	// open new browser window
 	Browser browser = new Browser("http://google.com");
