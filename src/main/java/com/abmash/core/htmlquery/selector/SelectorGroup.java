@@ -3,6 +3,9 @@ package com.abmash.core.htmlquery.selector;
 
 import java.util.ArrayList;
 
+import com.abmash.api.HtmlElement;
+import com.abmash.api.HtmlElements;
+
 
 public class SelectorGroup extends ArrayList<Selector> {
 	
@@ -14,6 +17,7 @@ public class SelectorGroup extends ArrayList<Selector> {
 	private int limit = 50; // result limit for this group
 	private int weight = 0; // the higher the value the higher the weight 
 	private Type type = Type.NORMAL; // normal or fallback group
+	private HtmlElements referenceElements = new HtmlElements();
 	
 	public SelectorGroup() {
 		super();
@@ -107,4 +111,20 @@ public class SelectorGroup extends ArrayList<Selector> {
 		return this;
 	}
 	
+	public void addReferenceElement(HtmlElement element) {
+		referenceElements.add(element);
+	}
+	
+	public void addReferenceElements(HtmlElements elements) {
+		referenceElements.addAll(elements);
+	}
+	
+	public HtmlElements getReferenceElements() {
+		return referenceElements;
+	}
+
+	public boolean hasReferenceElements() {
+		return referenceElements.size() > 0;
+	}
+
 }

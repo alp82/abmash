@@ -149,7 +149,7 @@ public class Window {
 		browser.javaScript(script).getReturnValue();
 		switchTo(windowName);
 		return windowName;
-}
+	}
 	
 	/**
 	 * Closes window with specified name.
@@ -157,7 +157,7 @@ public class Window {
 	 * @param windowName
 	 */
 	public void closeWindow(String windowName) {
-		String script = "window.close()";
+		String script = "window.close()";    
 		browser.javaScript(script).getReturnValue();
 		switchToMain();
 	}
@@ -201,6 +201,14 @@ public class Window {
 		return currentWindowName;
 	}
 
+	/**
+	 * Gets current window handles.
+	 * 
+	 * @return all window handles
+	 */
+	public ArrayList<String> getWindowHandles() {
+		return windowHandles;
+	}
 	
 	/**
 	 * Gets content type of current page.

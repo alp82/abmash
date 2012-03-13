@@ -3,12 +3,18 @@ package com.abmash.api.browser;
 
 import com.abmash.api.Browser;
 import com.abmash.api.HtmlElement;
+import com.abmash.api.HtmlQuery;
 import com.abmash.core.browser.waitcondition.ElementHasTextWaitCondition;
 import com.abmash.core.browser.waitcondition.ElementWaitCondition;
 import com.abmash.core.browser.waitcondition.JavaScriptEvaluatedWaitCondition;
+import com.thoughtworks.selenium.Wait;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 
@@ -52,16 +58,29 @@ public class WaitFor {
 	}
 
 	/**
-	 * Waits until element with the specified text is found. Useful for waiting for an AJAX call to complete.
+	 * Waits until element is found. Useful for waiting for an AJAX call to complete.
+	 * 
+	 * @param query the element query
+	 * @throws TimeoutException
+	 */
+	public void query(HtmlQuery query) throws TimeoutException {
+//		WebDriverWait wait = new WebDriverWait(browser.getWebDriver(), timeout);
+		FluentWait<WebDriver> wait = new FluentWait<WebDriver>(browser.getWebDriver())
+	       .withTimeout(timeout, TimeUnit.SECONDS)
+	       .pollingEvery(1, TimeUnit.SECONDS);
+		
+		// start waiting for given element
+		wait.until(new ElementWaitCondition(query));
+	}
+	
+	/**
+	 * Waits until element is found. Useful for waiting for an AJAX call to complete.
 	 * 
 	 * @param query the element which needs to be found, identified by the visible text or attribute values 
 	 * @throws TimeoutException
 	 */
 	public void element(String query) throws TimeoutException {
-		WebDriverWait wait = new WebDriverWait(browser.getWebDriver(), timeout);
-		
-		// start waiting for given text of element
-		wait.until(new ElementWaitCondition(browser.query().has(query).isText().findFirst()));
+		query(browser.query().has(query));
 	}
 
 	/**
@@ -72,7 +91,9 @@ public class WaitFor {
 	 * @throws TimeoutException
 	 */
 	public void elementText(HtmlElement element, String text) throws TimeoutException {
-		WebDriverWait wait = new WebDriverWait(browser.getWebDriver(), timeout);
+		FluentWait<WebDriver> wait = new FluentWait<WebDriver>(browser.getWebDriver())
+	       .withTimeout(timeout, TimeUnit.SECONDS)
+	       .pollingEvery(500, TimeUnit.MILLISECONDS);
 		
 		// start waiting for given text of element
 		wait.until(new ElementHasTextWaitCondition(element, text));

@@ -3,11 +3,11 @@ package com.abmash.core.htmlquery.condition;
 
 import java.util.TreeSet;
 
+import com.abmash.REMOVE.core.element.distance.ElementDistanceComparator;
+import com.abmash.REMOVE.core.element.distance.ElementDistanceComparator.CalculationType;
+import com.abmash.REMOVE.core.element.distance.ElementDistanceComparator.DistanceType;
 import com.abmash.api.HtmlElement;
 import com.abmash.api.HtmlElements;
-import com.abmash.core.element.distance.ElementDistanceComparator;
-import com.abmash.core.element.distance.ElementDistanceComparator.CalculationType;
-import com.abmash.core.element.distance.ElementDistanceComparator.DistanceType;
 import com.abmash.core.htmlquery.selector.JQuerySelector;
 import com.abmash.core.htmlquery.selector.SelectorGroup;
 
@@ -62,28 +62,14 @@ public class ClosenessCondition extends Condition {
 		RIGHT_ALL,
 	}
 	
-	private HtmlElements referenceElements;
 	private Direction direction;
+	private SelectorGroup group = new SelectorGroup();
 	
 	// constructors
 	
 	public ClosenessCondition(HtmlElements referenceElements, Direction direction) {
-		this.referenceElements = new HtmlElements();
-		int numReferenceElements = 0;
-		for (HtmlElement referenceElement: referenceElements) {
-			// do not allow more than specific amount of source elements
-			if(numReferenceElements + 1 > MAX_REFERENCE_ELEMENTS) break;
-			// add reference element (i.e. the parent of inline elements)
-			this.referenceElements.add(getNextAncestorBlockElement(referenceElement));
-			numReferenceElements++;
-		}
+		group.addReferenceElements(referenceElements);
 		this.direction = direction;
-	}
-
-	private HtmlElement getNextAncestorBlockElement(HtmlElement referenceElement) {
-		// TODO wrong in most cases (for example http://www.avis.com "Return" datepicker)
-		//if(referenceElement.getCssValue("display").equals("inline")) return getNextAncestorBlockElement(referenceElement.getParent());
-		return referenceElement;
 	}
 
 	// condition
@@ -91,35 +77,35 @@ public class ClosenessCondition extends Condition {
 	@Override
 	protected void buildSelectors() {
 		// jquery closeness selectors
-		SelectorGroup group = new SelectorGroup();
+		
 		
 		switch (direction) {
 			case INPUT:
-				group.add(new JQuerySelector("find('*:hasLabel(" + referenceElements + ")')"));
+				group.add(new JQuerySelector("hasLabel(abmash.getData('referenceElements'))"));
 				break;
 			case ABOVE:
-				group.add(new JQuerySelector("find('*:above(" + referenceElements + ")')"));
+				group.add(new JQuerySelector("above(abmash.getData('referenceElements'))"));
 				break;
 			case BELOW:
-				group.add(new JQuerySelector("find('*:below(" + referenceElements + ")')"));
+				group.add(new JQuerySelector("below(abmash.getData('referenceElements'))"));
 				break;
 			case LEFT:
-				group.add(new JQuerySelector("find('*:leftTo(" + referenceElements + ")')"));
+				group.add(new JQuerySelector("leftTo(abmash.getData('referenceElements'))"));
 				break;
 			case RIGHT:
-				group.add(new JQuerySelector("find('*:rightTo(" + referenceElements + ")')"));
+				group.add(new JQuerySelector("rightTo(abmash.getData('referenceElements'))"));
 				break;
 			case ABOVE_ALL:
-				group.add(new JQuerySelector("find('*:aboveAll(" + referenceElements + ")')"));
+				group.add(new JQuerySelector("aboveAll(abmash.getData('referenceElements'))"));
 				break;
 			case BELOW_ALL:
-				group.add(new JQuerySelector("find('*:belowAll(" + referenceElements + ")')"));
+				group.add(new JQuerySelector("belowAll(abmash.getData('referenceElements'))"));
 				break;
 			case LEFT_ALL:
-				group.add(new JQuerySelector("find('*:leftToAll(" + referenceElements + ")')"));
+				group.add(new JQuerySelector("leftToAll(abmash.getData('referenceElements'))"));
 				break;
 			case RIGHT_ALL:
-				group.add(new JQuerySelector("find('*:rightToAll(" + referenceElements + ")')"));
+				group.add(new JQuerySelector("rightToAll(abmash.getData('referenceElements'))"));
 				break;
 		}
 		
@@ -167,11 +153,12 @@ public class ClosenessCondition extends Condition {
 		
 		// TODO higher weight for reference elements in the beginning of the list
 		
-//		System.out.println("reference elements: " + referenceElements);
+//		System.out.println("reference elements: " + group.getReferenceElements());
 		for (HtmlElement foundElement: unsortedElements) {
 			// TODO allow reference elements in result
-			if(!referenceElements.contains(foundElement) && elementValid(foundElement)) {
-				foundElement.setReferenceElements(referenceElements);
+			if(!group.getReferenceElements().contains(foundElement) && elementValid(foundElement)) {
+				// TODO speichern der reference elemente globaler?
+				foundElement.setReferenceElements(group.getReferenceElements());
 //				System.out.println("ADDED valid found element: " + foundElement);
 				// add if element is in allowed location
 				elementSet.add(foundElement); // ordered by closeness
@@ -299,9 +286,9 @@ public class ClosenessCondition extends Condition {
 //	private boolean inHorizontalBounds(HtmlElement foundElement, HtmlElement referenceElement) {
 //		return !left(foundElement, referenceElement) && !right(foundElement, referenceElement);
 //	}
-
+	
 	public String toString() {
-		return super.toString() + " with direction [" + direction + "] and reference elements [" + referenceElements + "]";
+		return super.toString() + " with direction [" + direction + "] and reference elements [" + group.getReferenceElements() + "]";
 	}
 
 }

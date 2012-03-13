@@ -27,7 +27,7 @@ public class JQuerySelector extends Selector {
 	@Override
 	public String getExpressionAsJQueryCommand() {
 		// TODO replace single quotes if necessary
-		return "jQuery(abmash.getTempElement())." + expression/*.replaceAll("'", "\\\\'")*/;
+		return "jQuery(abmash.getData('queryElements'))." + expression/*.replaceAll("'", "\\\\'")*/;
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public class JQuerySelector extends Selector {
 
 	@Override
 	public HtmlElements find(Browser browser, HtmlElement rootElement) {
-		String script = "abmash.setTempElement(arguments[0]); var abmashQueryResult = " + getExpressionAsJQueryCommand() + "; return abmashQueryResult.get();";
+		String script = "abmash.setData('queryElements', arguments[0]); var abmashQueryResult = " + getExpressionAsJQueryCommand() + "; return abmashQueryResult.get();";
 		Object result = browser.javaScript(script, rootElement).getReturnValue();
 		return result != null ? new HtmlElements(browser, (List<WebElement>) result) : null;
 	}

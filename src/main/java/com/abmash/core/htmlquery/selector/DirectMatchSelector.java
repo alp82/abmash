@@ -18,7 +18,8 @@ public class DirectMatchSelector extends Selector {
 
 	@Override
 	public String getExpressionAsJQueryCommand() {
-		String script = "jQuery()";
+		// TODO direct match as jquery
+		String script = "jQuery();";
 		return script;
 	}
 

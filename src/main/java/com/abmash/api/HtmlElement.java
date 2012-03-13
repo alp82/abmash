@@ -327,9 +327,12 @@ public class HtmlElement extends Element {
 		click();
 		// TODO Ajax Wait condition
 		// TODO year
+		// TODO exception handler if no element was found
 		browser.query().isChoosable().has("datepicker").findFirst().choose(date.getMonth());
+		// TODO exception handler if no element was found
 		browser.query().isClickable().has(date.getDay()).findFirst().click();
 		// TODO time
+		// TODO exception handler if no element was found
 //		browser.query().isChoosable().has("time").findFirst().choose(date.getTime());
 		return this;
 	}

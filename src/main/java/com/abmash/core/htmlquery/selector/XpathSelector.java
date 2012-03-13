@@ -22,7 +22,7 @@ public class XpathSelector extends Selector {
 	@Override
 	public String getExpressionAsJQueryCommand() {
 		// TODO replace single quotes if necessary
-		String script = "jQuery(abmash.getTempElement()).xpath(\"" + expression/*.replaceAll("'", "\\\\'")*/ + "\")";
+		String script = "jQuery(abmash.getData('queryElements')).xpath(\"" + expression/*.replaceAll("'", "\\\\'")*/ + "\")";
 		return script;
 	}
 	

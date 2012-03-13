@@ -1,6 +1,7 @@
 package com.abmash.core.htmlquery.condition;
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -32,7 +33,7 @@ public abstract class Condition {
 	 * Matching types for element css attributes
 	 */
 	public enum CSSAttributeMatcher {
-		EQUAL, GREATER_THAN, LESS_THAN, CONTAINS,
+		GREATER_THAN, LESS_THAN, HAS_VALUE, CONTAINS, NOT_EQUAL, EQUAL, 
 	}
 
 	/*
@@ -97,21 +98,22 @@ public abstract class Condition {
 	 * If an attributeName equals to "*" an xpath selector is used instead of a css selector.
 	 * @return {@link Selector}
 	 */
-	protected Selector checkElementAttributes(String mainSelector, List<String> queries, String attributeName, List<AttributeMatcher> attributeMatchers, String mainSelectorNot) {
-		// build main selector
-		String mainSelectorCSS = mainSelector;
-		String mainSelectorXPath = mainSelector;
-		if(mainSelectorNot != null) {
-			mainSelectorCSS += ":not(" + mainSelectorNot + ")";
-			mainSelectorXPath += "[not(self::" + mainSelectorNot + ")]";
-		}
-		
-		// always use css selector, except for variable attribute names which need to be handled by xpath selectors
-		Boolean useCssSelector = !attributeName.equals("*");
-		
+	protected List<Selector> checkElementAttributes(List<String> mainSelectors, List<String> queries, String attributeName, AttributeMatcher attributeMatcher, String mainSelectorNot) {
 		// build the selector
-		Selector selector = null;
-		for (AttributeMatcher attributeMatcher: attributeMatchers) {
+		List<Selector> selectors = new ArrayList<Selector>();
+		for (String mainSelector: mainSelectors) {
+			
+			// build main selector
+			String mainSelectorCSS = mainSelector;
+			String mainSelectorXPath = mainSelector;
+			if(mainSelectorNot != null) {
+				mainSelectorCSS += ":not(" + mainSelectorNot + ")";
+				mainSelectorXPath += "[not(self::" + mainSelectorNot + ")]";
+			}
+			
+			// always use css selector, except for variable attribute names which need to be handled by xpath selectors
+			Boolean useCssSelector = !attributeName.equals("*");
+			
 			// do not process empty queries other than EXISTS
 			if(queries.isEmpty() && attributeMatcher != AttributeMatcher.EXISTS) continue;
 			
@@ -178,9 +180,9 @@ public abstract class Condition {
 			
 			// finally add the selector with the given parameters
 			if(useCssSelector) {
-				selector = new CssSelector(mainSelectorCSS + attributeSelectors, weight);
+				selectors.add(new CssSelector(mainSelectorCSS + attributeSelectors, weight));
 			} else {
-				selector = new XpathSelector("//" + mainSelectorXPath + attributeSelectors, weight);
+				selectors.add(new XpathSelector("//" + mainSelectorXPath + attributeSelectors, weight));
 			}
 			
 			// TODO use always jquery selector
@@ -188,16 +190,16 @@ public abstract class Condition {
 			//browser.log().debug(" find attributes selector: " + selector);
 		}
 		
-		return selector;
+		return selectors;
 	}
 	
 	/**
 	 * Check element attributes
 	 */
-	protected SelectorGroup checkElementAttributes(String mainSelector, List<String> queries, List<String> attributeNames, List<AttributeMatcher> attributeMatchers, String mainSelectorNot) {
+	protected SelectorGroup checkElementAttributes(List<String> mainSelectors, List<String> queries, List<String> attributeNames, AttributeMatcher attributeMatcher, String mainSelectorNot) {
 		SelectorGroup selectorGroup = new SelectorGroup();
 		for (String attributeName: attributeNames) {
-			selectorGroup.add(checkElementAttributes(mainSelector, queries, attributeName, attributeMatchers, mainSelectorNot));
+			selectorGroup.addAll(checkElementAttributes(mainSelectors, queries, attributeName, attributeMatcher, mainSelectorNot));
 		}
 		return selectorGroup;
 	}
@@ -207,8 +209,8 @@ public abstract class Condition {
 	 */
 	protected SelectorGroup checkElementAttributes(List<String> mainSelectors, List<String> queries, List<String> attributeNames, List<AttributeMatcher> attributeMatchers, String mainSelectorNot) {
 		SelectorGroup selectorGroup = new SelectorGroup();
-		for (String mainSelector: mainSelectors) {
-			selectorGroup.addAll(checkElementAttributes(mainSelector, queries, attributeNames, attributeMatchers, mainSelectorNot));
+		for (AttributeMatcher attributeMatcher: attributeMatchers) {
+			selectorGroup.addAll(checkElementAttributes(mainSelectors, queries, attributeNames, attributeMatcher, mainSelectorNot));
 		}
 		return selectorGroup;
 	}
@@ -216,12 +218,14 @@ public abstract class Condition {
 	/**
 	 * Check element attributes
 	 */
-	protected SelectorGroup checkElementAttributes(List<String> mainSelectors, List<String> queries, List<String> attributeNames, AttributeMatcher attributeMatcher, String mainSelectorNot) {
+	protected SelectorGroup checkElementAttributes(String mainSelector, List<String> queries, List<String> attributeNames, List<AttributeMatcher> attributeMatchers, String mainSelectorNot) {
 		SelectorGroup selectorGroup = new SelectorGroup();
-		selectorGroup.addAll(checkElementAttributes(mainSelectors, queries, attributeNames, Arrays.asList(attributeMatcher), mainSelectorNot));
+		for (AttributeMatcher attributeMatcher: attributeMatchers) {
+			selectorGroup.addAll(checkElementAttributes(Arrays.asList(mainSelector), queries, attributeNames, attributeMatcher, mainSelectorNot));
+		}
 		return selectorGroup;
 	}
-
+	
 	/**
 	 * Check element attributes
 	 */
@@ -236,7 +240,7 @@ public abstract class Condition {
 	 */
 	protected SelectorGroup checkElementAttributes(String mainSelector, List<String> queries, String attributeName, AttributeMatcher attributeMatcher) {
 		SelectorGroup selectorGroup = new SelectorGroup();
-		selectorGroup.addAll(checkElementAttributes(mainSelector, queries, Arrays.asList(attributeName), Arrays.asList(attributeMatcher), null));
+		selectorGroup.addAll(checkElementAttributes(Arrays.asList(mainSelector), queries, Arrays.asList(attributeName), Arrays.asList(attributeMatcher), null));
 		return selectorGroup;
 	}
 
@@ -288,13 +292,14 @@ public abstract class Condition {
 	/**
 	 * Check element css attributes
 	 */
-	protected Selector checkElementCssAttribute(String mainSelector, List<String> queries, String attributeName, CSSAttributeMatcher attributeMatcher) {
-		Selector selector;
+	protected SelectorGroup checkElementCssAttribute(String mainSelector, List<String> queries, String attributeName, CSSAttributeMatcher attributeMatcher) {
+		SelectorGroup selectorGroup = new SelectorGroup();
 
-		String sourceValue = "jQuery(this).css('" + attributeName + "')";
-		String expression = "find('" + mainSelector + "')";
 		
 		for (String query: queries) {
+			String sourceValue = "jQuery(this).css('" + attributeName + "')";
+			String expression = "find('" + mainSelector + "')";
+			
 			String comparisonValue = "'" + query + "'";
 			String comparisonOperator;
 			
@@ -309,10 +314,17 @@ public abstract class Condition {
 					sourceValue = "parseInt(" + sourceValue + ", 10)";
 					comparisonValue = "parseInt(" + comparisonValue + ", 10)";
 					break;
+				case HAS_VALUE:
+					comparisonOperator = "!==";
+					comparisonValue = "''";
+					break;
 				case CONTAINS:
 					comparisonOperator = sourceValue + ".contains(" + comparisonValue + ")";
 					sourceValue = "";
 					comparisonValue = "";
+					break;
+				case NOT_EQUAL:
+					comparisonOperator = "!==";
 					break;
 				case EQUAL:
 				default:
@@ -323,50 +335,60 @@ public abstract class Condition {
 			expression += ".filter(function() {" +
 				"return " + sourceValue + " " + comparisonOperator + " " + comparisonValue + ";" +
 			"})";
+			
+			// TODO compute weight of this selector
+			int weight = 0;
+			
+			selectorGroup.add(new JQuerySelector(expression, weight));
 		}
 		
-		// TODO compute weight of this selector
-		int weight = 0;
-		
-		selector = new JQuerySelector(expression, weight);
-		
-		return selector;
+		System.out.println(selectorGroup);
+		return selectorGroup;
+	}
+	
+	protected SelectorGroup checkElementCssAttribute(String mainSelector, List<String> queries, String attributeName, List<CSSAttributeMatcher> attributeMatchers) {
+		SelectorGroup selectorGroup = new SelectorGroup();
+		for (CSSAttributeMatcher attributeMatcher: attributeMatchers) {
+			selectorGroup.addAll(checkElementCssAttribute(mainSelector, queries, attributeName, attributeMatcher));
+		}
+		return selectorGroup;
 	}
 	
 	/**
 	 * Check the inner text of an element. The method looks either for exact or partial matches.
 	 */
-	protected Selector checkElementText(String mainSelector, List<String> queries, List<TextMatcher> textMatchers, String mainSelectorNot) {
-		// build the selector
-		String mainSelectorCSS = mainSelector;
-//		String mainSelectorXPath = mainSelector;
-		if(mainSelectorNot != null) {
-			mainSelectorNot = mainSelectorNot.replaceAll("'", "\'");
-			mainSelectorCSS += ":not(" + mainSelectorNot + ")";
-//			mainSelectorXPath += "[not(" + mainSelectorNot + ")]";
-		}
-		
-		// TODO compute weight of this selector
-		int weight = 0;
-		
-		Selector selector = null;
-		for (TextMatcher textMatcher: textMatchers) {
+	protected List<Selector> checkElementText(List<String> mainSelectors, List<String> queries, TextMatcher textMatcher, String mainSelectorNot) {
+		List<Selector> selectors = new ArrayList<Selector>();
+		for (String mainSelector: mainSelectors) {
+			
+			// build the selector
+			String mainSelectorCSS = mainSelector;
+//			String mainSelectorXPath = mainSelector;
+			if(mainSelectorNot != null) {
+				mainSelectorNot = mainSelectorNot.replaceAll("'", "\'");
+				mainSelectorCSS += ":not(" + mainSelectorNot + ")";
+//				mainSelectorXPath += "[not(" + mainSelectorNot + ")]";
+			}
+			
+			// TODO compute weight of this selector
+			int weight = 0;
+			
 			if(queries.isEmpty()) {
 				// Warning: mainSelector * and an empty query returns all html elements
-				selector = new CssSelector(mainSelectorCSS, weight);
+				selectors.add(new CssSelector(mainSelectorCSS, weight));
 			} else {
 				String querySelectors = "";
 				switch (textMatcher) {
 				case EXACT:
 					// element text matches exactly the query string
-					for (String query: queries) querySelectors += ":equallyCaseInsensitive(\"" + query + "\")";
-					selector = new JQuerySelector("find('" + mainSelectorCSS + querySelectors + "')", weight);
+					for (String query: queries) querySelectors += ":isCaseInsensitive(\"" + query + "\")";
+					selectors.add(new JQuerySelector("find('" + mainSelectorCSS + querySelectors + "')", weight));
 					break;
 				case CONTAINS:
 				default:
 					// element text contains the query string
 					for (String query: queries) querySelectors += ":containsCaseInsensitive(\"" + query + "\")";
-					selector = new JQuerySelector("find('" + mainSelectorCSS + querySelectors + "')", weight);
+					selectors.add(new JQuerySelector("find('" + mainSelectorCSS + querySelectors + "')", weight));
 					break;
 				}
 			}
@@ -374,7 +396,7 @@ public abstract class Condition {
 		
 //		browser.log().debug(" find text selector: " + selector);
 		// finally return the selector
-		return selector;
+		return selectors;
 	}
 	
 	/**
@@ -382,19 +404,8 @@ public abstract class Condition {
 	 */
 	protected SelectorGroup checkElementText(List<String> mainSelectors, List<String> queries, List<TextMatcher> textMatchers, String mainSelectorNot) {
 		SelectorGroup selectorGroup = new SelectorGroup();
-		for (String mainSelector: mainSelectors) {
-			selectorGroup.add(checkElementText(mainSelector, queries, textMatchers, mainSelectorNot));
-		}
-		return selectorGroup;
-	}
-	
-	/**
-	 * Check element text
-	 */
-	protected SelectorGroup checkElementText(List<String> mainSelectors, List<String> queries, TextMatcher textMatcher, String mainSelectorNot) {
-		SelectorGroup selectorGroup = new SelectorGroup();
-		for (String mainSelector: mainSelectors) {
-			selectorGroup.add(checkElementText(mainSelector, queries, Arrays.asList(textMatcher), mainSelectorNot));
+		for (TextMatcher textMatcher: textMatchers) {
+			selectorGroup.addAll(checkElementText(mainSelectors, queries, textMatcher, mainSelectorNot));
 		}
 		return selectorGroup;
 	}

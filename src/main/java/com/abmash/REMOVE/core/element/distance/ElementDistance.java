@@ -1,4 +1,4 @@
-package com.abmash.core.element.distance;
+package com.abmash.REMOVE.core.element.distance;
 
 import com.abmash.core.element.Location;
 import com.abmash.core.element.Size;

@@ -2,6 +2,7 @@ package com.abmash.api;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.json.JSONArray;
@@ -1211,147 +1212,159 @@ public class HtmlQuery {
 	 * @return the {@link HtmlElements} result set
 	 */
 	public HtmlElements find() {
-		if(!(resultElements instanceof HtmlElements)) {
-			// if no condition is set, add the "all elements" matcher
-			if(conditions.isEmpty() || !conditions.hasElementFinder()) conditions.add(new ElementCondition(browser, ElementType.ALL));
-				
-			JSONArray jsonConditions = new JSONArray();
+		resultElements = null;
 			
-			// building queries
-			try {
-				for(Condition condition: conditions) {
-					// TODO remove isElementFinder
-					if(condition.isElementFinder()) {
-						if(condition instanceof ElementCondition) {
-							if(!queryStrings.isEmpty()) {
-								// TODO queries for frame is "frame name"
-								((ElementCondition) condition).setQueries(queryStrings);
-							}
+		// if no condition is set, add the "all elements" matcher
+		if(conditions.isEmpty() || !conditions.hasElementFinder()) conditions.add(new ElementCondition(browser, ElementType.ALL));
+			
+		Map<String, HtmlElements> referenceElements = new HashMap<String, HtmlElements>(); 
+		
+		JSONArray jsonConditions = new JSONArray();
+		
+		// building queries
+		try {
+			for(Condition condition: conditions) {
+				// TODO remove isElementFinder
+				if(condition.isElementFinder()) {
+					if(condition instanceof ElementCondition) {
+						if(!queryStrings.isEmpty()) {
+							// TODO queries for frame is "frame name"
+							((ElementCondition) condition).setQueries(queryStrings);
 						}
-						
-						JSONObject jsonCondition = new JSONObject();
-						JSONArray jsonSelectorGroups = new JSONArray();
-						JSONArray jsonFallbackSelectorGroups = new JSONArray();
-						SelectorGroups selectorGroups = condition.getSelectorGroups();
-						
-						for(SelectorGroup selectorGroup: selectorGroups) {
-							Type selectorGroupType = selectorGroup.getType(); 
-							JSONObject jsonSelectorGroup = new JSONObject();
-							JSONArray jsonSelectors = new JSONArray();
-							for(Selector selector: selectorGroup) {
-								JSONObject jsonSelector = new JSONObject();
-								jsonSelector.put("type", selector.getType());
-								jsonSelector.put("weight", selector.getWeight());
-								jsonSelector.put("command", selector.getExpressionAsJQueryCommand());
-								jsonSelectors.put(jsonSelector);
-							}
-							jsonSelectorGroup.put("weight", selectorGroup.getWeight());
-							jsonSelectorGroup.put("limit", selectorGroup.getLimit());
-							jsonSelectorGroup.put("selectors", jsonSelectors);
-							
-							if(selectorGroupType.equals(Type.NORMAL)) {
-								jsonSelectorGroups.put(jsonSelectorGroup);
-							} else if(selectorGroupType.equals(Type.FALLBACK)) {
-								jsonFallbackSelectorGroups.put(jsonSelectorGroup);
-							}
-						}
-						
-						if(condition instanceof ElementCondition) {
-							jsonCondition.put("elementType", ((ElementCondition) condition).getElementType().toString().toLowerCase());
-						}
-						jsonCondition.put("type", condition.getType());
-						jsonCondition.put("selectorGroups", jsonSelectorGroups);
-						jsonCondition.put("fallbackSelectorGroups", jsonFallbackSelectorGroups);
-						jsonConditions.put(jsonCondition);
 					}
+					
+					JSONObject jsonCondition = new JSONObject();
+					JSONArray jsonSelectorGroups = new JSONArray();
+					JSONArray jsonFallbackSelectorGroups = new JSONArray();
+					SelectorGroups selectorGroups = condition.getSelectorGroups();
+					
+					for(SelectorGroup selectorGroup: selectorGroups) {
+						Type selectorGroupType = selectorGroup.getType(); 
+						JSONObject jsonSelectorGroup = new JSONObject();
+						JSONArray jsonSelectors = new JSONArray();
+						for(Selector selector: selectorGroup) {
+							JSONObject jsonSelector = new JSONObject();
+							jsonSelector.put("type", selector.getType());
+							jsonSelector.put("weight", selector.getWeight());
+							jsonSelector.put("command", selector.getExpressionAsJQueryCommand());
+							jsonSelectors.put(jsonSelector);
+						}
+						if(selectorGroup.hasReferenceElements()) {
+							String referenceId = Long.toString(System.currentTimeMillis()) + Double.toString(Math.random());
+							jsonSelectorGroup.put("referenceId", referenceId);
+							referenceElements.put(referenceId, selectorGroup.getReferenceElements());
+						}
+						jsonSelectorGroup.put("weight", selectorGroup.getWeight());
+						jsonSelectorGroup.put("limit", selectorGroup.getLimit());
+						jsonSelectorGroup.put("selectors", jsonSelectors);
+						
+						if(selectorGroupType.equals(Type.NORMAL)) {
+							jsonSelectorGroups.put(jsonSelectorGroup);
+						} else if(selectorGroupType.equals(Type.FALLBACK)) {
+							jsonFallbackSelectorGroups.put(jsonSelectorGroup);
+						}
+					}
+					
+					if(condition instanceof ElementCondition) {
+						jsonCondition.put("elementType", ((ElementCondition) condition).getElementType().toString().toLowerCase());
+					}
+					jsonCondition.put("type", condition.getType());
+					jsonCondition.put("selectorGroups", jsonSelectorGroups);
+					jsonCondition.put("fallbackSelectorGroups", jsonFallbackSelectorGroups);
+					jsonConditions.put(jsonCondition);
 				}
+			}
 //				System.out.println(jsonConditions.toString(2));
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-			
-			// sending queries to jquery executor
-			String script = "return abmash.query(arguments[0], arguments[1], arguments[2]);";
-			ArrayList<RemoteWebElement> seleniumElements = (ArrayList<RemoteWebElement>) browser.javaScript(
-					script,
-					jsonConditions.toString(),
-					rootElements,
-					0/*limit*/
-			).getReturnValue();
-			System.out.println("seleniumElements: " + seleniumElements);
-			
-			// converting selenium elements to abmash elements
-			HtmlElements tempElements = new HtmlElements();
-			for(RemoteWebElement seleniumElement: seleniumElements) {
-				tempElements.add(new HtmlElement(browser, seleniumElement));
-			}
-//			System.out.println("tempElements: " + tempElements);
-			
-			// or queries
-			for(HtmlQuery orQuery: orQueries) {
-				orQuery.childOf(rootElements);
-				tempElements.addAll(orQuery.find());
-			}
-			
-			// not queries
-			for(HtmlQuery notQuery: notQueries) {
-				// process not query if result is not empty already
-				if(!tempElements.isEmpty()) {
-					notQuery.childOf(rootElements);
-					HtmlElements notElements = notQuery.find();
-					
-					HtmlElements subQueryElements = new HtmlElements();
-					for (HtmlElement tempElement: tempElements) {
-						// add only elements which are not returned by last not query
-						if(notElements.contains(tempElement)) {
-							subQueryElements.add(tempElement);
-						}
-					}
-					
-					// set temp elements to narrowed down results
-					tempElements = subQueryElements;
-				}
-			}
-			
-			// filter out invalid matches
-			HtmlElements unsortedElements = new HtmlElements();
-			for (HtmlElement tempElement: tempElements) {
-				if(conditions.elementValid(tempElement)) {
-					tempElement.setWindowName(browser.window().getCurrentWindowName());
-					unsortedElements.add(tempElement);
-				}
-			}
-			
-			// fetch and store data for elements
-			// this needs to be done before sorting because of better performance
-			unsortedElements.fetchDataForCache();
-			
-			if(!elementTypes.isEmpty()) {
-				// set element types if specified by query
-				unsortedElements.setTypes(elementTypes);
-			}
-			
-			// sort results
-			HtmlElements sortedElements = new HtmlElements(); 
-			for (Condition condition: conditions) {
-				// TODO what to do if there are several and/or different sorts?
-				sortedElements = condition.sortElements(unsortedElements);
-			}
-			
-			// limit results
-			HtmlElements limitedElements = new HtmlElements();
-			for (HtmlElement sortedElement: sortedElements) {
-				if(limit == 0 || limitedElements.size() < limit) {
-					sortedElement.setWindowName(browser.window().getCurrentWindowName());
-					limitedElements.add(sortedElement);
-				}
-			}
-			
-			// finalize results
-			// TODO maybe there are still duplicates in the result
-			resultElements = limitedElements;
+		} catch (JSONException e) {
+			e.printStackTrace();
 		}
-		System.out.println(resultElements);
+		
+		// sending queries to jquery executor
+		String script = "return abmash.query(arguments[0], arguments[1], arguments[2], arguments[3]);";
+		@SuppressWarnings("unchecked")
+		ArrayList<RemoteWebElement> seleniumElements = (ArrayList<RemoteWebElement>) browser.javaScript(
+				script,
+				jsonConditions.toString(),
+				rootElements,
+				referenceElements,
+				0/*limit*/
+		).getReturnValue();
+		
+		// converting selenium elements to abmash elements
+		HtmlElements tempElements = new HtmlElements();
+		for(RemoteWebElement seleniumElement: seleniumElements) {
+			tempElements.add(new HtmlElement(browser, seleniumElement));
+		}
+//			System.out.println("tempElements: " + tempElements);
+		
+		// or queries
+		for(HtmlQuery orQuery: orQueries) {
+			orQuery.childOf(rootElements);
+			tempElements.addAll(orQuery.find());
+		}
+		
+		// not queries
+		for(HtmlQuery notQuery: notQueries) {
+			// process not query if result is not empty already
+			if(!tempElements.isEmpty()) {
+				notQuery.childOf(rootElements);
+				HtmlElements notElements = notQuery.find();
+				
+				HtmlElements subQueryElements = new HtmlElements();
+				for (HtmlElement tempElement: tempElements) {
+					// add only elements which are not returned by last not query
+					if(notElements.contains(tempElement)) {
+						subQueryElements.add(tempElement);
+					}
+				}
+				
+				// set temp elements to narrowed down results
+				tempElements = subQueryElements;
+			}
+		}
+		
+		// filter out invalid matches
+		HtmlElements unsortedElements = new HtmlElements();
+		for (HtmlElement tempElement: tempElements) {
+			if(conditions.elementValid(tempElement)) {
+				tempElement.setWindowName(browser.window().getCurrentWindowName());
+				unsortedElements.add(tempElement);
+			}
+		}
+		
+		// fetch and store data for elements
+		// this needs to be done before sorting because of better performance
+		unsortedElements.fetchDataForCache();
+		
+		if(!elementTypes.isEmpty()) {
+			// set element types if specified by query
+			unsortedElements.setTypes(elementTypes);
+		}
+		
+		// sort results
+		HtmlElements sortedElements = unsortedElements; 
+		for (Condition condition: conditions) {
+			// TODO what to do if there are several and/or different sorts?
+			if(condition instanceof ClosenessCondition) {
+				sortedElements = condition.sortElements(unsortedElements);
+				break;
+			}
+		}
+		
+		// limit results
+		HtmlElements limitedElements = new HtmlElements();
+		for (HtmlElement sortedElement: sortedElements) {
+			if(limit == 0 || limitedElements.size() < limit) {
+				sortedElement.setWindowName(browser.window().getCurrentWindowName());
+				limitedElements.add(sortedElement);
+			}
+		}
+		
+		// finalize results
+		// TODO maybe there are still duplicates in the result
+		resultElements = limitedElements;
+		
+//		System.out.println(resultElements);
 		return resultElements;
 	}
 	

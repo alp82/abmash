@@ -115,19 +115,19 @@ public class JavaScript {
 		//   var attributes = jQuery('div#header').getAttributeNames();
 		prerequisiteScripts += getJsFromFile("jquery-attributes");
 
-		// custom visual closeness/direction selector in jQuery
-		// Usage in JavaScript:
-		//   var divs = jQuery('div:above("selector")');
-		//   var divs = jQuery('div:below("selector")');
-		//   var divs = jQuery('div:leftTo("selector")');
-		//   var divs = jQuery('div:rightTo("selector")');
-		// Parameters:
-		//   selector: any jQuery selector which finds exactly one element
-		prerequisiteScripts += getJsFromFile("jquery-visual");
-		
 		// abmash control scripts
 		prerequisiteScripts += getJsFromFile("abmash-control");
 
+		// custom visual closeness/direction selector in jQuery
+		// Usage in JavaScript:
+		//   var divs = jQuery('div:above(jQuery("selector"))');
+		//   var divs = jQuery('div:below(jQuery("selector"))');
+		//   var divs = jQuery('div:leftTo(jQuery("selector"))');
+		//   var divs = jQuery('div:rightTo(jQuery("selector"))');
+		// Parameters:
+		//   selector: any jQuery object
+		prerequisiteScripts += getJsFromFile("abmash-visual");
+		
 		prerequisiteScripts += "}\n";
 		
 		// execute all needed scripts at once

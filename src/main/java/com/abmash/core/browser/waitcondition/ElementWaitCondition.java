@@ -2,6 +2,7 @@ package com.abmash.core.browser.waitcondition;
 
 
 import com.abmash.api.HtmlElement;
+import com.abmash.api.HtmlQuery;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -12,18 +13,18 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
  */
 public class ElementWaitCondition implements ExpectedCondition<Boolean> {
 	 
-	HtmlElement element = null;
+	HtmlQuery query = null;
  
-	public ElementWaitCondition(HtmlElement element) {
-		this.element = element;
+	public ElementWaitCondition(HtmlQuery query) {
+		this.query = query;
 	}
- 
+		
 	/**
 	 * Condition is met if target is found and its inner text or value equals the given text
 	 */
 	public Boolean apply(WebDriver webDriver) {
 		// check if element does exist 
-		return element instanceof HtmlElement;
+		return query.findFirst() instanceof HtmlElement;
 	}
  
 }

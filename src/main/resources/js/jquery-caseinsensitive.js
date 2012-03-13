@@ -1,5 +1,5 @@
-jQuery.expr[':'].equallyCaseInsensitive = function(node, stackIndex, properties) { 
-  return jQuery.trim(jQuery(node).text().toLowerCase()) ===  jQuery.trim(properties[3].toLowerCase());
+jQuery.expr[':'].isCaseInsensitive = function(node, stackIndex, properties) { 
+  return jQuery.trim((node.textContent || node.innerText || "").toLowerCase()) === jQuery.trim((properties[3] || "").toLowerCase());
 };
 
 jQuery.expr[':'].containsCaseInsensitive = function(node, stackIndex, properties) { 

@@ -1,11 +1,10 @@
 Abmash
 ======
-Abmash is a Java framework to automate web applications, based on Selenium/
-Webdriver, Firefox and JQuery. The goal is that programmers do not need any
-knowledge about the HTML/CSS source code of web pages. Instead, elements
-can be found by querying for visual attributes and visible text.
+**Abmash is human-oriented and vision-based imitation of browser interactions.**
 
-**Abmash is human-oriented imitation of browser interactions.**
+Getting Started
+---------------
+TODO Screencast
 
 *Example:*
 
@@ -26,13 +25,20 @@ page, independently from the page source and DOM structure. Correspondingly,
 `isTitle()` not only selects `<h1>`, `<h2>`, ... elements, but also elements with a
 bigger font-size than the average on the current page.
 
-Abmash is still under heavy development. Please let me know if you are interested in this project.
+Implementation Details
+----------------------
+Abmash is a Java framework to automate web applications, based on
+Selenium/Webdriver, Firefox and JQuery. The goal is that programmers do
+not need any knowledge about the HTML/CSS source code of web pages. Instead,
+elements can be found by querying for visual attributes and visible text.
+
+**Abmash is still under heavy development. Please let me know if you are interested in this project.**
 
 Maven
 -----
 Abmash snapshots are available as Maven repositories.
 
-First, add the following repository:
+First put the following repository in your `pom.xml`:
 
 	<repositories>
 		<repository>
@@ -41,7 +47,7 @@ First, add the following repository:
 		</repository>
 	</repositories>
 
-Then, put this dependency in your `pom.xml`:
+Then add this dependency:
 
 	<dependencies>
 		<dependency>

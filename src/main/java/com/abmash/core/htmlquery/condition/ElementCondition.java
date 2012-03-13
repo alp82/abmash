@@ -164,7 +164,7 @@ public class ElementCondition extends Condition {
 
 		// find elements with font-size bigger than the default
 		HtmlElement body = browser.query().tag("body").findFirst();
-		selectorGroups.add(new SelectorGroup(checkElementCssAttribute("*", Arrays.asList(body.getCssValue("font-size")), "font-size", CSSAttributeMatcher.GREATER_THAN)));
+		selectorGroups.add(checkElementCssAttribute("*", Arrays.asList(body.getCssValue("font-size")), "font-size", CSSAttributeMatcher.GREATER_THAN));
 
 		// find target by html attributes which match exactly or partially
 		selectorGroups.add(checkElementAttributes("*", queryStrings, attributeNames, Arrays.asList(AttributeMatcher.EXACT, AttributeMatcher.WORD, AttributeMatcher.STARTSWITH, AttributeMatcher.ENDSWITH, AttributeMatcher.CONTAINS)));
@@ -195,32 +195,36 @@ public class ElementCondition extends Condition {
 		// TODO with onclick attribute
 		// TODO with onclick event handler
 		
-		List<String> elementNames = Arrays.asList("a");
+		List<String> linkNames = Arrays.asList("a");
 		List<String> inputNames = Arrays.asList("input[type='checkbox']", "input[type='radio']", "input[type='submit']", "input[type='button']", "input[type='image']", "button");
+		List<String> elementNames = new ArrayList<String>(linkNames);
+		elementNames.addAll(inputNames);
 		List<String> attributeNames = Arrays.asList("id", "value", "name", "class", "title", "alt", "href", "*");
 
 		// find checkboxes, radioboxes and buttons
 		selectorGroups.add(checkElementAttributes(inputNames, queryStrings, attributeNames, Arrays.asList(AttributeMatcher.EXACT, AttributeMatcher.WORD, AttributeMatcher.CONTAINS)));
 
-		// find checkboxes and radioboxes by searching for closest fitting label
-//		if(textQuery != null && !textQuery.equals("")) {
-//			// TODO find with rootelements
-//			try {
-//				HtmlElements labelElements = browser.query().xPathSelector("//*[contains(" + xpathToLowercase + ", '" + textQuery.toLowerCase() + "')]").find();
-//				if(!labelElements.isEmpty()) {
-//					// has(null) needed so that no loops can occur
-//					HtmlElement clickableInput = browser.query().has(null).cssSelector("input[type='checkbox'],input[type='radio']").isClickable().closeToAny(labelElements).findFirst();
-//					if(clickableInput instanceof HtmlElement) {
-//						selectors.add(new SelectorGroup(new DirectMatchSelector(new HtmlElements(clickableInput))));
-//					}
-//				}
-//			} catch (Exception e) {
-//				// if no element was found, just continue with next selectors
-//			}
-//		}
+		// find clickables by searching for closest fitting label
+		if(!queryStrings.isEmpty()) {
+			try {
+				HtmlElements labelElements = browser.query().isText().has(queryStrings).limit(2).find();
+				if(!labelElements.isEmpty()) {
+					SelectorGroup group = new SelectorGroup();
+					group.addReferenceElements(labelElements);
+					// TODO find('...') should be isClickable() ...
+					group.add(new JQuerySelector("find('" + StringUtils.join(elementNames, ',') + "').hasLabel(abmash.getData('referenceElements'))"));
+					// TODO allow higher limit
+					group.setLimit(1);
+					selectorGroups.add(group);
+				}
+			} catch (Exception e) {
+				// if no element was found, just continue with next selectors
+				e.printStackTrace();
+			}
+		}
 
 		// find any element by inner text
-		selectorGroups.add(checkElementText(elementNames, queryStrings, Arrays.asList(TextMatcher.EXACT, TextMatcher.CONTAINS)));
+		selectorGroups.add(checkElementText(linkNames, queryStrings, Arrays.asList(TextMatcher.EXACT, TextMatcher.CONTAINS)));
 		
 		// find target by html attributes
 		selectorGroups.add(checkElementAttributes(elementNames, queryStrings, attributeNames, Arrays.asList(AttributeMatcher.EXACT, AttributeMatcher.WORD, AttributeMatcher.CONTAINS)));
@@ -246,7 +250,6 @@ public class ElementCondition extends Condition {
 		if(queryStrings.isEmpty()) {
 			SelectorGroup group = new SelectorGroup(Type.FALLBACK);
 			group.add(new CssSelector(StringUtils.join(elementNames, ',')));
-			group.add(new CssSelector(StringUtils.join(inputNames, ',')));
 			selectorGroups.add(group);
 		}
 	}
@@ -255,14 +258,14 @@ public class ElementCondition extends Condition {
 		// TODO without check and radioboxes
 		List<String> elementNames = Arrays.asList(
 				"input[type=password]", "input[type=text]", "input[type=email]", "input[type=url]",
-				"input[type=number]", "input[type=search]", "textarea");
+				"input[type=number]", "input[type=search]", "textarea", "input");
 		List<String> attributeNames = Arrays.asList("id", "name", "value", "class", "type", "title", "*");
 
 		// find target by html attributes which match exactly
 		selectorGroups.add(checkElementAttributes(elementNames, queryStrings, attributeNames, AttributeMatcher.EXACT));
 
 		// find tinyMce editor iframes
-		// TODO move to FindClosest 
+		// TODO move to JavaScript
 		Selector tinymceSelector = new CssSelector(".mceIframeContainer iframe[id*='" + queryStrings + "']");
 		try {
 			// TODO find with rootelements if needed
@@ -289,16 +292,17 @@ public class ElementCondition extends Condition {
 		// TODO find inputs with fitting labels by "id" and "for"
 		
 		// find inputs by searching for closest fitting label
-		// TODO find with rootelements
 		if(!queryStrings.isEmpty()) {
 			try {
 				HtmlElements labelElements = browser.query().isText().has(queryStrings).limit(2).find();
 				if(!labelElements.isEmpty()) {
-					// has() not allowed so that no loops can occur
-					HtmlElement directMatch = browser.query().isTypable().closestTo(labelElements, Direction.INPUT).findFirst();
-					if(directMatch instanceof HtmlElement) {
-						selectorGroups.add(new SelectorGroup(new DirectMatchSelector(new HtmlElements(directMatch))));
-					}
+					SelectorGroup group = new SelectorGroup();
+					group.addReferenceElements(labelElements);
+					// TODO find('...') should be isTypable() ...
+					group.add(new JQuerySelector("find('" + StringUtils.join(elementNames, ',') + "').hasLabel(abmash.getData('referenceElements'))"));
+					// TODO allow higher limit
+					group.setLimit(1);
+					selectorGroups.add(group);
 				}
 			} catch (Exception e) {
 				// if no element was found, just continue with next selectors
@@ -366,17 +370,17 @@ public class ElementCondition extends Condition {
 		//selectors.add(new SelectorGroup(new JQuerySelector("find('select:has(option:containsCaseInsensitive(" + textQuery + "))')")));
 
 		// find datepickers by searching for closest fitting label
-		// TODO find with rootelements
 		if(!queryStrings.isEmpty()) {
 			try {
 				HtmlElements labelElements = browser.query().isText().has(queryStrings).limit(2).find();
 				if(!labelElements.isEmpty()) {
-					selectorGroups.add(new SelectorGroup(new JQuerySelector("find('*:hasLabel(" + labelElements + ")')")));
-					// has() not allowed so that no loops can occur
-//					HtmlElement directMatch = browser.query().isDatepicker().closestTo(labelElements, Direction.INPUT).findFirst();
-//					if(directMatch instanceof HtmlElement) {
-//						selectorGroups.add(new SelectorGroup(new DirectMatchSelector(new HtmlElements(directMatch))));
-//					}
+					SelectorGroup group = new SelectorGroup();
+					group.addReferenceElements(labelElements);
+					// TODO find('...') should be isDatePicker() ...
+					group.add(new JQuerySelector("find('" + StringUtils.join(elementNames, ',') + "').hasLabel(abmash.getData('referenceElements'))"));
+					// TODO allow higher limit
+					group.setLimit(1);
+					selectorGroups.add(group);
 				}
 			} catch (Exception e) {
 				// if no element was found, just continue with next selectors
@@ -384,8 +388,7 @@ public class ElementCondition extends Condition {
 			}
 		}
 		
-		
-		// find target by  html attributes
+		// find target by html attributes
 		selectorGroups.add(checkElementAttributes(elementNames, Arrays.asList("datepicker"), attributeNames, Arrays.asList(AttributeMatcher.CONTAINS)));
 		selectorGroups.add(checkElementAttributes(elementNames, Arrays.asList("calendar"), attributeNames, Arrays.asList(AttributeMatcher.CONTAINS)));
 		
@@ -408,19 +411,24 @@ public class ElementCondition extends Condition {
 		List<String> elementNames = Arrays.asList("img");
 		List<String> attributeNames = Arrays.asList("id", "title", "alt", "class", "name", "*");
 
+		// find exact image matches
+		selectorGroups.add(checkElementAttributes(elementNames, queryStrings, attributeNames, Arrays.asList(AttributeMatcher.EXACT)));
+		selectorGroups.add(checkElementCssAttribute("*", queryStrings, "background-image", Arrays.asList(CSSAttributeMatcher.EQUAL)));
+		
 		// find target by html attributes
-		selectorGroups.add(checkElementAttributes(elementNames, queryStrings, attributeNames, Arrays.asList(AttributeMatcher.EXACT, AttributeMatcher.WORD, AttributeMatcher.CONTAINS)));
+		selectorGroups.add(checkElementAttributes(elementNames, queryStrings, attributeNames, Arrays.asList(AttributeMatcher.WORD, AttributeMatcher.CONTAINS)));
 		
-		// CSS background images
-		// TODO with attributes
-		// TODO as fallback (without attributes)
-//		selectors.add(new SelectorGroup(checkElementCssAttribute("*", "url(", "background-image", CSSAttributeMatcher.CONTAINS)));
+		// CSS background images with check if their url match the given query strings
+		// exists also as fallback without query string matching
+		selectorGroups.add(checkElementCssAttribute("*", queryStrings, "background-image", Arrays.asList(CSSAttributeMatcher.CONTAINS)));
 		
-		// if there were no results just find all images
+		// if there were no results just find all images and elements with background images
 		// but only if no text query was specified
 		if(queryStrings.isEmpty()) {
 			SelectorGroup group = new SelectorGroup(Type.FALLBACK);
 			group.add(new CssSelector(StringUtils.join(elementNames, ',')));
+			// TODO also as fallback if query strings were specified?
+			group.addAll(checkElementCssAttribute("*", Arrays.asList("none"), "background-image", Arrays.asList(CSSAttributeMatcher.NOT_EQUAL)));
 			selectorGroups.add(group);
 		}
 	}
