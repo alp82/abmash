@@ -1,10 +1,12 @@
 Abmash
 ======
-**Abmash is human-oriented and vision-based imitation of browser interactions.**
+**Abmash is imitation of human browser interactions, based on the visible rendered web page.**
 
 Getting Started
 ---------------
 TODO Screencast
+
+Abmash is all about interacting with browser as humans would do. Including AJAX and forms. 
 
 *Example:*
 

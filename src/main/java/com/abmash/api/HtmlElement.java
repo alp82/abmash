@@ -36,7 +36,7 @@ import com.abmash.core.element.Location;
 import com.abmash.core.element.Size;
 import com.abmash.core.htmlquery.condition.ElementCondition.ElementType;
 import com.abmash.core.htmlquery.selector.JQuerySelector;
-import com.abmash.core.tools.SimpleDataTypeConversion;
+import com.abmash.core.tools.DataTypeConversion;
 
 
 /**
@@ -544,13 +544,13 @@ public class HtmlElement extends Element {
 		
 		// coordinates and dimension
 		Map<String, Object> location = (Map<String, Object>) data.get("location");
-		Double left = SimpleDataTypeConversion.longOrDoubleToDouble(location.get("left"));
-		Double top = SimpleDataTypeConversion.longOrDoubleToDouble(location.get("top"));
+		Double left = DataTypeConversion.longOrDoubleToDouble(location.get("left"));
+		Double top = DataTypeConversion.longOrDoubleToDouble(location.get("top"));
 		this.location = new Location(left, top);
 		
 		List<Object> size = (List<Object>) data.get("size");
-		Double width = SimpleDataTypeConversion.longOrDoubleToDouble(size.get(0));
-		Double height = SimpleDataTypeConversion.longOrDoubleToDouble(size.get(1));
+		Double width = DataTypeConversion.longOrDoubleToDouble(size.get(0));
+		Double height = DataTypeConversion.longOrDoubleToDouble(size.get(1));
 		this.size = new Size(width, height);
 	}
 	

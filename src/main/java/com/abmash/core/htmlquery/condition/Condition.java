@@ -342,7 +342,7 @@ public abstract class Condition {
 			selectorGroup.add(new JQuerySelector(expression, weight));
 		}
 		
-		System.out.println(selectorGroup);
+//		System.out.println(selectorGroup);
 		return selectorGroup;
 	}
 	
