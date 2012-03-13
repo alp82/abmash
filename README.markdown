@@ -30,9 +30,9 @@ bigger font-size than the average on the current page.
 Implementation Details
 ----------------------
 Abmash is a Java framework to automate web applications, based on
-**Selenium**/**Webdriver**, **Firefox** and **jQuery**. The goal is that programmers do
-not need any knowledge about the HTML/CSS source code of web pages. Instead,
-elements can be found by querying for visual attributes and visible text.
+**[Selenium](http://seleniumhq.org/)**, **[Firefox](http://www.mozilla.org/firefox/)** and **[jQuery](http://jquery.com/)**.
+The goal is that programmers do not need any knowledge about the HTML/CSS source code of web pages.
+Instead, elements can be found by querying for visual attributes and visible text.
 
 **Abmash is still under heavy development. Please let me know if you are interested in this project.**
 
