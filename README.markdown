@@ -1,6 +1,6 @@
 Abmash
 ======
-**Abmash is imitation of human browser interactions, based on the visible rendered web page.**
+**Abmash is imitation of human interactions with a web browser, based on the visible rendered output.**
 
 Getting Started
 ---------------
@@ -30,7 +30,7 @@ bigger font-size than the average on the current page.
 Implementation Details
 ----------------------
 Abmash is a Java framework to automate web applications, based on
-Selenium/Webdriver, Firefox and JQuery. The goal is that programmers do
+**Selenium**/**Webdriver**, **Firefox** and **jQuery**. The goal is that programmers do
 not need any knowledge about the HTML/CSS source code of web pages. Instead,
 elements can be found by querying for visual attributes and visible text.
 
