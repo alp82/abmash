@@ -53,7 +53,7 @@ Then add this dependency:
 		<dependency>
 			<groupId>com.abmash</groupId>
 			<artifactId>abmash</artifactId>
-			<version>0.1.7-SNAPSHOT</version>
+			<version>0.1.8-SNAPSHOT</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
