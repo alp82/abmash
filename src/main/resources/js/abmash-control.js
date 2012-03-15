@@ -43,12 +43,12 @@
 		
 		// normal conditions
 		var results = queryConditions(conditions, referenceElements);
-		if(!results || results.length == 0) return false;
+		if(!results || results.length == 0) return [];
 		results = results.unique();
 		
 		// color conditions
 		var finalResults = results;
-		if(colorConditions.length > 0) {
+		if(colorConditions) {
 			abmash.setData('queryElements', results);
 			finalResults = queryConditions(colorConditions, referenceElements);
 		}

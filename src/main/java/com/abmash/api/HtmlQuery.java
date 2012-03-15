@@ -1391,7 +1391,7 @@ public class HtmlQuery {
 		ArrayList<RemoteWebElement> seleniumElements = (ArrayList<RemoteWebElement>) browser.javaScript(
 				script,
 				jsonConditions.toString(),
-				jsonColorConditions.toString(),
+				hasColorConditions ? jsonColorConditions.toString() : false,
 				rootElements,
 				referenceElements,
 				0/*limit*/
