@@ -39,7 +39,7 @@
 		queryLimit = limit;
 		queryElementsFound = 0;
 		// TODO how do multiple root elements work?
-		abmash.setData('queryElements', rootElements.length > 0 ? rootElements.join(',') : document.body);
+		abmash.setData('queryElements', rootElements.length > 0 ? rootElements.join(',') : document);
 		
 		// normal conditions
 		var results = queryConditions(conditions, referenceElements);
@@ -49,7 +49,7 @@
 		// color conditions
 		var finalResults = results;
 		if(colorConditions) {
-			abmash.setData('queryElements', results);
+			abmash.setData('queryElements', finalResults);
 			finalResults = queryConditions(colorConditions, referenceElements);
 		}
 				

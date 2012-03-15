@@ -64,7 +64,7 @@ public class JavaScriptExecution extends ActionOnBrowser {
 			try {
 				jsErrors = JavaScriptError.readErrors(browser.getWebDriver());
 			} catch (Exception e2) {
-				System.err.println("Warning: fetching JavaScriptErrors failed");
+				System.err.println("Warning: fetching JavaScriptErrors failed: " + e2.getMessage());
 				e2.printStackTrace();
 			}
 			String errorMessage = "JavaScript execution failed: " + jsMessage;

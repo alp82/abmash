@@ -679,10 +679,11 @@ public class HtmlElement extends Element {
 	 * @return the tag name of the element
 	 */
 	public String getTagName() {
+		// TODO tag name as jquery command + cached data?
 		if(tagName == null) {
 			switchToElementWindow();
 			try {
-				tagName = seleniumElement.getTagName();
+				tagName = seleniumElement.getTagName().toLowerCase();
 			} catch (Exception e) {
 				tagName = "";
 			}

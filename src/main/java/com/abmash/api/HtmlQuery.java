@@ -14,12 +14,14 @@ import javax.imageio.ImageIO;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.remote.RemoteWebElement;
 
 import com.abmash.api.data.List;
 import com.abmash.api.data.Table;
+import com.abmash.core.color.ColorName;
 import com.abmash.core.color.Dominance;
 import com.abmash.core.color.Tolerance;
 import com.abmash.core.htmlquery.condition.ClosenessCondition;
@@ -270,7 +272,8 @@ public class HtmlQuery {
 	 * 	TITLE			headlines and elements with bigger font size
 	 * 	CLICKABLE		clickable elements like links or buttons
 	 * 	TYPABLE			input elements which can be used to enter text
-	 * 	CHOOSABLE		select input elements like drop downs or select lists
+	 * 	CHOOSABLE		input elements like drop downs or select lists
+	 * 	DATEPICKER		datepicker elements for selecting date and time
 	 * 	IMAGE			images
 	 * 	LIST			lists
 	 * 	TABLE			tables
@@ -1129,6 +1132,24 @@ public class HtmlQuery {
 	 * @see HtmlQuery#isColor(Color, double)
 	 * @return true if image is covered by the color
 	 */
+	public HtmlQuery isColor(String color, Tolerance tolerance) {
+		ColorName colorName = null;
+		try {
+			// try to find the right color name
+			colorName = ColorName.valueOf(color.toUpperCase());
+		} catch (Exception e) {
+			return this;
+		}
+		
+		return isColor(colorName.getColor(), tolerance.getValue());
+	}
+	
+	/**
+	 * Checks if image is covered by the specified color, considering the given tolerance.
+	 * 
+	 * @see HtmlQuery#isColor(Color, double)
+	 * @return true if image is covered by the color
+	 */
 	public HtmlQuery isColor(Color color, Tolerance tolerance) {
 		return isColor(color, tolerance.getValue());
 	}
@@ -1153,8 +1174,26 @@ public class HtmlQuery {
 	 * @see HtmlQuery#hasColor(Color, double, double)
 	 * @return true if image is covered by the color
 	 */
+	public HtmlQuery hasColor(String color, double tolerance, double dominance) {
+		ColorName colorName = null;
+		try {
+			// try to find the right color name
+			colorName = ColorName.valueOf(color.toUpperCase());
+		} catch (Exception e) {
+			return this;
+		}
+		
+		return hasColor(colorName.getColor(), tolerance, dominance);
+	}
+
+	/**
+	 * Checks if image contains the specified color, considering the given dominance and tolerance.
+	 * 
+	 * @see HtmlQuery#hasColor(Color, double, double)
+	 * @return true if image is covered by the color
+	 */
 	public HtmlQuery hasColor(Color color, Tolerance tolerance, double dominance) {
-		return hasColor(color, dominance, tolerance.getValue());
+		return hasColor(color, tolerance.getValue(), dominance);
 	}
 	
 	/**
@@ -1164,7 +1203,7 @@ public class HtmlQuery {
 	 * @return true if image is covered by the color
 	 */
 	public HtmlQuery hasColor(Color color, double tolerance, Dominance dominance) {
-		return hasColor(color, dominance.getValue(), tolerance);
+		return hasColor(color, tolerance, dominance.getValue());
 	}
 
 	/**
@@ -1174,13 +1213,13 @@ public class HtmlQuery {
 	 * @return true if image is covered by the color
 	 */
 	public HtmlQuery hasColor(Color color, Tolerance tolerance, Dominance dominance) {
-		return hasColor(color, dominance.getValue(), tolerance.getValue());
+		return hasColor(color, tolerance.getValue(), dominance.getValue());
 	}
 	
 	/**
 	 * Checks if image contains the specified color, considering the given dominance and tolerance.
 	 * 
-	 * @param color the color value to check
+	 * @param color the color value to check, see also {@link ColorName#getColor()}
 	 * @param dominance the lower the value, the lower the dominance of the color in the
 	 * image within the tolerance parameter. <code>0</code> is always passed through,
 	 * <code>1</code> is only true if the image has exclusively colors within the tolerance
@@ -1367,7 +1406,7 @@ public class HtmlQuery {
 					}
 				}
 			}
-//				System.out.println(jsonConditions.toString(2));
+//			System.out.println(jsonConditions.toString(2));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

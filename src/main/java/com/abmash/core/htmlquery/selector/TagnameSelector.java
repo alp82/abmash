@@ -22,7 +22,7 @@ public class TagnameSelector extends Selector {
 	@Override
 	public String getExpressionAsJQueryCommand() {
 		// TODO replace single quotes if necessary
-		String script = "jQuery(arguments[0]).find('" + expression/*.replaceAll("'", "\\\\'")*/ + "')";
+		String script = "jQuery(abmash.getData('queryElements')).find('" + expression/*.replaceAll("'", "\\\\'")*/ + "')";
 		return script;
 	}
 	

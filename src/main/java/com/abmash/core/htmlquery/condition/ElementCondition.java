@@ -10,7 +10,6 @@ import org.apache.commons.lang.StringUtils;
 import com.abmash.api.Browser;
 import com.abmash.api.HtmlElement;
 import com.abmash.api.HtmlElements;
-import com.abmash.core.htmlquery.condition.ClosenessCondition.Direction;
 import com.abmash.core.htmlquery.selector.CssSelector;
 import com.abmash.core.htmlquery.selector.DirectMatchSelector;
 import com.abmash.core.htmlquery.selector.JQuerySelector;
@@ -18,7 +17,6 @@ import com.abmash.core.htmlquery.selector.Selector;
 import com.abmash.core.htmlquery.selector.SelectorGroup;
 import com.abmash.core.htmlquery.selector.SelectorGroup.Type;
 import com.abmash.core.htmlquery.selector.XpathSelector;
-
 
 public class ElementCondition extends Condition {
 	
