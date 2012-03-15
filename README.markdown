@@ -41,7 +41,7 @@ A list of all named colors can be found at [Recognized color keyword names](http
 Custom RGB values are possible too.
 The *tolerance* defines how close the specified color has to match.
 The *dominance* controls how many percent of the element's pixels need to match these constraints.
-By the way, images are also elements with a background image.
+By the way, the `isImage` condition also retrieves elements with a background image.
 
 Documentation
 -------------
