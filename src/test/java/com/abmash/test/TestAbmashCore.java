@@ -3,12 +3,12 @@ package com.abmash.test;
 import static org.junit.Assert.*;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.hamcrest.core.IsInstanceOf.instanceOf;
-import static org.hamcrest.core.IsSame.sameInstance;
-import static org.hamcrest.core.IsNull.*;
-import static org.hamcrest.core.AllOf.*;
-import static org.hamcrest.core.AnyOf.*;
+//import static org.hamcrest.core.IsEqual.equalTo;
+//import static org.hamcrest.core.IsInstanceOf.instanceOf;
+//import static org.hamcrest.core.IsSame.sameInstance;
+//import static org.hamcrest.core.IsNull.*;
+//import static org.hamcrest.core.AllOf.*;
+//import static org.hamcrest.core.AnyOf.*;
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -20,7 +20,7 @@ import com.abmash.api.Browser;
 import com.abmash.api.HtmlElement;
 import com.abmash.api.HtmlElements;
 
-public class AbmashTests {
+public class TestAbmashCore {
 
 	static Browser browser;
 	
