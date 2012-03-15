@@ -37,7 +37,8 @@ find elements by their color. Example:
 
 	HtmlElements blueImages = browser.query().isImage().hasColor("blue", Tolerance.LOW, Dominance.HIGH).find();
 
-A list of all colors can be found at [Recognized color keyword names](http://www.w3.org/TR/SVG/types.html#ColorKeywords).
+A list of all named colors can be found at [Recognized color keyword names](http://www.w3.org/TR/SVG/types.html#ColorKeywords).
+Custom RGB values are possible too.
 The *tolerance* defines how close the specified color has to match.
 The *dominance* controls how many percent of the element's pixels need to match these constraints.
 By the way, images are also elements with a background image.
