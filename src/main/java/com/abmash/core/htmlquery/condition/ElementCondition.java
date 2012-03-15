@@ -189,14 +189,10 @@ public class ElementCondition extends Condition {
 	}
 	
 	private void selectorsForClickables() {
-		// TODO range sliders: "input[type=range]"
-		// TODO date pickers: "input[type=date]"
-		// TODO color pickers: "input[type=color]"
-		// TODO with onclick attribute
 		// TODO with onclick event handler
 		
-		List<String> linkNames = Arrays.asList("a");
-		List<String> inputNames = Arrays.asList("input[type='checkbox']", "input[type='radio']", "input[type='submit']", "input[type='button']", "input[type='image']", "button");
+		List<String> linkNames = Arrays.asList("a", "*[onclick]");
+		List<String> inputNames = Arrays.asList("input[type='checkbox']", "input[type='radio']", "input[type='submit']", "input[type='button']", "input[type='image']", "input[type=range]", "input[type=color]", "button");
 		List<String> elementNames = new ArrayList<String>(linkNames);
 		elementNames.addAll(inputNames);
 		List<String> attributeNames = Arrays.asList("id", "value", "name", "class", "title", "alt", "href", "*");
@@ -363,7 +359,7 @@ public class ElementCondition extends Condition {
 	}
 	
 	private void selectorsForDatepickers() {
-		List<String> elementNames = Arrays.asList("input");
+		List<String> elementNames = Arrays.asList("input[type=date], input");
 		List<String> attributeNames = Arrays.asList("id", "class", "name");
 		
 		// find target by option labels
@@ -423,14 +419,11 @@ public class ElementCondition extends Condition {
 		selectorGroups.add(checkElementCssAttribute("*", queryStrings, "background-image", Arrays.asList(CSSAttributeMatcher.CONTAINS)));
 		
 		// if there were no results just find all images and elements with background images
-		// but only if no text query was specified
-		if(queryStrings.isEmpty()) {
-			SelectorGroup group = new SelectorGroup(Type.FALLBACK);
-			group.add(new CssSelector(StringUtils.join(elementNames, ',')));
-			// TODO also as fallback if query strings were specified?
-			group.addAll(checkElementCssAttribute("*", Arrays.asList("none"), "background-image", Arrays.asList(CSSAttributeMatcher.NOT_EQUAL)));
-			selectorGroups.add(group);
-		}
+		SelectorGroup group = new SelectorGroup(Type.FALLBACK);
+		group.add(new CssSelector(StringUtils.join(elementNames, ',')));
+		// TODO also as fallback if query strings were specified?
+		group.addAll(checkElementCssAttribute("*", Arrays.asList("none"), "background-image", Arrays.asList(CSSAttributeMatcher.NOT_EQUAL)));
+		selectorGroups.add(group);
 	}
 	
 	private void selectorsForLists() {

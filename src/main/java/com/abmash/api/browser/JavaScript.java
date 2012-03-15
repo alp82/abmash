@@ -120,13 +120,16 @@ public class JavaScript {
 
 		// custom visual closeness/direction selector in jQuery
 		// Usage in JavaScript:
-		//   var divs = jQuery('div:above(jQuery("selector"))');
-		//   var divs = jQuery('div:below(jQuery("selector"))');
-		//   var divs = jQuery('div:leftTo(jQuery("selector"))');
-		//   var divs = jQuery('div:rightTo(jQuery("selector"))');
+		//   divs = jQuery('div:above(jQuery("selector"))');
+		//   divs = jQuery('div:below(jQuery("selector"))');
+		//   divs = jQuery('div:leftTo(jQuery("selector"))');
+		//   divs = jQuery('div:rightTo(jQuery("selector"))');
 		// Parameters:
 		//   selector: any jQuery object
 		prerequisiteScripts += getJsFromFile("abmash-visual");
+		
+		// abmash image processing
+		prerequisiteScripts += getJsFromFile("abmash-image");
 		
 		prerequisiteScripts += "}\n";
 		

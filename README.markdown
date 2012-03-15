@@ -4,9 +4,12 @@ Abmash is about: **Imitation of human interactions with a web browser, based on 
 
 Getting Started
 ---------------
-TODO Screencast
+Abmash is all about interacting with a browser as humans would do. Including AJAX and forms.
 
-Abmash is all about interacting with a browser as humans would do. Including AJAX and forms. 
+The goal is that programmers do not need any knowledge about the HTML/CSS source code of web pages.
+Instead, elements can be found by querying for visual attributes and visible text.
+
+TODO Screencast
 
 *Example (Java):*
 
@@ -27,12 +30,26 @@ page, independently from the page source and DOM structure. Correspondingly,
 `isTitle()` not only selects `<h1>`, `<h2>`, ... elements, but also elements with a
 bigger font-size than the average on the current page.
 
+Color Queries
+-------------
+Colors are an important part of the visual representation of a web page. Therefore, Abmash allows you to
+find elements by their color. Example:
+
+	HtmlElements blueImages = browser.query().isImage().hasColor("blue", Tolerance.LOW, Dominance.HIGH).find();
+
+A list of all colors can be found at [Recognized color keyword names](http://www.w3.org/TR/SVG/types.html#ColorKeywords).
+The *tolerance* defines how close the specified color has to match.
+The *dominance* controls how many percent of the element's pixels need to match these constraints.
+By the way, images are also elements with a background image.
+
+Documentation
+-------------
+TODO Javadoc link
+
 Implementation Details
 ----------------------
-Abmash is a Java framework to automate web applications, based on
-**[Selenium](http://seleniumhq.org/)**, **[Firefox](http://www.mozilla.org/firefox/)** and **[jQuery](http://jquery.com/)**.
-The goal is that programmers do not need any knowledge about the HTML/CSS source code of web pages.
-Instead, elements can be found by querying for visual attributes and visible text.
+Abmash is a Java framework to automate web applications, based on **[Selenium](http://seleniumhq.org/)**,
+**[Firefox](http://www.mozilla.org/firefox/)** and **[jQuery](http://jquery.com/)**.
 
 **Abmash is still under heavy development. Please let me know if you are interested in this project.**
 

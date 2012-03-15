@@ -1,19 +1,30 @@
 package com.abmash.api;
 
 
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.remote.RemoteWebElement;
 
 import com.abmash.api.data.List;
 import com.abmash.api.data.Table;
+import com.abmash.core.color.Dominance;
+import com.abmash.core.color.Tolerance;
 import com.abmash.core.htmlquery.condition.ClosenessCondition;
 import com.abmash.core.htmlquery.condition.ClosenessCondition.Direction;
+import com.abmash.core.htmlquery.condition.ColorCondition;
 import com.abmash.core.htmlquery.condition.Condition;
 import com.abmash.core.htmlquery.condition.Conditions;
 import com.abmash.core.htmlquery.condition.ElementCondition;
@@ -21,7 +32,6 @@ import com.abmash.core.htmlquery.condition.ElementCondition.ElementType;
 import com.abmash.core.htmlquery.condition.SelectorCondition;
 import com.abmash.core.htmlquery.condition.SelectorCondition.QueryType;
 import com.abmash.core.htmlquery.condition.TagnameCondition;
-import com.abmash.core.htmlquery.selector.DirectMatchSelector;
 import com.abmash.core.htmlquery.selector.Selector;
 import com.abmash.core.htmlquery.selector.SelectorGroup;
 import com.abmash.core.htmlquery.selector.SelectorGroup.Type;
@@ -1110,6 +1120,80 @@ public class HtmlQuery {
 	public HtmlQuery rightToAll(HtmlElements referenceElements) {
 		return closestTo(referenceElements, Direction.RIGHT_ALL);
 	}
+	
+	// color selectors
+	
+	/**
+	 * Checks if image is covered by the specified color, considering the given tolerance.
+	 * 
+	 * @see HtmlQuery#isColor(Color, double)
+	 * @return true if image is covered by the color
+	 */
+	public HtmlQuery isColor(Color color, Tolerance tolerance) {
+		return isColor(color, tolerance.getValue());
+	}
+
+	/**
+	 * Checks if image is covered by the specified color, considering the given tolerance.
+	 * 
+	 * @param color the color value to check
+	 * @param tolerance the lower the value, the lower the tolerance regarding the color
+	 * distance. <code>1</code> returns always true, <code>0</code> is only true if the
+	 * image is completely filled with that exact color
+	 * @return true if image is covered by the color
+	 */
+	public HtmlQuery isColor(Color color, double tolerance) {
+		conditions.add(new ColorCondition(color, tolerance));
+		return this;
+	}
+	
+	/**
+	 * Checks if image contains the specified color, considering the given dominance and tolerance.
+	 * 
+	 * @see HtmlQuery#hasColor(Color, double, double)
+	 * @return true if image is covered by the color
+	 */
+	public HtmlQuery hasColor(Color color, Tolerance tolerance, double dominance) {
+		return hasColor(color, dominance, tolerance.getValue());
+	}
+	
+	/**
+	 * Checks if image contains the specified color, considering the given dominance and tolerance.
+	 * 
+	 * @see HtmlQuery#hasColor(Color, double, double)
+	 * @return true if image is covered by the color
+	 */
+	public HtmlQuery hasColor(Color color, double tolerance, Dominance dominance) {
+		return hasColor(color, dominance.getValue(), tolerance);
+	}
+
+	/**
+	 * Checks if image contains the specified color, considering the given dominance and tolerance.
+	 * 
+	 * @see HtmlQuery#hasColor(Color, double, double)
+	 * @return true if image is covered by the color
+	 */
+	public HtmlQuery hasColor(Color color, Tolerance tolerance, Dominance dominance) {
+		return hasColor(color, dominance.getValue(), tolerance.getValue());
+	}
+	
+	/**
+	 * Checks if image contains the specified color, considering the given dominance and tolerance.
+	 * 
+	 * @param color the color value to check
+	 * @param dominance the lower the value, the lower the dominance of the color in the
+	 * image within the tolerance parameter. <code>0</code> is always passed through,
+	 * <code>1</code> is only true if the image has exclusively colors within the tolerance
+	 * range
+	 * @param tolerance the lower the value, the lower the tolerance regarding the color
+	 * distance. <code>1</code> is always passed through, <code>0</code> is only true if the
+	 * image has enough dominant pixels with that exact color
+	 * @return true if image contains the color
+	 */	
+	public HtmlQuery hasColor(Color color, double tolerance, double dominance) {
+		conditions.add(new ColorCondition(color, tolerance, dominance));
+		return this;
+	}
 
 	// custom selectors
 
@@ -1220,6 +1304,8 @@ public class HtmlQuery {
 		Map<String, HtmlElements> referenceElements = new HashMap<String, HtmlElements>(); 
 		
 		JSONArray jsonConditions = new JSONArray();
+		JSONArray jsonColorConditions = new JSONArray();
+		boolean hasColorConditions = false;
 		
 		// building queries
 		try {
@@ -1271,7 +1357,14 @@ public class HtmlQuery {
 					jsonCondition.put("type", condition.getType());
 					jsonCondition.put("selectorGroups", jsonSelectorGroups);
 					jsonCondition.put("fallbackSelectorGroups", jsonFallbackSelectorGroups);
-					jsonConditions.put(jsonCondition);
+					
+					if(condition instanceof ColorCondition) {
+						hasColorConditions = true;
+						jsonCondition.put("isColorCondition", "true");
+						jsonColorConditions.put(jsonCondition);
+					} else {
+						jsonConditions.put(jsonCondition);
+					}
 				}
 			}
 //				System.out.println(jsonConditions.toString(2));
@@ -1279,12 +1372,26 @@ public class HtmlQuery {
 			e.printStackTrace();
 		}
 		
+		// send screenshot if color queries requested
+		if(hasColorConditions) {
+			try {
+				// TODO find way to take only one screenshot
+				byte[] pageAsPNGByteArray = ((TakesScreenshot) browser.getWebDriver()).getScreenshotAs(OutputType.BYTES);
+				BufferedImage image = ImageIO.read(new ByteArrayInputStream(pageAsPNGByteArray));
+				String pageAsBase64PNG = "data:image/png;base64," + ((TakesScreenshot) browser.getWebDriver()).getScreenshotAs(OutputType.BASE64);
+				browser.javaScript("abmash.updatePageScreenshot(arguments[0], arguments[1], arguments[2])", pageAsBase64PNG, image.getWidth(), image.getHeight());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		// sending queries to jquery executor
-		String script = "return abmash.query(arguments[0], arguments[1], arguments[2], arguments[3]);";
+		String script = "return abmash.query(arguments[0], arguments[1], arguments[2], arguments[3], arguments[4]);";
 		@SuppressWarnings("unchecked")
 		ArrayList<RemoteWebElement> seleniumElements = (ArrayList<RemoteWebElement>) browser.javaScript(
 				script,
 				jsonConditions.toString(),
+				jsonColorConditions.toString(),
 				rootElements,
 				referenceElements,
 				0/*limit*/

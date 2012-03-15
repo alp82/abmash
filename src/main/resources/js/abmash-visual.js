@@ -1,6 +1,6 @@
 (function(jQuery) {
 	jQuery.fn.dimension = function() {
-		return [this.outerWidth(), this.outerHeight()];
+		return {width: this.outerWidth(), height: this.outerHeight()};
 	}
 })(jQuery); 
 

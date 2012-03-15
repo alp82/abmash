@@ -548,9 +548,9 @@ public class HtmlElement extends Element {
 		Double top = DataTypeConversion.longOrDoubleToDouble(location.get("top"));
 		this.location = new Location(left, top);
 		
-		List<Object> size = (List<Object>) data.get("size");
-		Double width = DataTypeConversion.longOrDoubleToDouble(size.get(0));
-		Double height = DataTypeConversion.longOrDoubleToDouble(size.get(1));
+		Map<String, Object> size = (Map<String, Object>) data.get("size");
+		Double width = DataTypeConversion.longOrDoubleToDouble(size.get("width"));
+		Double height = DataTypeConversion.longOrDoubleToDouble(size.get("height"));
 		this.size = new Size(width, height);
 	}
 	

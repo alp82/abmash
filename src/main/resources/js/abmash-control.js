@@ -35,28 +35,47 @@
 		return response;
 	}
 	
-	abmash.query = function(conditions, rootElements, referenceElements, limit) {
-		var result = null;
+	abmash.query = function(conditions, colorConditions, rootElements, referenceElements, limit) {
 		queryLimit = limit;
 		queryElementsFound = 0;
 		// TODO how do multiple root elements work?
 		abmash.setData('queryElements', rootElements.length > 0 ? rootElements.join(',') : document.body);
-		jQuery.each(jQuery.parseJSON(conditions), function() {
-			var conditionResult = queryCondition(this, referenceElements);
-			if(result == null) {
-				result = conditionResult;
-			} else if(conditionResult.length > 0) {
-				// intersect the results with the previous condition because all conditions are ANDed
-				result = jQuery.map(result, function(a) { return jQuery.inArray(a, conditionResult) < 0 ? null : a;})
-			}
-			// TODO process all conditions again with fallbacks only? could produce unexpected results...
-			if(result.length == 0) return false;
-		});
-//		jQuery(result).css('background-color', 'purple');
-		return result.unique();
+		
+		// normal conditions
+		var results = queryConditions(conditions, referenceElements);
+		if(!results || results.length == 0) return false;
+		results = results.unique();
+		
+		// color conditions
+		var finalResults = results;
+		if(colorConditions.length > 0) {
+			abmash.setData('queryElements', results);
+			finalResults = queryConditions(colorConditions, referenceElements);
+		}
+				
+//		jQuery(finalResults).css('background-color', 'purple');
+		return finalResults;
 	}
 
 	// private functions
+	
+	function queryConditions(conditions, referenceElements) {
+		var conditionsResult = null;
+		
+		jQuery.each(jQuery.parseJSON(conditions), function() {
+			var conditionResult = queryCondition(this, referenceElements);
+			if(conditionsResult == null) {
+				conditionsResult = conditionResult;
+			} else if(conditionResult.length > 0) {
+				// intersect the results with the previous condition because all conditions are ANDed
+				conditionsResult = jQuery.map(conditionsResult, function(a) { return jQuery.inArray(a, conditionResult) < 0 ? null : a;})
+			}
+			// TODO process all conditions again with fallbacks only? could produce unexpected results...
+			if(conditionsResult.length == 0) return false;
+		});
+		
+		return conditionsResult;
+	}
 	
 	function queryCondition(condition, referenceElements) {
 		var conditionResult = [];
@@ -74,6 +93,12 @@
 				if(queryLimitReached()) return false;
 			});
 		}
+		
+		// if this was a color condition, further narrow down the results for potentially following color queries
+		if(condition.isColorCondition) {
+			abmash.setData('queryElements', conditionResult);
+		}
+		
 		return conditionResult;
 	}
 	
