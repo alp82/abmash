@@ -1,6 +1,6 @@
 Abmash
 ======
-Abmash is about: **Imitation of human interactions with a web browser, based on the visible rendered output.**
+**"Imitation of human interactions with a web browser, based on the visible rendered output."**
 
 Getting Started
 ---------------
