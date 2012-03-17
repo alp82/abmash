@@ -905,9 +905,9 @@ public class HtmlElement extends Element {
 		if(isLocatedInFrame()) {
 			browser.frame().switchTo(frameElement);
 		} else if(windowName instanceof String) {
-			browser.window().switchTo(windowName);
+			browser.window().switchToWindow(windowName);
 		} else {
-			browser.window().switchToMain();
+			browser.window().switchToMainWindow();
 		}
 	}
 

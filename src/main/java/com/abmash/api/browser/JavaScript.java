@@ -84,7 +84,7 @@ public class JavaScript {
 		prerequisiteScripts += "if(typeof jQuery == 'undefined') {\n" + getJsFromFile("jquery.min") + "\n}\n";
 		
 		// don't collide with other frameworks (i.e. Prototype)
-		prerequisiteScripts += "jQuery.noConflict();\n";
+		prerequisiteScripts += "if(typeof jQuery.noConflict != 'undefined') { jQuery.noConflict(); }\n";
 
 		// don't load custom scripts each time, only once and if it's needed
 		prerequisiteScripts += "if(typeof abmashCustomScripts == 'undefined') {\n";

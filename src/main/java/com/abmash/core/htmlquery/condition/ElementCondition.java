@@ -276,8 +276,8 @@ public class ElementCondition extends Condition {
 					textarea.setFrameElement(frame);
 					selectorGroups.add(new SelectorGroup(new DirectMatchSelector(new HtmlElements(textarea))));
 				}
-				// TODO switch to previously focused window
-				browser.window().switchToMain();
+				// TODO switch to previously focused main content 
+				browser.window().switchToMainContent();
 			}
 		} catch (Exception e) {
 			// if no element was found, just continue with next selectors

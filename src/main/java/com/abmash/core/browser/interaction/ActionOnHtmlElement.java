@@ -22,8 +22,8 @@ public abstract class ActionOnHtmlElement extends ActionOnBrowser {
 	}
 
 	protected void performAfter() {
-		// TODO switch to previously focused window
-		if(element != null && element.isLocatedInFrame()) browser.window().switchToMain();
+		// TODO switch to previously focused content
+		if(element != null && element.isLocatedInFrame()) browser.window().switchToMainContent();
 	}
 	
 	protected Keys getKey(String keyName) {

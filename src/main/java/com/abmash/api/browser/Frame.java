@@ -28,10 +28,10 @@ public class Frame {
 	}
 	
 	/**
-	 * Switches to main frame, which is also the main window
+	 * Switches to main content in this window.
 	 */
 	public void switchToMain() {
-		browser.window().switchToMain();
+		browser.window().switchToMainContent();
 	}
 	
 	/**

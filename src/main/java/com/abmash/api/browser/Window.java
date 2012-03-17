@@ -3,6 +3,8 @@ package com.abmash.api.browser;
 
 import com.abmash.api.Browser;
 import com.abmash.api.HtmlElement;
+import com.abmash.core.browser.Popup;
+import com.abmash.core.browser.Popups;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -32,9 +34,11 @@ public class Window {
 	
 	private Browser browser;
 
-	private ArrayList<String> windowHandles = new ArrayList<String>();
+	private String mainWindow= null;
+	private String currentWindow= null;
+
+	private Popups popups = new Popups();
 	
-	private String currentWindowName;
 	
 	/**
 	 * Constructs new BrowserWindow instance to interact with browser windows.
@@ -54,22 +58,33 @@ public class Window {
 	 */
 	// TODO as event listener
 	public void detectPopups() {
-		// check window handles
-		String handle = browser.getWebDriver().getWindowHandle();
-		if(!windowHandles.contains(handle)) {
-			browser.log().debug("New window handle detected: {}", handle);
-			Set<String> winHandles = browser.getWebDriver().getWindowHandles();
-			for(String winHandle: winHandles) {
-				// TODO handle new windows
-				if(!windowHandles.contains(winHandle)) windowHandles.add(winHandle);
+		// check current window handles
+		Set<String> windowHandles = browser.getWebDriver().getWindowHandles();
+		
+		// check if there is a new popup
+		for(String windowHandle: windowHandles) {
+			// TODO handle new windows
+			if(!popups.contains(windowHandle)) {
+				if(mainWindow == null && popups.size() == 0) {
+					browser.log().info("Main window detected: {}", windowHandle);
+					mainWindow = windowHandle;
+					currentWindow = mainWindow;
+				} else if(!windowHandle.equals(mainWindow)) {
+					browser.log().info("New popup detected: {}", windowHandle);
+					popups.add(new Popup(browser, windowHandle, browser.getCurrentUrl()));
+					// do not allow automatic focus of new popup window  
+					switchToMainWindow();
+				}
 			}
-			ArrayList<String> windowHandlesNew = new ArrayList<String>(windowHandles);
-			for(String windowHandle: windowHandles) {
-				// TODO handle removed windows
-				if(!winHandles.contains(windowHandle)) windowHandlesNew.remove(windowHandle);
-			}
-			windowHandles = windowHandlesNew;
-		}		
+		}
+		
+		// check if popups are removed
+		Popups popupsWithoutRemoved = new Popups(popups);
+		for(Popup popup: popups) {
+			// TODO handle removed windows
+			if(!windowHandles.contains(popup.getWindowHandle())) popupsWithoutRemoved.remove(popup);
+		}
+		popups = popupsWithoutRemoved;
 	}
 	
 	/**
@@ -104,63 +119,129 @@ public class Window {
 	// window handling
 	
 	/**
-	 * Refreshs the current page. All found {@link HtmlElement} instances may lose their validity.
+	 * Refreshs the current page.
+	 * 
+	 * All found {@link HtmlElement} instances may lose their validity.
 	 */
 	public void refresh() {
 		browser.log().info("Refreshing page");
 		browser.getWebDriver().navigate().refresh();	
 	}
+
+	/**
+	 * Switches to main content in the current window. 
+	 */
+	public void switchToMainContent() {
+//		browser.log().debug("Switching to main content in window");
+		browser.getWebDriver().switchTo().defaultContent();
+	}
+	
 	
 	/**
-	 * Switches to main window 
+	 * Switches to main window.
 	 */
-	public void switchToMain() {
-		try {
-//			browser.log().debug("Switching to main window");
-			browser.getWebDriver().switchTo().defaultContent();
-			currentWindowName = null;
-		} catch (Exception e) {
-			browser.log().debug("Main window to switch to not found, attempting to use existing window handles");
-			String windowHandle = windowHandles.get(0);
-			switchTo(windowHandle);
-		}
+	public void switchToMainWindow() {
+//		browser.log().debug("Switching to main window");
+		switchToWindow(mainWindow);
 	}
 	
 	/**
-	 * Switches to window with specified name.
+	 * Switches to the specified popup.
+	 * 
+	 * @param popup
+	 */
+	public void switchToLastOpenedPopup() {
+		Popup popup = popups.get(popups.size() - 1);
+		switchToPopup(popup);
+	}
+	
+	/**
+	 * Switches to the specified popup.
+	 * 
+	 * @param popup
+	 */
+	public void switchToPopup(Popup popup) {
+		switchToWindow(popup.getWindowHandle());
+	}
+	
+	/**
+	 * Switches to window with specified name or handle.
 	 * 
 	 * @param windowName
 	 */
-	public void switchTo(String windowName) {
+	public void switchToWindow(String windowName) {
 		browser.log().debug("Switching to window: " + windowName);
 		browser.getWebDriver().switchTo().window(windowName);
-		currentWindowName = windowName;
+		currentWindow = windowName;
 	}
-
+	
 	/**
 	 * Creates new window and goes to specified URL.
 	 * 
 	 * @param url
 	 */
-	public String newWindow(String url) {
-		// TODO new window
-		String windowName = "newtab";
-		String script = "window.open('" + url + "', '" + windowName + "');";
-		browser.javaScript(script).getReturnValue();
-		switchTo(windowName);
-		return windowName;
+//	public String newWindow(String url) {
+//		// TODO new window
+//		String windowName = "newtab";
+//		String script = "window.open('" + url + "', '" + windowName + "');";
+//		browser.javaScript(script).getReturnValue();
+//		switchTo(windowName);
+//		return windowName;
+//	}
+	
+	/**
+	 * Closes current window
+	 */
+//	public void closeCurrentWindow() {
+//		// TODO remove popup
+//		String script = "window.close()";    
+//		browser.javaScript(script).getReturnValue();
+//		switchToMainWindow();
+//	}
+	
+	/**
+	 * Closes all popup windows (all windows except the initial main window).
+	 * 
+	 * Exits the browser application if the main window was closed beforehand.
+	 */
+	public void closeAllPopups() {
+		for(Popup popup: popups) {
+			closePopup(popup);
+		}
+		popups.clear();
 	}
 	
 	/**
-	 * Closes window with specified name.
+	 * Closes specified popup.
 	 * 
-	 * @param windowName
+	 * Exits the browser application if it was the last open window.
+	 * 
+	 * @param popup
 	 */
-	public void closeWindow(String windowName) {
-		String script = "window.close()";    
-		browser.javaScript(script).getReturnValue();
-		switchToMain();
-	}
+	public void closePopup(Popup popup) {
+		if(popups.contains(popup)) {
+			closeWindow(popup.getWindowHandle());
+		}
+	}	
+	
+	/**
+	 * Closes window with specified handle.
+	 * 
+	 * Exits the browser application if it was the last open window.
+	 * 
+	 * @param windowHandle
+	 */
+	public void closeWindow(String windowHandle) {
+		browser.getWebDriver().switchTo().window(windowHandle).close();
+		if(windowHandle.equals(mainWindow)) {
+			browser.log().debug("Main window closed");
+			// TODO main window handling, which is now the main window?
+			mainWindow = null;
+		} else {
+			browser.log().debug("window closed: " + windowHandle);
+			popups.remove(windowHandle);
+		}
+	}	
 	
 	/**
 	 * Tabs are not supported yet. Uses {@link Window#newWindow(String)}
@@ -168,29 +249,29 @@ public class Window {
 	 * @param url
 	 * @return name of the new tab
 	 */
-	public String newTab(String url) {
-		// TODO new tab
-		return newWindow(url);
-	}
+//	public String newTab(String url) {
+//		// TODO new tab
+//		return newWindow(url);
+//	}
 
 	/**
 	 * Tabs are not supported yet. Uses {@link Window#closeWindow(String)}
 	 * 
 	 * @param tabName
 	 */
-	public void closeTab(String tabName) {
-		// TODO close tab
-		closeWindow(tabName);
-	}
+//	public void closeTab(String tabName) {
+//		// TODO close tab
+//		closeWindow(tabName);
+//	}
 
 	// content-type and validation
 	
 	/**
 	 * Not implemented yet 
 	 */
-	public void validate() {
-		// TODO window validation
-	}
+//	public void validate() {
+//		// TODO window validation
+//	}
 
 	/**
 	 * Gets current name of active window.
@@ -198,16 +279,18 @@ public class Window {
 	 * @return name of currently focused window
 	 */
 	public String getCurrentWindowName() {
-		return currentWindowName;
+		// TODO not reliable
+		return currentWindow;
 	}
 
 	/**
-	 * Gets current window handles.
+	 * Gets current popups.
 	 * 
-	 * @return all window handles
+	 * @return all popups windows
 	 */
-	public ArrayList<String> getWindowHandles() {
-		return windowHandles;
+	public Popups getPopups() {
+		detectPopups();
+		return popups;
 	}
 	
 	/**
