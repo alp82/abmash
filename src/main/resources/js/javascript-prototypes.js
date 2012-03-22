@@ -42,6 +42,21 @@ Array.prototype.unique = function() {
     // Add the one thing we want added to the window object.
     window.setZeroTimeout = setZeroTimeout;
 })();
+
+// alert handling
+//document.hasAlert = false;
+//window.alert = function(msg) {
+//	document.hasAlert = true; document.lastAlert = msg;
+//};
+//
+//function checkForWindowAlert() {
+//	var alertText = "";
+//	if(document.hasAlert) {
+//		document.hasAlert = false;
+//		alertText = document.lastAlert;
+//	}
+//	return alertText;
+//}
 	
 // error handling
 /*

@@ -1,10 +1,10 @@
-//	// !!!!!!!!!!!!!! TODO !!!!!!!!!!!!!
+	// !!!!!!!!!!!!!! TODO !!!!!!!!!!!!!
 //	public Color getClosestNamedColor() {
 //		SortedSet<Entry<ColorName, Double>> distances = getDistancesToNamedColors();
 //		return distances.first().getKey().getColor();
 //	}
 //	
-//	// !!!!!!!!!!!!!! TODO !!!!!!!!!!!!!
+	// !!!!!!!!!!!!!! TODO !!!!!!!!!!!!!
 //	public SortedSet<Entry<ColorName, Double>> getDistancesToNamedColors() {
 //		Map<ColorName, Double> unsortedDistances = new TreeMap<ColorName, Double>();
 //		
@@ -18,6 +18,16 @@
 //	}
 	
 (function(jQuery) {
+	
+	// TODO sorting!
+//	return resultElements ? resultElements.sort(sortByCloseness) : resultElements;
+//    function sortByCloseness(firstElement, secondElement) {
+//    	var firstDistance = calculateDistance(firstElement);
+//    	var secondDistance = calculateDistance(secondElement);
+//		
+//		return firstDistance <= secondDistance ? -1 : 1;
+//	}
+    
 	var filterIsColor = function(color, tolerance, dominance, node) {
 		var result = abmash.filterColor("is", node, color, tolerance);
 		return result ? node : false;
@@ -56,26 +66,34 @@
 })(jQuery);
 
 (function(abmash) {
+	
+	var imageDataSegments = "";
     
     jQuery.extend(abmash, {
+ 
+    	buildImageDataForPageScreenshot: function(imageData) {
+			imageDataSegments += imageData;
+    	},
     	
-    	updatePageScreenshot: function(imageData, width, height) {
-    		// create canvas if it not exists already
-    		if(jQuery('canvas#abmashCurrentPageScreenshot').length == 0) {
-    			jQuery(document.body).append('<canvas id="abmashCurrentPageScreenshot"></canvas>');
-    			jQuery('canvas#abmashCurrentPageScreenshot').hide();
-    		}
+    	updatePageScreenshot: function(width, height) {
+    		// (re)create canvas
+			if(jQuery('canvas#abmashCurrentPageScreenshot').length > 0) {
+				jQuery('canvas#abmashCurrentPageScreenshot').remove();
+			}
+			jQuery(document.body).append('<canvas id="abmashCurrentPageScreenshot"></canvas>');
+	 		jQuery('canvas#abmashCurrentPageScreenshot').hide();
     		
-        	var canvas = jQuery('canvas#abmashCurrentPageScreenshot');
-        	var ctx = canvas.get(0).getContext("2d");
-        	canvas.prop('width', width);
-        	canvas.prop('height', height);
-        	
-        	var image = new Image();
-        	image.onload = function() {
-                ctx.drawImage(image, 0, 0);
-            };
-        	image.src = imageData;
+			var canvas = jQuery('canvas#abmashCurrentPageScreenshot');
+			var ctx = canvas.get(0).getContext("2d");
+			canvas.attr('width', width);
+			canvas.attr('height', height);
+			
+			var image = new Image();
+			image.onload = function() {
+				ctx.drawImage(image, 0, 0);
+			};
+			image.src = imageDataSegments;
+			imageDataSegments = "";
     	},
     	
     	filterColor: function(type, element, color, tolerance, dominance) {
@@ -86,17 +104,27 @@
         	// element coordinates
         	var offset = jQuery(element).offset();
         	var dimension = jQuery(element).dimension();
-        	var left = Math.min(Math.max(offset.left, 0), canvas.prop("width"));
-        	var top = Math.min(Math.max(offset.top, 0), canvas.prop("height"));
-        	var width = Math.max(Math.min(dimension.width, canvas.prop("width") - left), 0);
-        	var height = Math.max(Math.min(dimension.height, canvas.prop("height") - top), 0);
+        	var left = Math.min(Math.max(offset.left, 0), canvas.attr("width"));
+        	var top = Math.min(Math.max(offset.top, 0), canvas.attr("height"));
+        	var width = Math.max(Math.min(dimension.width, canvas.attr("width") - left), 0);
+        	var height = Math.max(Math.min(dimension.height, canvas.attr("height") - top), 0);
 
         	// crop image and get its data
         	if(width == 0 || height == 0) return false;
     		var imgdata = ctx.getImageData(left, top, width, height);
     		var img = imgdata.data;
+    		
+    		var result;
+    		
+    		if(type == 'is') {
+    			result = isColor(img, color, tolerance);
+    		} else if(type == 'has') {
+    			result = hasColor(img, color, tolerance, dominance);
+    		} else if(type == 'get') {
+    			result = getDominanceOfColor(img, color, tolerance);
+    		}
 
-    		return type == 'is' ? isColor(img, color, tolerance) : hasColor(img, color, tolerance, dominance);
+    		return result;
     	}
     	
     });
@@ -113,6 +141,7 @@
 	}
     
     function getDominanceOfColor(img, color, tolerance) {
+		if(img && img.length < 4) return false;
     	var data = analyzeImage(img, color);
     	
     	var sumMatchingPixels = 0;

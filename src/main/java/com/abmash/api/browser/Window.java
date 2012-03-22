@@ -3,6 +3,7 @@ package com.abmash.api.browser;
 
 import com.abmash.api.Browser;
 import com.abmash.api.HtmlElement;
+import com.abmash.api.data.JavaScriptResult;
 import com.abmash.core.browser.Popup;
 import com.abmash.core.browser.Popups;
 
@@ -20,6 +21,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.openqa.selenium.Alert;
+import org.openqa.selenium.JavascriptExecutor;
 
 
 /**
@@ -87,6 +89,14 @@ public class Window {
 		popups = popupsWithoutRemoved;
 	}
 	
+	public void checkForAlerts() {
+//		String alertText = (String) browser.javaScript("return checkForWindowAlert()").getReturnValue();
+//		String alertText = (String) new JavaScriptResult(((JavascriptExecutor) browser.getWebDriver()).executeScript("return checkForWindowAlert();")).getReturnValue();
+//		if(!alertText.equals("")) {
+//			browser.log().info("Alert detected: " + alertText);
+//		}
+	}
+	
 	/**
 	 * Detects alerts, not fully supported yet. 
 	 * @return {@link Alert} object if an alert was detected, or null if not 
@@ -95,25 +105,14 @@ public class Window {
 	public Alert getAlert() {
 		// check alerts
 		
-		/*for (String windowHandle: browser.getWebDriver().getWindowHandles()) {
-		}
-		System.out.println(" WINDOW HANDLES: " + browser.getWebDriver().getWindowHandles());*/
+		Alert alert = null;
 		
 		try {
 			// TODO PERFORMANCE PROBLEM BECAUSE OF TIMEOUT IF NO ALERT EXISTS
-			Alert alert = browser.getWebDriver().switchTo().alert();
-			
-			// check if alert exists
-			if(alert != null) {
-				String alertText = alert.getText();
-				
-				// TODO alert handling
-				browser.log().info("Alert detected: {}", alertText);
-				return alert;
-			}
+			alert = browser.getWebDriver().switchTo().alert();
 		} catch (Exception e) {
 		}
-		return null;
+		return alert;
 	}
 	
 	// window handling

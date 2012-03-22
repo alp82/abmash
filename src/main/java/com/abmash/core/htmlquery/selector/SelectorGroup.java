@@ -14,7 +14,7 @@ public class SelectorGroup extends ArrayList<Selector> {
 		FALLBACK
 	}
 	
-	private int limit = 50; // result limit for this group
+	private int limit = 1000; // result limit for this group
 	private int weight = 0; // the higher the value the higher the weight 
 	private Type type = Type.NORMAL; // normal or fallback group
 	private HtmlElements referenceElements = new HtmlElements();

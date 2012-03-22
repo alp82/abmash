@@ -61,8 +61,15 @@
 	
 	function queryConditions(conditions, referenceElements) {
 		var conditionsResult = null;
-		
-		jQuery.each(jQuery.parseJSON(conditions), function() {
+		var conditionsJson = [];
+		try {
+			//conditionsJson = jQuery.parseJSON(conditions);
+			conditionsJson = JSON.parse(conditions);
+		} catch (e) {
+			// TODO exception handling when parsing json
+			alert(e);
+		}
+		jQuery.each(conditionsJson, function() {
 			var conditionResult = queryCondition(this, referenceElements);
 			if(conditionsResult == null) {
 				conditionsResult = conditionResult;

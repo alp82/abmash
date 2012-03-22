@@ -4,7 +4,9 @@ import java.util.ArrayList;
 
 public class SelectorGroups extends ArrayList<SelectorGroup> {
 	
-	// TODO ensure that FallBack groups are at the end
-
+	@Override
+	public boolean add(SelectorGroup e) {
+		return e.isEmpty() ? false : super.add(e);
+	}
 
 }

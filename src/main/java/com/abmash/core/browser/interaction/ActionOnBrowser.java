@@ -6,6 +6,7 @@ import com.abmash.api.Browser;
 import java.io.File;
 
 import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.Alert;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 
@@ -20,7 +21,12 @@ public abstract class ActionOnBrowser {
 	public void execute() {
 		try {
 			// first detect potentially new dialogs and windows
-//			browser.window().getAlert();
+//			Alert alert = browser.window().getAlert();
+//			if(alert instanceof Alert) {
+//				browser.log().info("Alert detected: " + alert.getText());
+//				alert.accept();
+//			}
+//			browser.window().checkForAlerts();
 			browser.window().detectPopups();
 			
 			// TODO validate presence of correct window

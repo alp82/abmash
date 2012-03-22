@@ -190,7 +190,7 @@ public class ElementCondition extends Condition {
 		// TODO with onclick event handler
 		
 		List<String> linkNames = Arrays.asList("a", "*[onclick]");
-		List<String> inputNames = Arrays.asList("input[type='checkbox']", "input[type='radio']", "input[type='submit']", "input[type='button']", "input[type='image']", "input[type=range]", "input[type=color]", "button");
+		List<String> inputNames = Arrays.asList("input[type='checkbox']", "input[type='radio']", "input[type='submit']", "input[type='button']", "input[type='image']", "input[type='range']", "input[type='color']", "button");
 		List<String> elementNames = new ArrayList<String>(linkNames);
 		elementNames.addAll(inputNames);
 		List<String> attributeNames = Arrays.asList("id", "value", "name", "class", "title", "alt", "href", "*");

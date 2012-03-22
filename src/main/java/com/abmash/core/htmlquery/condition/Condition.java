@@ -209,6 +209,7 @@ public abstract class Condition {
 	 */
 	protected SelectorGroup checkElementAttributes(List<String> mainSelectors, List<String> queries, List<String> attributeNames, List<AttributeMatcher> attributeMatchers, String mainSelectorNot) {
 		SelectorGroup selectorGroup = new SelectorGroup();
+		if(queries.isEmpty()) attributeMatchers = Arrays.asList(AttributeMatcher.EXACT);
 		for (AttributeMatcher attributeMatcher: attributeMatchers) {
 			selectorGroup.addAll(checkElementAttributes(mainSelectors, queries, attributeNames, attributeMatcher, mainSelectorNot));
 		}
@@ -220,9 +221,7 @@ public abstract class Condition {
 	 */
 	protected SelectorGroup checkElementAttributes(String mainSelector, List<String> queries, List<String> attributeNames, List<AttributeMatcher> attributeMatchers, String mainSelectorNot) {
 		SelectorGroup selectorGroup = new SelectorGroup();
-		for (AttributeMatcher attributeMatcher: attributeMatchers) {
-			selectorGroup.addAll(checkElementAttributes(Arrays.asList(mainSelector), queries, attributeNames, attributeMatcher, mainSelectorNot));
-		}
+		selectorGroup.addAll(checkElementAttributes(Arrays.asList(mainSelector), queries, attributeNames, attributeMatchers, mainSelectorNot));
 		return selectorGroup;
 	}
 	
@@ -404,6 +403,7 @@ public abstract class Condition {
 	 */
 	protected SelectorGroup checkElementText(List<String> mainSelectors, List<String> queries, List<TextMatcher> textMatchers, String mainSelectorNot) {
 		SelectorGroup selectorGroup = new SelectorGroup();
+		if(queries.isEmpty()) textMatchers = Arrays.asList(TextMatcher.EXACT);
 		for (TextMatcher textMatcher: textMatchers) {
 			selectorGroup.addAll(checkElementText(mainSelectors, queries, textMatcher, mainSelectorNot));
 		}
