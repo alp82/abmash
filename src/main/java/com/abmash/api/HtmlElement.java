@@ -5,18 +5,19 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.remote.RemoteWebElement;
 
-import com.abmash.api.data.Date;
 import com.abmash.api.data.Table;
 import com.abmash.core.browser.interaction.Clear;
 import com.abmash.core.browser.interaction.Click;
@@ -313,27 +314,29 @@ public class HtmlElement extends Element {
 	 * 
 	 * TODO
 	 * 
-	 * @param date
+	 * @param dateTime
 	 * @return this {@link HtmlElement}
 	 */
-	public HtmlElement chooseDate(Date date) {
+	public HtmlElement chooseDate(DateTime dateTime) {
 		// TODO detect datepicker type
 		// TODO detect date format in input field
 		// TODO detect time format and input field
 		// TODO detect if sendkeys work for one or the other
 		
 		// TODO convert date to string 08/22/2013 and check if sendkeys worked
-		//type(date.getDateString());
+		//type(dateTime.getDateString());
 		click();
 		// TODO Ajax Wait condition
 		// TODO year
 		// TODO exception handler if no element was found
-		browser.query().isChoosable().has("datepicker").findFirst().choose(date.getMonth());
+		// TODO first try with month name
+		browser.query().isChoosable().has("datepicker").findFirst().choose(String.valueOf(dateTime.getMonthOfYear() - 1));
 		// TODO exception handler if no element was found
-		browser.query().isClickable().has(date.getDay()).findFirst().click();
-		// TODO time
+		browser.query().isClickable().has(String.valueOf(dateTime.getDayOfMonth())).closestTo(this).findFirst().click();
+		// TODO time7
+		DateTimeFormatter fmt = DateTimeFormat.forPattern("h:mm aa");
 		// TODO exception handler if no element was found
-//		browser.query().isChoosable().has("time").findFirst().choose(date.getTime());
+		browser.query().isChoosable().has("time").closestTo(this).findFirst().choose(fmt.print(dateTime));
 		return this;
 	}
 	
@@ -943,8 +946,9 @@ public class HtmlElement extends Element {
 	 * @return Date object
 	 * @throws ParseException 
 	 */
-	public Date extractDate() throws ParseException {
-		Date date = null;
+	public DateTime extractDate() throws ParseException {
+		// TODO Use Joda DateTime functions and patterns
+		DateTime dateTime = null;
 		boolean dateFound = false;
 	    
 	    String year = null;
@@ -1054,11 +1058,11 @@ public class HtmlElement extends Element {
 			if(!dateFormatPattern.equals("") && !dateString.equals("")) {
 				//TODO support different locales
 				SimpleDateFormat dateFormat = new SimpleDateFormat(dateFormatPattern.trim(), Locale.US);
-				date = new Date(dateFormat.parse(dateString.trim()));
+				dateTime = new DateTime(dateFormat.parse(dateString.trim()));
 			}
 		}
 			    
-		return date;
+		return dateTime;
 	}
 	
 	private Matcher checkDatePattern(String regex, String text) {

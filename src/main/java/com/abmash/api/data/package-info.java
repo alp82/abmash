@@ -1,7 +1,7 @@
 /**
  * Provides data classes in a browser context.
  * <p>
- * {@link com.abmash.api.data.Date} extracts a date from an <code>HtmlElement</code>
+ * {@link com.abmash.REMOVE.api.data.Date} extracts a date from an <code>HtmlElement</code>
  * by using the {@link com.abmash.api.HtmlElement#extractDate()} method.
  * <p>
  * {@link com.abmash.api.data.Table} and {@link com.abmash.api.data.TableRow} are used to represent tables

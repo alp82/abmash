@@ -35,12 +35,11 @@ compareStrings = function(str1, str2, type) {
     case "EXACT":
         return str1 == str2;
     case "WORD":
-        //  /\bSTR2\b/gi
-        return str1 == str2;
+        return str1.containsWord(str2);
     case "BEGINSWITH":
-        return str1 == str2;
+        return str1.beginsWith(str2);
     case "ENDSWITH":
-        return str1 == str2;
+        return str1.endsWith(str2);
     case "CONTAINS":
         return str1.contains(str2);
     default:

@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.openqa.selenium.WebDriver;
+import org.joda.time.DateTime;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +16,6 @@ import com.abmash.api.browser.History;
 import com.abmash.api.browser.JavaScript;
 import com.abmash.api.browser.WaitFor;
 import com.abmash.api.browser.Window;
-import com.abmash.api.data.Date;
 import com.abmash.api.data.JavaScriptResult;
 import com.abmash.api.data.List;
 import com.abmash.api.data.Table;
@@ -392,7 +391,7 @@ public class Browser implements Document {
 	 * @see HtmlElement#click()
 	 */
 	public HtmlElement click(String query) {
-		HtmlElement element = query().has(query).isClickable().findFirst();
+		HtmlElement element = query().has(query).isClickable().findFirstWithWait();
 		return element instanceof HtmlElement ? element.click() : null;
 	}
 	
@@ -415,7 +414,7 @@ public class Browser implements Document {
 	 * @see HtmlElement#hover()
 	 */
 	public HtmlElement hover(String query) {
-		HtmlElement element = query().has(query).findFirst();
+		HtmlElement element = query().has(query).findFirstWithWait();
 		return element instanceof HtmlElement ? element.hover() : null;
 	}
 	
@@ -440,8 +439,8 @@ public class Browser implements Document {
 	 * @see HtmlElement#dragTo(HtmlElement)
 	 */
 	public HtmlElement dragTo(String querySource, String queryTarget) {
-		HtmlElement source = query().has(querySource).findFirst();
-		HtmlElement target = query().has(queryTarget).findFirst();
+		HtmlElement source = query().has(querySource).findFirstWithWait();
+		HtmlElement target = query().has(queryTarget).findFirstWithWait();
 		return source instanceof HtmlElement && target instanceof HtmlElement ? source.dragTo(target) : null;
 	}
 	
@@ -468,7 +467,7 @@ public class Browser implements Document {
 	 * @see HtmlElement#type(String)
 	 */
 	public HtmlElement type(String query, String text) {
-		HtmlElement element = query().has(query).isTypable().findFirst();
+		HtmlElement element = query().has(query).isTypable().findFirstWithWait();
 		return element instanceof HtmlElement ? element.type(text) : null;
 	}
 	
@@ -492,7 +491,7 @@ public class Browser implements Document {
 	 * or {@code null} if element could not be found
 	 */
 	public HtmlElement choose(String query, String optionQuery) {
-		HtmlElement element = query().has(query).isChoosable().findFirst();
+		HtmlElement element = query().has(query).isChoosable().findFirstWithWait();
 		return element instanceof HtmlElement ? element.choose(optionQuery) : null;
 	}
 	
@@ -516,7 +515,7 @@ public class Browser implements Document {
 	 * or {@code null} if element could not be found
 	 */
 	public HtmlElement unchoose(String query, String optionQuery) {
-		HtmlElement element = query().has(query).isChoosable().findFirst();
+		HtmlElement element = query().has(query).isChoosable().findFirstWithWait();
 		return element instanceof HtmlElement ? element.unchoose(optionQuery) : null;
 	}
 	
@@ -535,13 +534,13 @@ public class Browser implements Document {
 	 * TODO Select description
 	 * 
 	 * @param query calendar/date picker element
-	 * @param date the date to select
+	 * @param dateTime the date to select
 	 * @return HtmlElement to further interact with the form element, for instance to {@link HtmlElement#submit()} the form,
 	 * or {@code null} if element could not be found
 	 */
-	public HtmlElement chooseDate(String query, Date date) {
-		HtmlElement element = query().has(query).isDatepicker().findFirst();
-		return element instanceof HtmlElement ? element.chooseDate(date) : null;
+	public HtmlElement chooseDate(String query, DateTime dateTime) {
+		HtmlElement element = query().has(query).isDatepicker().findFirstWithWait();
+		return element instanceof HtmlElement ? element.chooseDate(dateTime) : null;
 	}
 	
 	/**
@@ -557,7 +556,7 @@ public class Browser implements Document {
 	 * @return HtmlElement to further interact with the form element or {@code null} if element could not be found
 	 */
 	public HtmlElement submit(String query) {
-		HtmlElement element = query().has(query).cssSelector("form,input,button,textarea").findFirst();
+		HtmlElement element = query().has(query).cssSelector("form,input,button,textarea").findFirstWithWait();
 		return element instanceof HtmlElement ? element.submit() : null;
 	}
 	

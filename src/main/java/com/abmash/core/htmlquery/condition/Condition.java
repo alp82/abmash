@@ -117,78 +117,20 @@ public abstract class Condition {
 			// do not process empty queries other than EXISTS
 			if(queries.isEmpty() && attributeMatcher != AttributeMatcher.EXISTS) continue;
 			
-			String attributeSelectors = "";
-			switch (attributeMatcher) {
-				case EXISTS:
-					// attribute value exists, no matter which value it has
-					if(useCssSelector) {
-						attributeSelectors = "[" + attributeName + "]";
-					} else {
-						attributeSelectors = "[@*]";
-					}
-					break;
-				case EXACT:
-					// attribute value matches exactly the query string
-					if(useCssSelector) {
-						for (String query: queries) attributeSelectors += "[" + attributeName + "='" + query + "']";
-					} else {
-						for (String query: queries) attributeSelectors += "[@*='" + query + "']";
-					}
-					break;
-				case WORD:
-					// attribute value has at least one word matching the query string
-					if(useCssSelector) {
-						for (String query: queries) attributeSelectors += "[" + attributeName + "~='" + query + "']";
-					} else {
-						for (String query: queries) attributeSelectors += "[contains(concat(' ', @*, ' '), ' " + query + " ')]";
-					}
-					break;
-				case STARTSWITH:
-					// attribute value begins with query string
-					if(useCssSelector) {
-						for (String query: queries) attributeSelectors += "[" + attributeName + "^='" + query + "']";
-					} else {
-						for (String query: queries) attributeSelectors += "[@*[starts-with(., '" + query + "')]]";
-					}
-					break;
-				case ENDSWITH:
-					// attribute value ends with query string
-					if(useCssSelector) {
-						for (String query: queries) attributeSelectors += "[" + attributeName + "$='" + query + "']";
-					} else {
-						// TODO ends-with produces errors
-//						for (String query: queries) attributeSelectors += "[@*[starts-with(., '" + query + "')]]";
-						for (String query: queries) attributeSelectors += "[@*[ends-with(., '" + query + "')]]";
-						//*[not(self::input)][@*[ends-with(.,'Copyright')]]
-						//*[not(self::input)][@*[substring(., string-length() -8) = 'Copyright']]
-					}
-					break;
-				case CONTAINS:
-				default:
-					// attribute value contains the query string
-					if(useCssSelector) {
-						for (String query: queries) attributeSelectors += "[" + attributeName + "*='" + query + "']";
-					} else {
-						for (String query: queries) attributeSelectors += "[@*[contains(., '" + query + "')]]";
-					}
-					break;
-	
-			}
-			
 			// TODO compute weight of this selector
 			int weight = 0;
 			
 			// finally add the selector with the given parameters
+			String attributeSelectors = "";
+			for (String query: queries) attributeSelectors += ":attrCaseInsensitive(" + attributeMatcher.toString() + ", " + attributeName + ", " + query + ")";
 			if(useCssSelector) {
-				selectors.add(new CssSelector(mainSelectorCSS + attributeSelectors, weight));
+				selectors.add(new JQuerySelector("find('" + mainSelectorCSS + attributeSelectors + "')", weight));
 			} else {
-				selectors.add(new XpathSelector("//" + mainSelectorXPath + attributeSelectors, weight));
+				selectors.add(new JQuerySelector("xpath('//" + mainSelectorXPath + "').filter('" + attributeSelectors + "')", weight));
 			}
 			
-			// TODO use always jquery selector
-			// selector = new JQuerySelector(rootElement, mainSelector + ":attrCaseInsensitive(" + attributeMatcher + ", " + attributeName + ", " + query + ")"); 
-			//browser.log().debug(" find attributes selector: " + selector);
 		}
+//		System.out.println(selectors);
 		
 		return selectors;
 	}

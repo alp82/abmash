@@ -20,11 +20,12 @@ public class ElementWaitCondition implements ExpectedCondition<Boolean> {
 	}
 		
 	/**
-	 * Condition is met if target is found and its inner text or value equals the given text
+	 * Condition is met if at least one target is found
 	 */
 	public Boolean apply(WebDriver webDriver) {
-		// check if element does exist 
-		return query.findFirst() instanceof HtmlElement;
+		// check if element does exist
+		HtmlElement element = query.findFirst();
+		return element instanceof HtmlElement;
 	}
  
 }

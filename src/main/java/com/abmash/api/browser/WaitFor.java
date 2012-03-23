@@ -67,7 +67,7 @@ public class WaitFor {
 //		WebDriverWait wait = new WebDriverWait(browser.getWebDriver(), timeout);
 		FluentWait<WebDriver> wait = new FluentWait<WebDriver>(browser.getWebDriver())
 	       .withTimeout(timeout, TimeUnit.SECONDS)
-	       .pollingEvery(1, TimeUnit.SECONDS);
+	       .pollingEvery(500, TimeUnit.MILLISECONDS);
 		
 		// start waiting for given element
 		wait.until(new ElementWaitCondition(query));
@@ -107,7 +107,10 @@ public class WaitFor {
 	 * @throws TimeoutException
 	 */
 	public void elementText(String query, String text) throws TimeoutException {
-		elementText(browser.query().has(query).isText().findFirst(), text);
+		// wait until element is found
+		element(text);
+		// wait until element text is detected
+		elementText(browser.query().has(query).findFirst(), text);
 	}
 
 	/**

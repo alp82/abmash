@@ -1,12 +1,12 @@
 package com.abmash.core.tools;
 
-import com.abmash.api.data.Date;
-
 import java.util.ArrayList;
 
 
 import java.util.HashMap;
 import java.util.Iterator;
+
+import org.joda.time.DateTime;
 
 
 public class ParamHolder {
@@ -16,7 +16,7 @@ public class ParamHolder {
 	protected HashMap<String, Integer> ints = new HashMap<String, Integer>();
 	protected HashMap<String, Double> doubles = new HashMap<String, Double>();
 	protected HashMap<String, String> strings = new HashMap<String, String>();
-	protected HashMap<String, Date> dates = new HashMap<String, Date>();
+	protected HashMap<String, DateTime> dates = new HashMap<String, DateTime>();
 	
 	public ParamHolder() {
 		// TODO constructor params
@@ -36,7 +36,7 @@ public class ParamHolder {
 		return strings.get(key);
 	}
 	
-	public Date getDate(String key) {
+	public DateTime getDate(String key) {
 		return dates.get(key);
 	}
 	
@@ -60,8 +60,8 @@ public class ParamHolder {
 		}
 	}
 	
-	public void setDate(String key, Date value) {
-		if(addKeyIfUnique(key, Date.class.getSimpleName())) {
+	public void setDate(String key, DateTime value) {
+		if(addKeyIfUnique(key, DateTime.class.getSimpleName())) {
 			dates.put(key, value);
 		}
 	}

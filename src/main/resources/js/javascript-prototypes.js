@@ -1,4 +1,13 @@
+String.prototype.trim = function() { return (this.replace(/^[\s\xA0]+/, "").replace(/[\s\xA0]+$/, "")); };
+
 String.prototype.contains = function(it) { return this.indexOf(it) != -1; };
+
+//  /\bSTR2\b/gi
+String.prototype.containsWord = function(str) { return str.search('/' + this + '/i') >= 0; };
+
+String.prototype.beginsWith = function(str) { return this.match("^" + str) == str; };
+
+String.prototype.endsWith = function(str) { return this.match(str + "$") == str; };
 
 Array.prototype.unique = function() {
     var a = this.concat();

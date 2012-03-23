@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeoutException;
 
 import javax.imageio.ImageIO;
 
@@ -1316,6 +1317,19 @@ public class HtmlQuery {
 	// find logic
 	
 	/**
+	 * Finds best matching element which match the given search conditions. Waits for the element to appear.
+	 * <p>
+	 * Returns {@code null} if no element was found after the waiting time.
+	 * 
+	 * @return the {@link HtmlElement} result
+	 */
+	public HtmlElement findFirstWithWait() {
+		limit = 1;
+		resultElements = findWithWait();
+		return resultElements instanceof HtmlElements && !resultElements.isEmpty() ? resultElements.first() : null;
+	}
+	
+	/**
 	 * Finds best matching element which match the given search conditions.
 	 * <p>
 	 * Returns {@code null} if no element was found.
@@ -1329,6 +1343,27 @@ public class HtmlQuery {
 	}
 	
 	/**
+	 * Finds all elements which match the given search conditions. Waits for the element to appear.
+	 * <p>
+	 * Returns {@code null} if no element was found after the waiting time.
+	 * 
+	 * @return the {@link HtmlElements} result set
+	 */
+	public HtmlElements findWithWait() {
+		doFind();
+		if(resultElements == null || resultElements.isEmpty()) {
+			try {
+				browser.waitFor().query(this);
+				doFind();
+			} catch (TimeoutException e) {
+				// element not found
+				browser.log().info("Query: element not found for query " + this.toString());
+			}
+		}
+		return resultElements;
+	}
+
+	/**
 	 * Finds all elements which match the given search conditions.
 	 * <p>
 	 * Returns {@code null} if no element was found.
@@ -1336,12 +1371,17 @@ public class HtmlQuery {
 	 * @return the {@link HtmlElements} result set
 	 */
 	public HtmlElements find() {
+		return doFind();
+	}
+	
+	private HtmlElements doFind() {
 		resultElements = null;
 			
 		// if no condition is set, add the "all elements" matcher
 		if(conditions.isEmpty() || !conditions.hasElementFinder()) conditions.add(new ElementCondition(browser, ElementType.ALL));
 			
 		Map<String, HtmlElements> referenceElements = new HashMap<String, HtmlElements>(); 
+		Map<String, HtmlElements> labelElements = new HashMap<String, HtmlElements>(); 
 		
 		JSONArray jsonConditions = new JSONArray();
 		JSONArray jsonColorConditions = new JSONArray();
@@ -1388,6 +1428,12 @@ public class HtmlQuery {
 						} else if(selectorGroupType.equals(Type.FALLBACK)) {
 							jsonFallbackSelectorGroups.put(jsonSelectorGroup);
 						}
+					}
+					
+					if(selectorGroups.hasLabelElements()) {
+						String labelId = Long.toString(System.currentTimeMillis()) + Double.toString(Math.random());
+						jsonCondition.put("labelId", labelId);
+						labelElements.put(labelId, selectorGroups.getLabelElements());
 					}
 					
 					if(condition instanceof ElementCondition) {
@@ -1445,7 +1491,7 @@ public class HtmlQuery {
 		}
 		
 		// sending queries to jquery executor
-		String script = "return abmash.query(arguments[0], arguments[1], arguments[2], arguments[3], arguments[4]);";
+		String script = "return abmash.query(arguments[0], arguments[1], arguments[2], arguments[3], arguments[4], arguments[5]);";
 		@SuppressWarnings("unchecked")
 		ArrayList<RemoteWebElement> seleniumElements = (ArrayList<RemoteWebElement>) browser.javaScript(
 				script,
@@ -1453,7 +1499,8 @@ public class HtmlQuery {
 				hasColorConditions ? jsonColorConditions.toString() : false,
 				rootElements,
 				referenceElements,
-				0/*limit*/
+				labelElements,
+				limit
 		).getReturnValue();
 		
 		// converting selenium elements to abmash elements
@@ -1461,7 +1508,7 @@ public class HtmlQuery {
 		for(RemoteWebElement seleniumElement: seleniumElements) {
 			tempElements.add(new HtmlElement(browser, seleniumElement));
 		}
-//			System.out.println("tempElements: " + tempElements);
+//		System.out.println("tempElements: " + tempElements + " -- " + conditions);
 		
 		// or queries
 		for(HtmlQuery orQuery: orQueries) {
@@ -1497,6 +1544,7 @@ public class HtmlQuery {
 				unsortedElements.add(tempElement);
 			}
 		}
+//		System.out.println("unsortedElements: " + unsortedElements + " -- " + conditions);
 		
 		// fetch and store data for elements
 		// this needs to be done before sorting because of better performance
@@ -1530,7 +1578,7 @@ public class HtmlQuery {
 		// TODO maybe there are still duplicates in the result
 		resultElements = limitedElements;
 		
-//		System.out.println(resultElements);
+//		System.out.println(resultElements + " -- " + conditions);
 		return resultElements;
 	}
 	

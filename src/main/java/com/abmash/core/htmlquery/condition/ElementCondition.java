@@ -123,10 +123,9 @@ public class ElementCondition extends Condition {
 		}*/
 		
 		// if nothing was found just return all elements
-		// but only if no text query was given
-		if(queryStrings.isEmpty()) {
-			selectorGroups.add(new SelectorGroup(new CssSelector(StringUtils.join(elementNames, ',')), Type.FALLBACK, 1));
-		}
+//		if(!queryStrings.isEmpty()) {
+//			selectorGroups.add(new SelectorGroup(new CssSelector(StringUtils.join(elementNames, ',')), Type.FALLBACK, 1));
+//		}
 	}
 	
 	private void selectorsForText() {
@@ -147,10 +146,9 @@ public class ElementCondition extends Condition {
 		}*/
 		
 		// if nothing was found just return all elements
-		// but only if no text query was given
-		if(queryStrings.isEmpty()) {
-			selectorGroups.add(new SelectorGroup(new CssSelector(StringUtils.join(elementNames, ',')), Type.FALLBACK, 1));
-		}
+//		if(!queryStrings.isEmpty()) {
+//			selectorGroups.add(new SelectorGroup(new CssSelector(StringUtils.join(elementNames, ',')), Type.FALLBACK, 1));
+//		}
 	}
 	
 	private void selectorsForTitles() {
@@ -183,45 +181,36 @@ public class ElementCondition extends Condition {
 		}*/
 		
 		// if nothing was found just return all headline elements
-		selectorGroups.add(new SelectorGroup(new CssSelector(StringUtils.join(elementNames, ',')), Type.FALLBACK));
+//		if(!queryStrings.isEmpty()) {
+//			selectorGroups.add(new SelectorGroup(new CssSelector(StringUtils.join(elementNames, ',')), Type.FALLBACK));
+//		}
 	}
 	
 	private void selectorsForClickables() {
 		// TODO with onclick event handler
-		
 		List<String> linkNames = Arrays.asList("a", "*[onclick]");
 		List<String> inputNames = Arrays.asList("input[type='checkbox']", "input[type='radio']", "input[type='submit']", "input[type='button']", "input[type='image']", "input[type='range']", "input[type='color']", "button");
 		List<String> elementNames = new ArrayList<String>(linkNames);
 		elementNames.addAll(inputNames);
 		List<String> attributeNames = Arrays.asList("id", "value", "name", "class", "title", "alt", "href", "*");
 
-		// find checkboxes, radioboxes and buttons
-		selectorGroups.add(checkElementAttributes(inputNames, queryStrings, attributeNames, Arrays.asList(AttributeMatcher.EXACT, AttributeMatcher.WORD, AttributeMatcher.CONTAINS)));
+		// find links, checkboxes, radioboxes and buttons
+		selectorGroups.add(checkElementAttributes(elementNames, queryStrings, attributeNames, AttributeMatcher.EXACT));
+		// find any element by inner text
+		selectorGroups.add(checkElementText(linkNames, queryStrings, TextMatcher.EXACT));
 
 		// find clickables by searching for closest fitting label
 		if(!queryStrings.isEmpty()) {
-			try {
-				HtmlElements labelElements = browser.query().isText().has(queryStrings).limit(2).find();
-				if(!labelElements.isEmpty()) {
-					SelectorGroup group = new SelectorGroup();
-					group.addReferenceElements(labelElements);
-					// TODO find('...') should be isClickable() ...
-					group.add(new JQuerySelector("find('" + StringUtils.join(elementNames, ',') + "').hasLabel(abmash.getData('referenceElements'))"));
-					// TODO allow higher limit
-					group.setLimit(1);
-					selectorGroups.add(group);
-				}
-			} catch (Exception e) {
-				// if no element was found, just continue with next selectors
-				e.printStackTrace();
+			HtmlElements labelElements = browser.query().isText().has(queryStrings).limit(2).find();
+			if(!labelElements.isEmpty()) {
+				selectorGroups.addLabelElements(labelElements);
 			}
 		}
 
+		// find links, checkboxes, radioboxes and buttons
+		selectorGroups.add(checkElementAttributes(elementNames, queryStrings, attributeNames, Arrays.asList(AttributeMatcher.WORD, AttributeMatcher.CONTAINS)));
 		// find any element by inner text
-		selectorGroups.add(checkElementText(linkNames, queryStrings, Arrays.asList(TextMatcher.EXACT, TextMatcher.CONTAINS)));
-		
-		// find target by html attributes
-		selectorGroups.add(checkElementAttributes(elementNames, queryStrings, attributeNames, Arrays.asList(AttributeMatcher.EXACT, AttributeMatcher.WORD, AttributeMatcher.CONTAINS)));
+		selectorGroups.add(checkElementText(linkNames, queryStrings, Arrays.asList(TextMatcher.CONTAINS)));
 		
 		// TODO elements with parent <a> tags are also clickable 
 		if(queryStrings.isEmpty()) {
@@ -240,12 +229,9 @@ public class ElementCondition extends Condition {
 		}*/	
 		
 		// if there were no results just find all clickables
-		// but only if no text query was specified
-		if(queryStrings.isEmpty()) {
-			SelectorGroup group = new SelectorGroup(Type.FALLBACK);
-			group.add(new CssSelector(StringUtils.join(elementNames, ',')));
-			selectorGroups.add(group);
-		}
+//		if(!queryStrings.isEmpty()) {
+//			selectorGroups.add(new SelectorGroup(new CssSelector(StringUtils.join(elementNames, ',')), Type.FALLBACK));
+//		}
 	}
 	
 	private void selectorsForTypables() {
@@ -287,20 +273,9 @@ public class ElementCondition extends Condition {
 		
 		// find inputs by searching for closest fitting label
 		if(!queryStrings.isEmpty()) {
-			try {
-				HtmlElements labelElements = browser.query().isText().has(queryStrings).limit(2).find();
-				if(!labelElements.isEmpty()) {
-					SelectorGroup group = new SelectorGroup();
-					group.addReferenceElements(labelElements);
-					// TODO find('...') should be isTypable() ...
-					group.add(new JQuerySelector("find('" + StringUtils.join(elementNames, ',') + "').hasLabel(abmash.getData('referenceElements'))"));
-					// TODO allow higher limit
-					group.setLimit(1);
-					selectorGroups.add(group);
-				}
-			} catch (Exception e) {
-				// if no element was found, just continue with next selectors
-				e.printStackTrace();
+			HtmlElements labelElements = browser.query().isText().has(queryStrings).limit(2).find();
+			if(!labelElements.isEmpty()) {
+				selectorGroups.addLabelElements(labelElements);
 			}
 		}
 		
@@ -328,12 +303,9 @@ public class ElementCondition extends Condition {
 		}*/
 		
 		// if there were no results just find all inputs
-		// but only if no text query was specified
-		if(queryStrings.isEmpty()) {
-			SelectorGroup group = new SelectorGroup(Type.FALLBACK);
-			group.add(new CssSelector(StringUtils.join(elementNames, ',')));
-			selectorGroups.add(group);
-		}
+//		if(!queryStrings.isEmpty()) {
+//			selectorGroups.add(new SelectorGroup(new CssSelector(StringUtils.join(elementNames, ',')), Type.FALLBACK));
+//		}
 	}
 	
 	private void selectorsForChoosables() {
@@ -348,12 +320,9 @@ public class ElementCondition extends Condition {
 		selectorGroups.add(new SelectorGroup(new JQuerySelector("find('select:has(option:containsCaseInsensitive(" + queryStrings + "))')")));
 
 		// if there were no results just find all selects
-		// but only if no text query was specified
-		if(queryStrings.isEmpty()) {
-			SelectorGroup group = new SelectorGroup(Type.FALLBACK);
-			group.add(new CssSelector(StringUtils.join(elementNames, ',')));
-			selectorGroups.add(group);
-		}
+		selectorGroups.add(new SelectorGroup(new CssSelector(StringUtils.join(elementNames, ',')), Type.FALLBACK));
+//		if(queryLimit != 2) alert(selector.command.toSource());
+
 	}
 	
 	private void selectorsForDatepickers() {
@@ -365,20 +334,9 @@ public class ElementCondition extends Condition {
 
 		// find datepickers by searching for closest fitting label
 		if(!queryStrings.isEmpty()) {
-			try {
-				HtmlElements labelElements = browser.query().isText().has(queryStrings).limit(2).find();
-				if(!labelElements.isEmpty()) {
-					SelectorGroup group = new SelectorGroup();
-					group.addReferenceElements(labelElements);
-					// TODO find('...') should be isDatePicker() ...
-					group.add(new JQuerySelector("find('" + StringUtils.join(elementNames, ',') + "').hasLabel(abmash.getData('referenceElements'))"));
-					// TODO allow higher limit
-					group.setLimit(1);
-					selectorGroups.add(group);
-				}
-			} catch (Exception e) {
-				// if no element was found, just continue with next selectors
-				e.printStackTrace();
+			HtmlElements labelElements = browser.query().isText().has(queryStrings).limit(2).find();
+			if(!labelElements.isEmpty()) {
+				selectorGroups.addLabelElements(labelElements);
 			}
 		}
 		
@@ -392,12 +350,9 @@ public class ElementCondition extends Condition {
 			selectorGroups.add(new SelectorGroup(new XpathSelector("//label[contains(" + xpathToLowercase + ", '" + query.toLowerCase() + "')]/following-sibling::input")));
 		}
 
-		// if there were no results just find all selects
-		// but only if no text query was specified
-//		if(textQuery == null || textQuery.equals("")) {
-//			SelectorGroup group = new SelectorGroup(Type.FALLBACK);
-//			group.add(new CssSelector(StringUtils.join(elementNames, ',')));
-//			selectors.add(group);
+		// if there were no results just find all datepickers
+//		if(!queryStrings.isEmpty()) {
+//			selectorGroups.add(new SelectorGroup(new CssSelector(StringUtils.join(elementNames, ',')), Type.FALLBACK));
 //		}
 	}
 	
@@ -433,12 +388,9 @@ public class ElementCondition extends Condition {
 		selectorGroups.add(checkElementAttributes(elementNames, queryStrings, attributeNames, Arrays.asList(AttributeMatcher.EXACT, AttributeMatcher.WORD, AttributeMatcher.CONTAINS)));
 		
 		// if there were no results just find all lists
-		// but only if no text query was specified
-		if(queryStrings.isEmpty()) {
-			SelectorGroup group = new SelectorGroup(Type.FALLBACK);
-			group.add(new CssSelector(StringUtils.join(elementNames, ',')));
-			selectorGroups.add(group);
-		}
+//		if(!queryStrings.isEmpty()) {
+//			selectorGroups.add(new SelectorGroup(new CssSelector(StringUtils.join(elementNames, ',')), Type.FALLBACK));
+//		}
 	}
 	
 	private void selectorsForTables() {
@@ -450,17 +402,14 @@ public class ElementCondition extends Condition {
 		selectorGroups.add(checkElementAttributes(elementNames, queryStrings, attributeNames, Arrays.asList(AttributeMatcher.EXACT, AttributeMatcher.WORD, AttributeMatcher.CONTAINS)));
 		
 		// if there were no results just find all tables
-		// but only if no text query was specified
-		if(queryStrings.isEmpty()) {
-			SelectorGroup group = new SelectorGroup(Type.FALLBACK);
-			group.add(new CssSelector(StringUtils.join(elementNames, ',')));
-			selectorGroups.add(group);
+		if(!queryStrings.isEmpty()) {
+			selectorGroups.add(new SelectorGroup(new CssSelector(StringUtils.join(elementNames, ',')), Type.FALLBACK));
 		}
 	}
 
 	private void selectorsInLists() {
 		// TODO dl besteht aus dt und dd (term/descriptions)
-		List<String> elementNames = Arrays.asList("li,dt");
+		List<String> elementNames = Arrays.asList("li, dt");
 		List<String> attributeNames = Arrays.asList("id", "class", "name", "value", "title", "alt", "for", "*");
 		
 		// find target by inner text and html attributes which match exactly or partially
@@ -476,12 +425,9 @@ public class ElementCondition extends Condition {
 		}*/
 		
 		// if there were no results just find list items
-		// but only if no text query was specified
-		if(queryStrings.isEmpty()) {
-			SelectorGroup group = new SelectorGroup(Type.FALLBACK);
-			group.add(new CssSelector(StringUtils.join(elementNames, ',')));
-			selectorGroups.add(group);
-		}
+//		if(!queryStrings.isEmpty()) {
+//			selectorGroups.add(new SelectorGroup(new CssSelector(StringUtils.join(elementNames, ',')), Type.FALLBACK));
+//		}
 	}
 
 	private void selectorsInTables() {
@@ -501,12 +447,9 @@ public class ElementCondition extends Condition {
 		}*/
 		
 		// if there were no results just find all table cells
-		// but only if no text query was specified
-		if(queryStrings.isEmpty()) {
-			SelectorGroup group = new SelectorGroup(Type.FALLBACK);
-			group.add(new CssSelector(StringUtils.join(elementNames, ',')));
-			selectorGroups.add(group);
-		}
+//		if(!queryStrings.isEmpty()) {
+//			selectorGroups.add(new SelectorGroup(new CssSelector(StringUtils.join(elementNames, ',')), Type.FALLBACK));
+//		}
 	}
 	
 	private void selectorsForFrames() {
@@ -517,18 +460,16 @@ public class ElementCondition extends Condition {
 		selectorGroups.add(checkElementAttributes(elementNames, queryStrings, attributeNames, Arrays.asList(AttributeMatcher.EXACT, AttributeMatcher.WORD, AttributeMatcher.CONTAINS)));
 		
 		// if there were no results just find all frames
-		// but only if no text query was specified
-		if(queryStrings.isEmpty()) {
-			SelectorGroup group = new SelectorGroup(Type.FALLBACK);
-			group.add(new CssSelector(StringUtils.join(elementNames, ',')));
-			selectorGroups.add(group);
-		}
+//		if(!queryStrings.isEmpty()) {
+//			selectorGroups.add(new SelectorGroup(new CssSelector(StringUtils.join(elementNames, ',')), Type.FALLBACK));
+//		}
 	}
 
 	public boolean elementValid(HtmlElement foundElement) {
 		if(!super.elementValid(foundElement)) return false;
 		
-		if(elementType == ElementType.TITLE && foundElement.getText().isEmpty()) return false;
+		// TODO move to JavaScript
+//		if(elementType == ElementType.TITLE && foundElement.getText().isEmpty()) return false;
 			
 		return true;
 	}
