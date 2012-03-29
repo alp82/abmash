@@ -1,18 +1,65 @@
 (function(jQuery) {
 	jQuery.fn.dimension = function() {
 		return {width: this.outerWidth(), height: this.outerHeight()};
-	}
+	};
+	
+//	jQuery.fn.collidesWith = function(target) {
+//		var src=jQuery(this);
+//		var x1=src.offset().left,y1=src.offset().top,w=src.outerWidth(),h=src.outerHeight();
+//		var xp1=target.offset().left,yp1=target.offset().top,wp=target.outerWidth(),hp=target.outerHeight();
+//		var x2=x1+w,y2=y1+h,xp2=xp1+wp,yp2=yp1+hp;
+//		if(xp1>=x1 && xp1<=x2 ) {
+//			if(yp1>=y1 && yp1<=y2) {
+//				return true;
+//			}
+//			else if(y1>=yp1 && y1<=yp2) {
+//				return true;
+//			}
+//		}
+//		else if(x1>=xp1 && x1<=xp2) {
+//			if(yp1>=y1 && yp1<=y2) {
+//				return true;
+//			}
+//			else if(y1>=yp1 && y1<=yp2) {
+//				return true;
+//			}
+//		}
+//		return false;
+//	};
+	
+	jQuery.fn.elementWithinElement = function(elemPossiblyCovering) {
+		var elemPossiblyCovered = jQuery(this).get(0);
+		elemPossiblyCovering = jQuery(elemPossiblyCovering).get(0);
+		
+		var top = elemPossiblyCovered.offsetTop;
+		var left = elemPossiblyCovered.offsetLeft;
+		var width = elemPossiblyCovered.offsetWidth;
+		var height = elemPossiblyCovered.offsetHeight;
+
+		while (elemPossiblyCovered.offsetParent) {
+			elemPossiblyCovered = elemPossiblyCovered.offsetParent;
+			top += elemPossiblyCovered.offsetTop;
+			left += elemPossiblyCovered.offsetLeft;
+		}
+
+		return (top >= elemPossiblyCovering.offsetTop
+				&& left >= elemPossiblyCovering.offsetLeft
+				&& (top + height) <= (elemPossiblyCovering.offsetTop + elemPossiblyCovering.offsetHeight) && (left + width) <= (elemPossiblyCovering.offsetLeft + elemPossiblyCovering.offsetWidth));
+	};
+
 })(jQuery); 
 
 (function(abmash) {
 	// constants
 	var directionType = {
-		hasLabel: 1,
-		above: 2,
-		below: 3,
-		leftTo: 4,
-		rightTo: 5,
-	}
+		closeTo: 1,
+		hasLabel: 5,
+		hasLabelForSelect: 6,
+		above: 10,
+		below: 20,
+		leftTo: 30,
+		rightTo: 40,
+	};
 	var distanceType = {
 		topLeft: 1,
 		top: 2,
@@ -24,23 +71,44 @@
 		bottom: 8,
 		bottomRight: 9,
 		average: 10,
-	}
+	};
 	var calculationType = {
 		min: 1,
 		average: 2,
-	}
+	};
 
 	// closeness query
-	var options;
+	var options = {};
     
     jQuery.fn.extend({
+    	closeTo: function(referenceElements) {
+    		return abmash.elementsInDirection({
+		    	sources: this,
+		    	targets: jQuery(referenceElements),
+		    	direction: directionType.closeTo,
+		    	distance: distanceType.center,
+		    	calculation: calculationType.min,
+		    	inBounds: false,
+		    	directionHasToMatchAllTargets: false,
+		    });
+    	},
     	hasLabel: function(referenceElements) {
-//    		jQuery(referenceElements).css('background-color', 'red');
     		return abmash.elementsInDirection({
 		    	sources: this,
 		    	targets: jQuery(referenceElements),
 		    	direction: directionType.hasLabel,
 		    	distance: distanceType.topLeft,
+		    	calculation: calculationType.min,
+		    	inBounds: false,
+		    	directionHasToMatchAllTargets: false,
+		    });
+    	},
+    	hasLabelForSelect: function(referenceElements) {
+    		return abmash.elementsInDirection({
+		    	sources: this,
+		    	targets: jQuery(referenceElements),
+		    	direction: directionType.hasLabelForSelect,
+		    	distance: distanceType.center,
 		    	calculation: calculationType.min,
 		    	inBounds: false,
 		    	directionHasToMatchAllTargets: false,
@@ -150,35 +218,56 @@
 		    	inBounds: false,
 		    	directionHasToMatchAllTargets: false,
 		    }, closenessOptions);
-
+		    
 //			jQuery(options.sources).css('background-color', 'green');
 			jQuery.each(options.sources, function() {
 				var source = jQuery(this);
-			    if(source && abmash.checkElementLocations(source)) {
+			    if(source.get().length > 0 && abmash.checkElementLocations(source)) {
 			    	resultElements.push(source.get(0));
 			    }
 			});
 			
 //			jQuery(resultElements).css('background-color', 'yellow');
 			// now return the sorted result set
-			return resultElements ? resultElements.sort(sortByCloseness) : resultElements;
+			return resultElements.length > 0 ? resultElements.sort(sortByCloseness) : [];
     	},
 		
     	checkElementLocations: function(source) {
 		    var result;
+		    
+		    // closeTo is only about ordered results, no filter is applied
+		    if(options.direction == directionType.closeTo) {
+		    	return true;
+		    }
+		    
+		    // the html document's root element cannot be taken for closeness calculations
+		    if(source.get(0) == document) {
+		    	return false;
+		    }
 		    
 		    if(options.directionHasToMatchAllTargets) {
 		    	result = true;
 		    } else {
 		    	result = false;
 		    }
-		    
+
 		    jQuery.each(options.targets, function() {
 			    var target = jQuery(this);
 			    var coords = calculateCoordinates(source, target);
 				
 				if(options.direction == directionType.hasLabel) {
 					var hasLabel = abmash.isBelow(coords) || abmash.isRightTo(coords);
+					if(options.directionHasToMatchAllTargets && !hasLabel) {
+						result = false;
+						return false;
+					} else if(hasLabel) {
+						result = true;
+						return false;
+					}
+				}
+				
+				if(options.direction == directionType.hasLabelForSelect) {
+					var hasLabel = abmash.isLeftTo(coords);
 					if(options.directionHasToMatchAllTargets && !hasLabel) {
 						result = false;
 						return false;
@@ -263,18 +352,18 @@
     });
     
     function sortByCloseness(firstElement, secondElement) {
-//		var calculationType = options.directionHasToMatchAllTargets ? 'average' : 'min';
-//		var distanceType = 'default';
-		
-//		if(direction == 'hasLabel' || direction == 'below') distanceType = 'topleft';
-//		if(direction == 'above') distanceType = 'bottomleft';
-//		if(direction == 'leftTo') distanceType = 'right';
-//		if(direction == 'rightTo') distanceType = 'left';
+    	// TODO collision needed?
+    	if(jQuery(firstElement).elementWithinElement(secondElement)) {
+    		return 1;
+    	}
+    	if(jQuery(secondElement).elementWithinElement(firstElement)) {
+    		return -1;
+    	}
     	
     	var firstDistance = calculateDistance(firstElement);
     	var secondDistance = calculateDistance(secondElement);
 		
-		return firstDistance <= secondDistance ? -1 : 1;
+		return firstDistance - secondDistance;
 	}
     
     function calculateDistance(element) {
@@ -296,9 +385,17 @@
 			}
     	});
     	
+    	// total distance
     	distance /= totalWeight;
+    	distance = options.directionHasToMatchAllTargets ? distance / jQuery(options.targets).get().length : distance;
     	
-    	return options.directionHasToMatchAllTargets ? distance / jQuery(options.targets).get().length : distance;
+    	// distance gets higher for bigger elements
+    	distance *= Math.sqrt(jQuery(element).dimension().width * jQuery(element).dimension().height);
+    	
+    	// distance is correlated to element weight
+    	distance /= abmash.getElementWeight(element);
+    	
+    	return distance;
     }
     
     function getDistance(source, target) {
@@ -312,7 +409,7 @@
 		var distanceLeft = euclideanDistance(coords.rightSource - coords.leftTarget, coords.diffCenterY);
 		var distanceCenter = euclideanDistance(coords.diffCenterX, coords.diffCenterY);
 		var distanceRight = euclideanDistance(coords.leftSource - coords.rightTarget, coords.diffCenterY);
-		var istanceBottomLeft = euclideanDistance(coords.diffLeft, coords.topSource - coords.bottomTarget);
+		var distanceBottomLeft = euclideanDistance(coords.diffLeft, coords.topSource - coords.bottomTarget);
 		var distanceBottom = euclideanDistance(coords.diffCenterX, coords.topSource - coords.bottomTarget);
 		var distanceBottomRight = euclideanDistance(coords.diffRight, coords.topSource - coords.bottomTarget);
 		

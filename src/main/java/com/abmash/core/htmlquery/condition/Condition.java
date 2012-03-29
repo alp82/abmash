@@ -23,6 +23,28 @@ public abstract class Condition {
 	final protected String xpathToLowercase = "translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ', 'abcdefghijklmnopqrstuvwxyzæøå')";
 
 	/*
+	 * Weights for selectors
+	 */
+	protected enum Weight {
+		HUGE(32),
+		VERYHIGH(16),
+		HIGH(8),
+		QUITE(4),
+		LOW(2),
+		VERYLOW(1);
+		
+		private int value;
+		
+		private Weight(int value) {
+			this.value = value;
+		}
+		
+		public int getValue() {
+			return value;
+		}
+	}
+	
+	/*
 	 * Matching types for element attributes
 	 */
 	public enum AttributeMatcher {
@@ -117,8 +139,26 @@ public abstract class Condition {
 			// do not process empty queries other than EXISTS
 			if(queries.isEmpty() && attributeMatcher != AttributeMatcher.EXISTS) continue;
 			
-			// TODO compute weight of this selector
-			int weight = 0;
+			// compute weight of this selector
+			int weight = 1;
+			switch (attributeMatcher) {
+			case EXACT:
+				weight = Weight.HUGE.getValue();
+				break;
+			case WORD:
+				weight = Weight.VERYHIGH.getValue();
+				break;
+			case STARTSWITH:
+			case ENDSWITH:
+				weight = Weight.HIGH.getValue();
+				break;
+			case CONTAINS:
+				weight = Weight.QUITE.getValue();
+				break;
+			case EXISTS:
+				weight = Weight.LOW.getValue();
+				break;
+			}
 			
 			// finally add the selector with the given parameters
 			String attributeSelectors = "";
@@ -237,6 +277,9 @@ public abstract class Condition {
 		SelectorGroup selectorGroup = new SelectorGroup();
 
 		
+		// weight of this selector
+		int weight = 1;
+		
 		for (String query: queries) {
 			String sourceValue = "jQuery(this).css('" + attributeName + "')";
 			String expression = "find('" + mainSelector + "')";
@@ -249,36 +292,39 @@ public abstract class Condition {
 					comparisonOperator = ">";
 					sourceValue = "parseInt(" + sourceValue + ", 10)";
 					comparisonValue = "parseInt(" + comparisonValue + ", 10)";
+					weight = Weight.HIGH.getValue();
 					break;
 				case LESS_THAN:
 					comparisonOperator = "<";
 					sourceValue = "parseInt(" + sourceValue + ", 10)";
 					comparisonValue = "parseInt(" + comparisonValue + ", 10)";
+					weight = Weight.HIGH.getValue();
 					break;
 				case HAS_VALUE:
 					comparisonOperator = "!==";
 					comparisonValue = "''";
+					weight = Weight.LOW.getValue();
 					break;
 				case CONTAINS:
 					comparisonOperator = sourceValue + ".contains(" + comparisonValue + ")";
 					sourceValue = "";
 					comparisonValue = "";
+					weight = Weight.QUITE.getValue();
 					break;
 				case NOT_EQUAL:
 					comparisonOperator = "!==";
+					weight = Weight.LOW.getValue();
 					break;
 				case EQUAL:
 				default:
 					comparisonOperator = "==";
+					weight = Weight.HUGE.getValue();
 					break;
 			}
 			
 			expression += ".filter(function() {" +
 				"return " + sourceValue + " " + comparisonOperator + " " + comparisonValue + ";" +
 			"})";
-			
-			// TODO compute weight of this selector
-			int weight = 0;
 			
 			selectorGroup.add(new JQuerySelector(expression, weight));
 		}
@@ -300,6 +346,18 @@ public abstract class Condition {
 	 */
 	protected List<Selector> checkElementText(List<String> mainSelectors, List<String> queries, TextMatcher textMatcher, String mainSelectorNot) {
 		List<Selector> selectors = new ArrayList<Selector>();
+		
+		// compute weight of this selector
+		int weight = 1;
+		switch (textMatcher) {
+		case EXACT:
+			weight = Weight.HUGE.getValue();
+			break;
+		case CONTAINS:
+			weight = Weight.QUITE.getValue();
+			break;
+		}
+		
 		for (String mainSelector: mainSelectors) {
 			
 			// build the selector
@@ -310,9 +368,6 @@ public abstract class Condition {
 				mainSelectorCSS += ":not(" + mainSelectorNot + ")";
 //				mainSelectorXPath += "[not(" + mainSelectorNot + ")]";
 			}
-			
-			// TODO compute weight of this selector
-			int weight = 0;
 			
 			if(queries.isEmpty()) {
 				// Warning: mainSelector * and an empty query returns all html elements

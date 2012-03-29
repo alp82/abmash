@@ -29,6 +29,10 @@ public class ClosenessCondition extends Condition {
 		 */
 		INPUT,
 		/**
+		 * The searched element is a select, checkbox or radio field close to the/any reference element.
+		 */
+		SELECT,
+		/**
 		 * The searched element is above the/any reference element.
 		 */
 		ABOVE,
@@ -73,6 +77,12 @@ public class ClosenessCondition extends Condition {
 	}
 
 	// condition
+	
+//	@Override
+//	public boolean isElementFinder() {
+//		// this is not an element finder, closeness conditions are executed in the end
+//		return false;
+//	}
 
 	@Override
 	protected void buildSelectors() {
@@ -80,8 +90,14 @@ public class ClosenessCondition extends Condition {
 		
 		
 		switch (direction) {
+			case CLOSE:
+				group.add(new JQuerySelector("closeTo(abmash.getData('referenceElements'))"));
+				break;
 			case INPUT:
 				group.add(new JQuerySelector("hasLabel(abmash.getData('referenceElements'))"));
+				break;
+			case SELECT:
+				group.add(new JQuerySelector("hasLabelForSelect(abmash.getData('referenceElements'))"));
 				break;
 			case ABOVE:
 				group.add(new JQuerySelector("above(abmash.getData('referenceElements'))"));
@@ -108,71 +124,71 @@ public class ClosenessCondition extends Condition {
 				group.add(new JQuerySelector("rightToAll(abmash.getData('referenceElements'))"));
 				break;
 		}
-		
+
 		if(!group.isEmpty()) selectorGroups.add(group);
 	}
 	
-	@Override
-	public HtmlElements sortElements(HtmlElements unsortedElements) {
-		HtmlElements sortedElements = new HtmlElements();
-
-		DistanceType distanceType;
-		CalculationType calculationType = CalculationType.MIN;
-		
-		switch (direction) {
-			case INPUT:
-				distanceType = DistanceType.TOPLEFT;
-				break;
-			case ABOVE_ALL:
-				calculationType = CalculationType.AVERAGE;
-			case ABOVE:
-				distanceType = DistanceType.BOTTOMLEFT;
-				break;
-			case BELOW_ALL:
-				calculationType = CalculationType.AVERAGE;
-			case BELOW:
-				distanceType = DistanceType.TOPLEFT;
-				break;
-			case LEFT_ALL:
-				calculationType = CalculationType.AVERAGE;
-			case LEFT:
-				distanceType = DistanceType.RIGHT;
-				break;
-			case RIGHT_ALL:
-				calculationType = CalculationType.AVERAGE;
-			case RIGHT:
-				distanceType = DistanceType.LEFT;
-				break;
-			case CLOSE:
-			default:
-				distanceType = DistanceType.DEFAULT;
-				break;
-		}
-		
-		TreeSet<HtmlElement> elementSet = new TreeSet<HtmlElement>(new ElementDistanceComparator(distanceType, calculationType));
-		
-		// TODO higher weight for reference elements in the beginning of the list
-		
-//		System.out.println("reference elements: " + group.getReferenceElements());
-		for (HtmlElement foundElement: unsortedElements) {
-			// TODO allow reference elements in result
-			if(!group.getReferenceElements().contains(foundElement) && elementValid(foundElement)) {
-				// TODO speichern der reference elemente globaler?
-				foundElement.setReferenceElements(group.getReferenceElements());
-//				System.out.println("ADDED valid found element: " + foundElement);
-				// add if element is in allowed location
-				elementSet.add(foundElement); // ordered by closeness
-			}
-		}
-
-		// build sorted element result set
-		for (HtmlElement element: elementSet) {
-			sortedElements.addAndIgnoreDuplicates(element);
-		}
-		
-		return sortedElements;
-	}
-	
+//	@Override
+//	public HtmlElements sortElements(HtmlElements unsortedElements) {
+//		HtmlElements sortedElements = new HtmlElements();
+//
+//		DistanceType distanceType;
+//		CalculationType calculationType = CalculationType.MIN;
+//		
+//		switch (direction) {
+//			case INPUT:
+//				distanceType = DistanceType.TOPLEFT;
+//				break;
+//			case ABOVE_ALL:
+//				calculationType = CalculationType.AVERAGE;
+//			case ABOVE:
+//				distanceType = DistanceType.BOTTOMLEFT;
+//				break;
+//			case BELOW_ALL:
+//				calculationType = CalculationType.AVERAGE;
+//			case BELOW:
+//				distanceType = DistanceType.TOPLEFT;
+//				break;
+//			case LEFT_ALL:
+//				calculationType = CalculationType.AVERAGE;
+//			case LEFT:
+//				distanceType = DistanceType.RIGHT;
+//				break;
+//			case RIGHT_ALL:
+//				calculationType = CalculationType.AVERAGE;
+//			case RIGHT:
+//				distanceType = DistanceType.LEFT;
+//				break;
+//			case CLOSE:
+//			default:
+//				distanceType = DistanceType.DEFAULT;
+//				break;
+//		}
+//		
+//		TreeSet<HtmlElement> elementSet = new TreeSet<HtmlElement>(new ElementDistanceComparator(distanceType, calculationType));
+//		
+//		// TODO higher weight for reference elements in the beginning of the list
+//		
+////		System.out.println("reference elements: " + group.getReferenceElements());
+//		for (HtmlElement foundElement: unsortedElements) {
+//			// TODO allow reference elements in result
+//			if(!group.getReferenceElements().contains(foundElement) && elementValid(foundElement)) {
+//				// TODO speichern der reference elemente globaler?
+//				foundElement.setReferenceElements(group.getReferenceElements());
+////				System.out.println("ADDED valid found element: " + foundElement);
+//				// add if element is in allowed location
+//				elementSet.add(foundElement); // ordered by closeness
+//			}
+//		}
+//
+//		// build sorted element result set
+//		for (HtmlElement element: elementSet) {
+//			sortedElements.addAndIgnoreDuplicates(element);
+//		}
+//		
+//		return sortedElements;
+//	}
+//	
 //	public boolean elementValid(HtmlElement foundElement) {
 //		if(!super.elementValid(foundElement)) return false;
 //		

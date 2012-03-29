@@ -11,6 +11,9 @@ jQuery.fn.extend({
 			var realNode = node[0], name = realNode.localName;
 			if (!name) break;
 			name = name.toLowerCase();
+			
+			// support for namespaced tag names
+			name = name.replace(":", "\\:");
 
 			var parent = node.parent();
 

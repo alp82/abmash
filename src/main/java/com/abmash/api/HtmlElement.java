@@ -333,10 +333,17 @@ public class HtmlElement extends Element {
 		browser.query().isChoosable().has("datepicker").findFirst().choose(String.valueOf(dateTime.getMonthOfYear() - 1));
 		// TODO exception handler if no element was found
 		browser.query().isClickable().has(String.valueOf(dateTime.getDayOfMonth())).closestTo(this).findFirst().click();
-		// TODO time7
+		// TODO time
 		DateTimeFormatter fmt = DateTimeFormat.forPattern("h:mm aa");
 		// TODO exception handler if no element was found
 		browser.query().isChoosable().has("time").closestTo(this).findFirst().choose(fmt.print(dateTime));
+		
+		// TODO remove temp output
+//		ArrayList<RemoteWebElement> tmp = (ArrayList<RemoteWebElement>) browser.javaScript("return abmash.getData('tmp');").getReturnValue();
+//		ArrayList<RemoteWebElement> tmp2 = (ArrayList<RemoteWebElement>) browser.javaScript("return abmash.getData('tmp2');").getReturnValue();
+//		System.out.println("tmp1: " + tmp);
+//		System.out.println("tmp2: " + tmp2);
+		
 		return this;
 	}
 	
@@ -529,6 +536,7 @@ public class HtmlElement extends Element {
 		// TODO tag name does not work, javascript hangs completely
 //		javaScripts.put("tagName", new JQuerySelector("get(0).nodeName.toLowerCase()"));
 		javaScripts.put("uniqueSelector", new JQuerySelector("getPath()"));
+		// TODO attributes map
 		javaScripts.put("attributeNames", new JQuerySelector("getAttributeNames()"));
 		javaScripts.put("text", new JQuerySelector("text()"));
 		javaScripts.put("sourceText", new JQuerySelector("html()"));
@@ -1089,12 +1097,13 @@ public class HtmlElement extends Element {
 	public String toString() {
 		String attributes = "";
 		// retrieval of attribute names
+		// TODO bad performance, cache all attributes?
 		if(getAttributeNames() != null) {
 			for (String attributeName: attributeNames) {
 				attributes += " " + attributeName + "=\"" + getAttribute(attributeName) + "\"";
 			}
 		}
-		return "<" + getTagName() + attributes + ">" + getText().replace("\n", " ") + "</" + getTagName() + ">";
+		return "<" + getTagName() + attributes + ">" + getText().replace("\n", " ").substring(0, Math.min(50, getText().length())) + "</" + getTagName() + ">";
 	}
 	
 }

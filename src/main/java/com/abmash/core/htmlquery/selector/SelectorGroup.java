@@ -11,7 +11,8 @@ public class SelectorGroup extends ArrayList<Selector> {
 	
 	public enum Type {
 		NORMAL,
-		FALLBACK
+		LABEL,
+		FALLBACK, 
 	}
 	
 	private int limit = 1000; // result limit for this group

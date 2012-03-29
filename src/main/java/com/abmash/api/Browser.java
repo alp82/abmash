@@ -344,7 +344,7 @@ public class Browser implements Document {
 	// -----------------------------------------------------------------------
 
 	/**
-	 * Creates {@link HtmlQuery} instance to find element on current page.
+	 * Creates {@link HtmlQuery} instance to find elements on current page.
 	 * <p>
 	 * <strong>Examples:</strong>
 	 * <ul>
@@ -364,6 +364,19 @@ public class Browser implements Document {
 	 */
 	public HtmlQuery query() {
 		return new HtmlQuery(this);
+	}
+	
+	/**
+	 * Creates {@link HtmlQuery} instance to filter elements on current page.
+	 * <p>
+	 * TODO examples
+	 * 
+	 * @return HtmlQuery instance to add an arbitrary number of find conditions
+	 * @see Browser#query()
+	 * @see HtmlQuery#subsetOf(HtmlElements)
+	 */
+	public HtmlQuery query(HtmlElements elementsToFilter) {
+		return new HtmlQuery(this).subsetOf(elementsToFilter);
 	}
 	
 	// -----------------------------------------------------------------------

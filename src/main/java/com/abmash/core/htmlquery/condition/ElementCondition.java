@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import com.abmash.api.Browser;
 import com.abmash.api.HtmlElement;
 import com.abmash.api.HtmlElements;
+import com.abmash.core.htmlquery.condition.ClosenessCondition.Direction;
 import com.abmash.core.htmlquery.selector.CssSelector;
 import com.abmash.core.htmlquery.selector.DirectMatchSelector;
 import com.abmash.core.htmlquery.selector.JQuerySelector;
@@ -51,12 +52,14 @@ public class ElementCondition extends Condition {
 		this.elementType = elementType;
 	}
 	
-	public void setQueries(List<String> queries) {
-		queryStrings.addAll(queries);
+	public void addQueries(List<String> queries) {
+		for(String query: queries) {
+			addQuery(query);
+		}
 	}
 	
 	public void addQuery(String query) {
-		if(query != null && !query.equals("")) queryStrings.add(query);
+		if(query != null && !query.equals("") && !queryStrings.contains(query)) queryStrings.add(query);
 	}
 	
 	// condition
@@ -159,11 +162,13 @@ public class ElementCondition extends Condition {
 		selectorGroups.add(checkElementText(elementNames, queryStrings, Arrays.asList(TextMatcher.EXACT, TextMatcher.CONTAINS)));
 
 		// find elements with font-size bigger than the default
+		// TODO move that to jquery
+		// TODO combine css check with text check
 		HtmlElement body = browser.query().tag("body").findFirst();
 		selectorGroups.add(checkElementCssAttribute("*", Arrays.asList(body.getCssValue("font-size")), "font-size", CSSAttributeMatcher.GREATER_THAN));
 
 		// find target by html attributes which match exactly or partially
-		selectorGroups.add(checkElementAttributes("*", queryStrings, attributeNames, Arrays.asList(AttributeMatcher.EXACT, AttributeMatcher.WORD, AttributeMatcher.STARTSWITH, AttributeMatcher.ENDSWITH, AttributeMatcher.CONTAINS)));
+		selectorGroups.add(checkElementAttributes(elementNames, queryStrings, attributeNames, Arrays.asList(AttributeMatcher.EXACT, AttributeMatcher.WORD, AttributeMatcher.STARTSWITH, AttributeMatcher.ENDSWITH, AttributeMatcher.CONTAINS)));
 		
 		// find target by tag name selector 
 		// TODO tagname selector necessary?
@@ -192,26 +197,25 @@ public class ElementCondition extends Condition {
 		List<String> inputNames = Arrays.asList("input[type='checkbox']", "input[type='radio']", "input[type='submit']", "input[type='button']", "input[type='image']", "input[type='range']", "input[type='color']", "button");
 		List<String> elementNames = new ArrayList<String>(linkNames);
 		elementNames.addAll(inputNames);
-		List<String> attributeNames = Arrays.asList("id", "value", "name", "class", "title", "alt", "href", "*");
+		List<String> attributeNames = Arrays.asList("title", "alt", "href", "id", "class", "*");
 
 		// find links, checkboxes, radioboxes and buttons
-		selectorGroups.add(checkElementAttributes(elementNames, queryStrings, attributeNames, AttributeMatcher.EXACT));
+		selectorGroups.add(checkElementAttributes(elementNames, queryStrings, attributeNames, Arrays.asList(AttributeMatcher.EXACT, AttributeMatcher.WORD, AttributeMatcher.CONTAINS)));
+
 		// find any element by inner text
-		selectorGroups.add(checkElementText(linkNames, queryStrings, TextMatcher.EXACT));
+		selectorGroups.add(checkElementText(linkNames, queryStrings, Arrays.asList(TextMatcher.EXACT, TextMatcher.CONTAINS)));
 
 		// find clickables by searching for closest fitting label
 		if(!queryStrings.isEmpty()) {
 			HtmlElements labelElements = browser.query().isText().has(queryStrings).limit(2).find();
 			if(!labelElements.isEmpty()) {
 				selectorGroups.addLabelElements(labelElements);
+				selectorGroups.setLabelType(Direction.SELECT);
+				// now add all checkboxes for closest label comparison
+				selectorGroups.add(new SelectorGroup(new JQuerySelector("find('input[type=checkbox], input[type=radio]')", Weight.VERYLOW.getValue()), Type.LABEL));
 			}
 		}
 
-		// find links, checkboxes, radioboxes and buttons
-		selectorGroups.add(checkElementAttributes(elementNames, queryStrings, attributeNames, Arrays.asList(AttributeMatcher.WORD, AttributeMatcher.CONTAINS)));
-		// find any element by inner text
-		selectorGroups.add(checkElementText(linkNames, queryStrings, Arrays.asList(TextMatcher.CONTAINS)));
-		
 		// TODO elements with parent <a> tags are also clickable 
 		if(queryStrings.isEmpty()) {
 			// TODO has-parent instead of following-sibling
@@ -317,7 +321,8 @@ public class ElementCondition extends Condition {
 		selectorGroups.add(checkElementAttributes(elementNames, queryStrings, attributeNames, Arrays.asList(AttributeMatcher.EXACT, AttributeMatcher.WORD, AttributeMatcher.CONTAINS)));
 		
 		// find target by option labels
-		selectorGroups.add(new SelectorGroup(new JQuerySelector("find('select:has(option:containsCaseInsensitive(" + queryStrings + "))')")));
+		selectorGroups.add(new SelectorGroup(new JQuerySelector("find('select:has(option:containsCaseInsensitive(" + queryStrings + "))')"), Weight.QUITE.getValue()));
+		// TODO option attributes
 
 		// if there were no results just find all selects
 		selectorGroups.add(new SelectorGroup(new CssSelector(StringUtils.join(elementNames, ',')), Type.FALLBACK));

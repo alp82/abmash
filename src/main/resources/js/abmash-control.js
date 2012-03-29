@@ -2,6 +2,8 @@
 	var queryElementsFound = 0;
 	var queryLimit = 0;
 	var queryData = {};
+	var elementWeight = {};
+	var elementWeightHistory = {};
 	
 	// public functions
 	
@@ -11,6 +13,27 @@
 	
 	abmash.getData = function(key) {
 		return queryData[key];
+	};
+	
+	abmash.setElementWeight = function(element, weight) {
+		elementWeight[jQuery(element).getPath()] = Math.max(weight, abmash.getElementWeight(element, { useHistory: false }));
+	};
+
+	abmash.getElementWeight = function(element, options) {
+//		if(document.title.contains("Select a Car")) {
+//			alert("element: " + element);
+//			alert("options: " + options);
+//			alert("path: " + jQuery(element).getPath());
+//			alert("type: " + (typeof elementWeight[jQuery(element).getPath()]));
+//		}		
+
+		options = jQuery.extend({
+			useHistory: true,
+		}, options);
+		
+		if(typeof elementWeight[jQuery(element).getPath()] != "undefined") return elementWeight[jQuery(element).getPath()];
+		if(options.useHistory && typeof elementWeightHistory[jQuery(element).getPath()] != "undefined") return elementWeightHistory[jQuery(element).getPath()];
+		return 1;
 	};
 	
 	abmash.processJqueryCommands = function(elements, jQueryCommands) {
@@ -27,24 +50,33 @@
 		return response;
 	};
 	
-	abmash.query = function(conditions, colorConditions, rootElements, referenceElements, labelElements, limit) {
+	abmash.query = function(conditions, closenessConditions, colorConditions, rootElements, referenceElements, labelElements, limit) {
 		queryLimit = limit;
 		queryElementsFound = 0;
+		elementWeightHistory = jQuery.extend(elementWeightHistory, elementWeight);
+		elementWeight = {};
 		// TODO how do multiple root elements work?
 		abmash.setData('queryElements', rootElements.length > 0 ? rootElements.join(',') : document);
 		
-		// normal conditions
+		// normal conditions (element selectors)
 		var results = queryConditions(conditions, referenceElements, labelElements);
-		if(!results || results.length == 0) return [];
-		results = results.unique();
+		if(results.length == 0) return [];
 
-		// color conditions
-		if(colorConditions) {
+		// closeness conditions
+		if(JSON.parse(closenessConditions).length > 0) {
 			abmash.setData('queryElements', results);
-			results = queryConditions(colorConditions, referenceElements, labelElements);
+			results = queryConditions(closenessConditions, referenceElements, labelElements);
+			if(results.length == 0) return [];
 		}
 		
-		results = results.sort(sortResults);
+		// color conditions
+		if(JSON.parse(colorConditions).length > 0) {
+			abmash.setData('queryElements', results);
+			results = queryConditions(colorConditions, referenceElements, labelElements);
+			if(results.length == 0) return [];
+		}
+		
+//		results = results.sort(sortResults);
 				
 //		jQuery(results).css('background-color', 'purple');
 		return results;
@@ -74,42 +106,60 @@
 			if(conditionsResult.length == 0) return false;
 		});
 
-		return conditionsResult;
+		return conditionsResult == null ? [] : conditionsResult.unique();
 	}
 	
 	function queryCondition(condition, referenceElements, labelElements) {
 		var conditionResult = [];
 		// TODO condition weight?
-		jQuery.each(condition.selectorGroups, function() {
-			var groupResult = querySelectorGroup(this, referenceElements);
-			if(groupResult.length > 0) conditionResult = conditionResult.concat(groupResult);
-			if(queryLimitReached()) return false;
-		});
+		conditionResult = querySelectorGroups(condition.selectorGroups, referenceElements, conditionResult);
 
 		// continue with fallback selector groups if nothing was found
 		if(queryElementsFound == 0) {
-			jQuery.each(condition.fallbackSelectorGroups, function() {
-				var groupResult = querySelectorGroup(this, referenceElements);
-				if(groupResult.length > 0) conditionResult = conditionResult.concat(groupResult);
-				if(queryLimitReached()) return false;
-			});
+			conditionResult = querySelectorGroups(condition.fallbackSelectorGroups, referenceElements, conditionResult);
 		}
-
+		
 		// search for closest labels if needed
-		// TODO !!!!!!!!!!!
 		if(condition.labelId) {
-			var labelResult = jQuery(conditionResult).hasLabel(jQuery(labelElements[condition.labelId]));
-			conditionResult = labelResult.concat(conditionResult);
+			var additionalElementsForLabels = querySelectorGroups(condition.labelSelectorGroups, referenceElements, conditionResult);
+			var totalElementsForLabels = jQuery(conditionResult).add(additionalElementsForLabels);
+			var labelResult = [];
+			if(condition.labelType == "input") {
+				labelResult = totalElementsForLabels.hasLabel(jQuery(labelElements[condition.labelId]));
+			} else if(condition.labelType == "select") {
+				labelResult = totalElementsForLabels.hasLabelForSelect(jQuery(labelElements[condition.labelId]));
+			}
+			
+			// apply element weights for labels
+			jQuery.each(jQuery(labelResult), function() {
+				abmash.setElementWeight(this, abmash.getElementWeight(jQuery(labelElements[condition.labelId])));
+			});
+			
+			conditionResult = labelResult.concat(conditionResult).unique();
 		}
 
+		// sort results by their weight
+		conditionResult = conditionResult.sort(sortByWeight);
+		
 		// remove duplicates
 		conditionResult = conditionResult.unique();
 		
-		// if this was a color condition, further narrow down the results for potentially following color queries
-		if(condition.isColorCondition) {
+		// if this was a closeness or color condition, further narrow down the results for potentially following similar queries
+		if(condition.isClosenessCondition || condition.isColorCondition) {
 			abmash.setData('queryElements', conditionResult);
 		}
 
+		return conditionResult;
+	}
+	
+	function querySelectorGroups(groups, referenceElements, conditionResult) {
+		jQuery.each(groups, function() {
+			var groupResult = querySelectorGroup(this, referenceElements);
+			if(groupResult.length > 0) conditionResult = conditionResult.concat(groupResult);
+			// TODO query limit needed? (cannot return here)
+//			if(queryLimitReached()) return false;
+		});
+		
 		return conditionResult;
 	}
 	
@@ -122,15 +172,19 @@
 		jQuery.each(selectorGroup.selectors, function() {
 			var selector = this;
 
+			
 			// process jquery command
 			jQuery.globalEval("abmash.setData('queryResults', " + selector.command + ");");
 			var queryResult = abmash.getData('queryResults');
 			jQuery.each(jQuery(queryResult), function() {
-			    var element = this;
+			    var element = jQuery(this);
 			    // add element if it is visible
-			    // TODO optional?
-			    if(jQuery(element).filter(":visible").length > 0 && jQuery(element).parents('body').length > 0) {
-			    	groupResult.push(element);
+			    // TODO :visible optional?
+			    if(element.filter(':visible').length > 0 && element.parents('head').length == 0 && element.parents('html').length > 0) {
+			    	groupResult.push(element.get(0));
+			    	// store priority for element based on selector weight
+			    	abmash.setElementWeight(element.get(0), selector.weight);
+			    	// increment element count
 			    	queryElementsFound++;
 			    	if(groupLimit > 0 && groupResult.length >= groupLimit) return false;
 			    }
@@ -144,13 +198,10 @@
 		return queryLimit > 0 && queryElementsFound >= queryLimit;
 	}
 	
-    function sortResults(firstElement, secondElement) {
-    	var highPriority = jQuery(document.body).find(firstElement).length > 0;
-		return highPriority ? -1 : 0;
+    function sortByWeight(firstElement, secondElement) {
+    	var firstWeight = abmash.getElementWeight(firstElement);
+    	var secondWeight = abmash.getElementWeight(secondElement);
+		return secondWeight - firstWeight;
 	}
     
 })(window.abmash = window.abmash || {});
-
-//jQuery(document).ready(function(jQuery) {
-//	abmash.foo();
-//});

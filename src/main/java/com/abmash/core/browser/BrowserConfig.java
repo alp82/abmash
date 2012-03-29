@@ -10,10 +10,14 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeDriverService;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxBinary;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 
@@ -63,6 +67,17 @@ public class BrowserConfig {
 				e.printStackTrace();
 			}
 			webDriver = (RemoteWebDriver) new FirefoxDriver(binary, profile);
+		} else if(properties.getProperty("browserType").equalsIgnoreCase("chrome")) {
+			System.setProperty("webdriver.chrome.driver", properties.getProperty("browserBin"));
+			ChromeDriverService cds = ChromeDriverService.createDefaultService();
+			try {
+				cds.start();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+//			ChromeOptions options = new ChromeOptions();
+//			options.setBinary(new File(properties.getProperty("browserBin")));
+			webDriver = (RemoteWebDriver) new ChromeDriver(cds);
 		}
 		
 		// TODO htmlunit does not work yet (RemoteWebElement is Firefox specific, CSS selectors do not work properly)

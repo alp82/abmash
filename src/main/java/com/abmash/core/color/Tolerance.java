@@ -4,8 +4,8 @@ public enum Tolerance {
 	NONE(0.0),
 	VERYLOW(0.1),
 	LOW(0.2),
-	SOME(0.35),
-	QUITE(0.5),
+	MIDLOW(0.35),
+	MIDHIGH(0.5),
 	HIGH(0.65),
 	VERYHIGH(0.8),
 	HUGE(0.9);

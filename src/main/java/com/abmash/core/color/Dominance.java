@@ -3,8 +3,8 @@ package com.abmash.core.color;
 public enum Dominance {
 	VERYLOW(0.1),
 	LOW(0.2),
-	SOME(0.3),
-	QUITE(0.45),
+	MIDLOW(0.3),
+	MIDHIGH(0.45),
 	HIGH(0.6),
 	VERYHIGH(0.75),
 	HUGE(0.9),
