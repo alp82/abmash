@@ -1395,7 +1395,9 @@ public class HtmlQuery {
 		resultElements = null;
 			
 		// if no condition is set, add the "all elements" matcher
-		if(conditions.isEmpty() || !conditions.hasElementFinder()) conditions.add(new ElementCondition(browser, ElementType.ALL));
+		if(elementsToFilter.isEmpty() && (conditions.isEmpty() || !conditions.hasElementFinder())) {
+			conditions.add(new ElementCondition(browser, ElementType.ALL));
+		}
 			
 		Map<String, HtmlElements> referenceElements = new HashMap<String, HtmlElements>(); 
 		Map<String, HtmlElements> labelElements = new HashMap<String, HtmlElements>(); 
@@ -1520,9 +1522,13 @@ public class HtmlQuery {
 			}
 		}
 		
+		if(!elementsToFilter.isEmpty()) {
+			System.out.println(elementsToFilter);
+		}
+		
 		// sending queries to jquery executor
 //		String queryId = Long.toString(System.currentTimeMillis()) + Double.toString(Math.random());
-		String script = "return abmash.query(arguments[0], arguments[1], arguments[2], arguments[3], arguments[4], arguments[5], arguments[6]);";
+		String script = "return abmash.query(arguments[0], arguments[1], arguments[2], arguments[3], arguments[4], arguments[5], arguments[6], arguments[7]);";
 		@SuppressWarnings("unchecked")
 		ArrayList<RemoteWebElement> seleniumElements = (ArrayList<RemoteWebElement>) browser.javaScript(
 				script,
@@ -1531,6 +1537,7 @@ public class HtmlQuery {
 				jsonClosenessConditions.toString(),
 				jsonColorConditions.toString(),
 				rootElements,
+				elementsToFilter,
 				referenceElements,
 				labelElements,
 				limit
@@ -1562,13 +1569,9 @@ public class HtmlQuery {
 		// not queries
 		for(HtmlQuery notQuery: notQueries) {
 			// process not query if result is not empty already
-			System.out.println(notQuery);
-			System.out.println(tempElements);
 			if(!tempElements.isEmpty()) {
-				System.out.println(tempElements);
 				notQuery.childOf(rootElements);
 				HtmlElements notElements = notQuery.find();
-				System.out.println(notElements);
 				
 				HtmlElements subQueryElements = new HtmlElements();
 				for (HtmlElement tempElement: tempElements) {
@@ -1577,7 +1580,6 @@ public class HtmlQuery {
 						subQueryElements.add(tempElement);
 					}
 				}
-				System.out.println(subQueryElements);
 				
 				// set temp elements to narrowed down results
 				tempElements = subQueryElements;

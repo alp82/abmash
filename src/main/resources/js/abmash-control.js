@@ -50,7 +50,7 @@
 		return response;
 	};
 	
-	abmash.query = function(conditions, closenessConditions, colorConditions, rootElements, referenceElements, labelElements, limit) {
+	abmash.query = function(conditions, closenessConditions, colorConditions, rootElements, elementsToFilter, referenceElements, labelElements, limit) {
 		queryLimit = limit;
 		queryElementsFound = 0;
 		elementWeightHistory = jQuery.extend(elementWeightHistory, elementWeight);
@@ -58,21 +58,38 @@
 		// TODO how do multiple root elements work?
 		abmash.setData('queryElements', rootElements.length > 0 ? rootElements.join(',') : document);
 		
+		// prepare results
+		var results = [];
+		
+		// TODO remove
+		if(elementsToFilter.length > 0) {
+			abmash.setData('debug1', true);
+		}
+		
 		// normal conditions (element selectors)
-		var results = queryConditions(conditions, referenceElements, labelElements);
-		if(results.length == 0) return [];
+		if(JSON.parse(conditions).length > 0) {
+			results = queryConditions(conditions, referenceElements, labelElements, elementsToFilter);
+			if(results.length == 0) return [];
+		} else if(elementsToFilter.length > 0) {
+			results = elementsToFilter;
+		}
 
 		// closeness conditions
 		if(JSON.parse(closenessConditions).length > 0) {
 			abmash.setData('queryElements', results);
-			results = queryConditions(closenessConditions, referenceElements, labelElements);
+			// TODO remove
+			if(abmash.getData('debug1')) {
+				abmash.setData('debug2', true);
+			}		
+			results = queryConditions(closenessConditions, referenceElements, labelElements, []);
 			if(results.length == 0) return [];
 		}
+		
 		
 		// color conditions
 		if(JSON.parse(colorConditions).length > 0) {
 			abmash.setData('queryElements', results);
-			results = queryConditions(colorConditions, referenceElements, labelElements);
+			results = queryConditions(colorConditions, referenceElements, labelElements, []);
 			if(results.length == 0) return [];
 		}
 		
@@ -84,17 +101,10 @@
 
 	// private functions
 	
-	function queryConditions(conditions, referenceElements, labelElements) {
-		var conditionsResult = null;
-		var conditionsJson = [];
-		try {
-			//conditionsJson = jQuery.parseJSON(conditions);
-			conditionsJson = JSON.parse(conditions);
-		} catch (e) {
-			// TODO exception handling when parsing json
-			alert(e);
-		}
-		jQuery.each(conditionsJson, function() {
+	function queryConditions(conditions, referenceElements, labelElements, preResult) {
+		var conditionsResult = preResult.length > 0 ? preResult : null;
+
+		jQuery.each(JSON.parse(conditions), function() {
 			var conditionResult = queryCondition(this, referenceElements, labelElements);
 			if(conditionsResult == null) {
 				conditionsResult = conditionResult;
@@ -102,6 +112,7 @@
 				// intersect the results with the previous condition because all conditions are ANDed
 				conditionsResult = jQuery.map(conditionsResult, function(a) { return jQuery.inArray(a, conditionResult) < 0 ? null : a;});
 			}
+			
 			// TODO process all conditions again with fallbacks only? could produce unexpected results...
 			if(conditionsResult.length == 0) return false;
 		});
@@ -172,7 +183,6 @@
 		jQuery.each(selectorGroup.selectors, function() {
 			var selector = this;
 
-			
 			// process jquery command
 			jQuery.globalEval("abmash.setData('queryResults', " + selector.command + ");");
 			var queryResult = abmash.getData('queryResults');
@@ -180,6 +190,7 @@
 			    var element = jQuery(this);
 			    // add element if it is visible
 			    // TODO :visible optional?
+
 			    if(element.filter(':visible').length > 0 && element.parents('head').length == 0 && element.parents('html').length > 0) {
 			    	groupResult.push(element.get(0));
 			    	// store priority for element based on selector weight

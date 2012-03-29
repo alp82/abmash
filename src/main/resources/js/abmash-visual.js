@@ -219,6 +219,14 @@
 		    	directionHasToMatchAllTargets: false,
 		    }, closenessOptions);
 		    
+			// TODO remove
+			if(abmash.getData('debug2')) {
+				alert(options.sources.get());
+				alert(options.targets.get());
+				alert(options.direction);
+			}	
+
+		    
 //			jQuery(options.sources).css('background-color', 'green');
 			jQuery.each(options.sources, function() {
 				var source = jQuery(this);

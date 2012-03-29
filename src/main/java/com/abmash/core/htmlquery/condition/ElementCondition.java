@@ -155,7 +155,7 @@ public class ElementCondition extends Condition {
 	}
 	
 	private void selectorsForTitles() {
-		List<String> elementNames = Arrays.asList("h1", "h2", "h3", "h4", "h5", "h6");
+		List<String> elementNames = Arrays.asList("h1", "h2", "h3", "h4", "h5", "h6", "*");
 		List<String> attributeNames = Arrays.asList("for", "id", "class", "name", "value", "type", "title", "alt", "*");
 		
 		// find target by inner text which match exactly or partially
@@ -164,8 +164,8 @@ public class ElementCondition extends Condition {
 		// find elements with font-size bigger than the default
 		// TODO move that to jquery
 		// TODO combine css check with text check
-		HtmlElement body = browser.query().tag("body").findFirst();
-		selectorGroups.add(checkElementCssAttribute("*", Arrays.asList(body.getCssValue("font-size")), "font-size", CSSAttributeMatcher.GREATER_THAN));
+//		HtmlElement body = browser.query().tag("body").findFirst();
+//		selectorGroups.add(checkElementCssAttribute("*", Arrays.asList(body.getCssValue("font-size")), "font-size", CSSAttributeMatcher.GREATER_THAN));
 
 		// find target by html attributes which match exactly or partially
 		selectorGroups.add(checkElementAttributes(elementNames, queryStrings, attributeNames, Arrays.asList(AttributeMatcher.EXACT, AttributeMatcher.WORD, AttributeMatcher.STARTSWITH, AttributeMatcher.ENDSWITH, AttributeMatcher.CONTAINS)));
