@@ -53,6 +53,11 @@ public class BrowserConfig {
 			// TODO use Firefox3Locator
 			File binaryFile = new File(properties.getProperty("browserBin"));
 			FirefoxBinary binary = new FirefoxBinary(binaryFile);
+			
+			// can be used for headless mode. (Xvfb needs to be running for the specified display)
+			if(properties.containsKey("display")) {
+				binary.setEnvironmentProperty("DISPLAY", properties.getProperty("display"));
+			}
 			FirefoxProfile profile = new FirefoxProfile();
 			// enable native events
 			profile.setEnableNativeEvents(true); 
