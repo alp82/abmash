@@ -13,7 +13,6 @@ import java.util.concurrent.TimeoutException;
 
 import javax.imageio.ImageIO;
 
-import org.apache.commons.codec.binary.Base64;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -1633,7 +1632,7 @@ public class HtmlQuery {
 //		System.out.println(resultElements + " -- " + conditions);
 		return resultElements;
 	}
-	
+
 //	public HtmlElements findOld() {
 //		if(!(resultElements instanceof HtmlElements)) {
 //			// find elements
