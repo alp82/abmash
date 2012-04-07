@@ -50,7 +50,92 @@
 		return response;
 	};
 	
-	abmash.query = function(conditions, closenessConditions, colorConditions, rootElements, elementsToFilter, referenceElements, labelElements, limit) {
+	abmash.query = function(jsonJQueryList/*, closenessConditions, colorConditions, rootElements, elementsToFilter, referenceElements, labelElements, limit*/) {
+		var result = abmash.queryJQueryList(JSON.parse(jsonJQueryList), null);
+		return result;
+	};
+	
+	abmash.queryJQueryList = function(jQueryList, relationalResult) {
+		var result = [];
+
+		jQuery.each(jQueryList, function() {
+			var jQuery = this;
+			//TODO jQuery.weight
+			result = result.concat(abmash.queryJQueryCommands(jQuery.commands, relationalResult));
+		});
+		
+		return result;
+	};
+	
+	abmash.queryJQueryCommands = function(jQueryCommands, relationalResult) {
+		var result = [];
+		
+		var firstAnd = true;
+		
+		jQuery.each(jQueryCommands, function() {
+			var jQueryCommand = this;
+
+			if(jQueryCommand.boolean) {
+				booleanResult = result.concat(abmash.queryJQueryList(jQueryCommand.jQueryList, result));
+				switch (jQueryCommand.type) {
+				case "OR":
+					// merge results
+					result = result.concat(booleanResult);
+					break;
+					
+				case "NOT":
+					// remove not result from query result
+					result = jQuery.map(booleanResult, function(a) { return jQuery.inArray(a, result) < 0 ? a : null;});
+					break;
+					
+				case "AND":
+					// intersect results
+					if(firstAnd) {
+						result = result.concat(booleanResult);
+						firstAnd = false;
+					} else {
+						result = jQuery.map(booleanResult, function(a) { return jQuery.inArray(a, result) < 0 ? null : a;});
+					}
+					break;
+					
+				default:
+					alert("WRONG BOOLEAN TYPE: " + jQueryCommand.type);
+				}
+			} else {
+				result = result.concat(abmash.queryExecuteJQueryCommand(jQueryCommand, relationalResult));
+			}
+		});
+		
+		return result;
+	};
+	
+	abmash.queryExecuteJQueryCommand = function(jQueryCommand, relationalResult) {
+		var result = [];
+		
+		var jQueryEval = "jQuery" + (relationalResult != null && false ? "(" + relationalResult + ")" : "");
+		jQueryEval += "." + jQueryCommand.method + "(" + jQueryCommand.selector + ")";
+
+		jQuery.globalEval("abmash.setData('commandResult', " + jQueryEval + ");");
+		var commandResult = abmash.getData('commandResult');
+		jQuery.each(jQuery(commandResult), function() {
+		    var element = jQuery(this);
+		    // add element if it is visible
+		    // TODO :visible optional?
+
+		    if(element.filter(':visible').length > 0 && element.parents('head').length == 0 && element.parents('html').length > 0) {
+		    	result.push(element.get(0));
+		    	// store priority for element based on selector weight
+		    	abmash.setElementWeight(element.get(0), jQueryCommand.weight);
+		    	// increment element count
+//		    	queryElementsFound++;
+//		    	if(groupLimit > 0 && groupResult.length >= groupLimit) return false;
+		    }
+		});
+		
+		return result;
+	};
+	
+	abmash.queryOld = function(conditions, closenessConditions, colorConditions, rootElements, elementsToFilter, referenceElements, labelElements, limit) {
 		queryLimit = limit;
 		queryElementsFound = 0;
 		elementWeightHistory = jQuery.extend(elementWeightHistory, elementWeight);

@@ -1,23 +1,22 @@
 package com.abmash.api.query;
 
-import java.util.ArrayList;
-
-import com.abmash.api.query.predicate.*;
-import com.abmash.core.jquery.JQuery;
+import com.abmash.api.query.predicate.BooleanPredicate;
+import com.abmash.api.query.predicate.LinkPredicate;
+import com.abmash.api.query.predicate.Predicate;
+import com.abmash.api.query.predicate.TagPredicate;
 
 public class Factory {
 	
 //	public static final int CLICKABLE = 1;
 	
-	// Varargs implicitly means connecting predicates using Predicate.and()
-	public static ArrayList<JQuery> query(Predicate... predicates) {
-		return new Query(predicates).build();
+	public static Query query(Predicate... predicates) {
+		return new Query(predicates);
 	}
 
 	public static Query union(Query... queries) {
-		Query unionQuery = new Query();
+		Query unionQuery = new Query(); 
 		for (Query query: queries) {
-			unionQuery = unionQuery.union(query);
+			unionQuery.union(query);
 		}
 		return unionQuery;
 	}

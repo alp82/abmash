@@ -12,7 +12,7 @@ public class LinkPredicate extends Predicate {
 
 	@Override
 	public void buildCommands() {
-		jQueryList.add(JQueryFactory.select("'a'"));
-		jQueryList.add(JQueryFactory.select("'button'"));
+		jQueryList.add(JQueryFactory.select("'a'", 1));
+		jQueryList.add(JQueryFactory.select("'button'", 1));
 	}
 }

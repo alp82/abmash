@@ -4,8 +4,6 @@ import java.util.ArrayList;
 
 import com.abmash.api.query.BooleanType;
 import com.abmash.core.jquery.JQuery;
-import com.abmash.core.jquery.JQueryCommandTODO;
-import com.abmash.core.jquery.command.Command;
 
 public abstract class Predicate {
 
@@ -35,7 +33,7 @@ public abstract class Predicate {
 	
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + " with commands " + jQueryList;
+		return getClass().getSimpleName() + " with jQueryList " + jQueryList;
 	}
 
 }

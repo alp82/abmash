@@ -1,6 +1,5 @@
 package com.abmash.core.jquery.command;
 
-import com.abmash.core.jquery.JQuery;
 
 /**
  * Find descendants of the current set of matched elements that match the selector.

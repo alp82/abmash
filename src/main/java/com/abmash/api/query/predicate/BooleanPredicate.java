@@ -41,16 +41,15 @@ public class BooleanPredicate extends Predicate {
 		BooleanCommand booleanCommand = new BooleanCommand(type);
 		for(Predicate predicate: predicates) {
 			predicate.buildCommands();
-			for(JQuery jQuery: predicate.getJQueryList()) {
-				booleanCommand.addCommands(jQuery.getCommands());
-			}
+			// TODO there is no distinction between predicate jquery's yet
+			booleanCommand.addJQueryList(predicate.getJQueryList());
 		}
-		jQueryList.add(new JQuery(booleanCommand));
+		jQueryList.add(new JQuery(booleanCommand, null));
 	}
 	
 	@Override
 	public String toString() {
-		return type + " " + super.toString();
+		return super.toString() + " (" + type + ")";
 	}
 	
 }

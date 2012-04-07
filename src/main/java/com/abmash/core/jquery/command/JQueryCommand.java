@@ -1,7 +1,5 @@
 package com.abmash.core.jquery.command;
 
-import java.util.ArrayList;
-
 import com.abmash.core.jquery.JQuery;
 
 /**
@@ -12,7 +10,7 @@ public class JQueryCommand extends Command {
 	private JQuery jQuery;
 	
 	public JQueryCommand(JQuery jQuery) {
-		super(null);
+		super(null, null);
 		this.jQuery = jQuery;
 	}
 	
@@ -21,12 +19,12 @@ public class JQueryCommand extends Command {
 	}
 	
 	// TODO
-	public String getCommand() {
-		ArrayList<Command> commands = jQuery.getCommands();
-		String cmd = "jQuery()";
-		for(Command command: commands) {
-			cmd += "." + command.getCommand();
-		}
-		return cmd;
-	}
+//	public String getCommand() {
+//		ArrayList<Command> commands = jQuery.getCommands();
+//		String cmd = "jQuery()";
+//		for(Command command: commands) {
+//			cmd += "." + command.getCommand();
+//		}
+//		return cmd;
+//	}
 }

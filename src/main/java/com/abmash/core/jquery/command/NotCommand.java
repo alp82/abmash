@@ -1,6 +1,5 @@
 package com.abmash.core.jquery.command;
 
-import com.abmash.core.jquery.JQuery;
 
 /**
  * Remove all elements from the set of matched elements that match the selector.

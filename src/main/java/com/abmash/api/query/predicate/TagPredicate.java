@@ -12,6 +12,6 @@ public class TagPredicate extends Predicate {
 
 	@Override
 	public void buildCommands() {
-		jQueryList.add(JQueryFactory.select("'" + name + "'"));
+		jQueryList.add(JQueryFactory.select("'" + name + "'", 1));
 	}
 }

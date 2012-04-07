@@ -2,15 +2,15 @@ package com.abmash.core.jquery.command;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.abmash.core.jquery.JQuery;
-
 public abstract class Command {
 	
 	String method;
 	String selector;
+	double weight;
 	
-	public Command(String selector) {
+	public Command(String selector, Double weight) {
 		this.selector = selector;
+		this.weight = weight != null ? weight : 1;
 	}
 	
 	public String getMethod() {
@@ -21,16 +21,20 @@ public abstract class Command {
 		return selector;
 	}
 	
-	public String getCommand() {
-		String command = "";
-		if(selector instanceof String) {
-			if(method instanceof String) {
-				command = method + "(" + selector + ")";
-			} else {
-				command = selector;
-			}
-		}
-		return command;
+	public double getWeight() {
+		return weight;
+	}
+	
+	public boolean isBooleanCommand() {
+		return false;
+	}
+	
+	public boolean isClosenessCommand() {
+		return false;
+	}
+	
+	public boolean isColorCommand() {
+		return false;
 	}
 	
 	/**

@@ -2,8 +2,8 @@ package com.abmash.core.jquery;
 
 public class JQueryFactory {
 	
-	public static JQuery select(String selector) {
-		return new JQuery().find(selector);
+	public static JQuery select(String selector, double weight) {
+		return new JQuery(weight).find(selector);
 	}
 
 }
