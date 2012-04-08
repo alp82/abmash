@@ -10,7 +10,7 @@ public class JQueryCommand extends Command {
 	private JQuery jQuery;
 	
 	public JQueryCommand(JQuery jQuery) {
-		super(null, null);
+		super(null);
 		this.jQuery = jQuery;
 	}
 	

@@ -7,11 +7,11 @@ package com.abmash.core.jquery.command;
 public class SelectCommand extends Command {
 	
 	public SelectCommand(String selector) {
-		super(selector, null);
+		super(selector);
 	}
-	
+
 	@Override
-	public String toString(int intendationSpaces) {
-		return super.toString(intendationSpaces) + " with selector " + selector;
+	public boolean isEvalCommand() {
+		return true;
 	}
 }

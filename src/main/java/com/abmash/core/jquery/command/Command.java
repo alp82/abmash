@@ -6,11 +6,10 @@ public abstract class Command {
 	
 	String method;
 	String selector;
-	double weight;
 	
-	public Command(String selector, Double weight) {
+	public Command(String selector) {
+		// TODO throw exception if selector empty or null
 		this.selector = selector;
-		this.weight = weight != null ? weight : 1;
 	}
 	
 	public String getMethod() {
@@ -21,8 +20,8 @@ public abstract class Command {
 		return selector;
 	}
 	
-	public double getWeight() {
-		return weight;
+	public boolean isEvalCommand() {
+		return false;
 	}
 	
 	public boolean isBooleanCommand() {
@@ -46,7 +45,8 @@ public abstract class Command {
 	}
 
 	public String toString(int intendationSpaces) {
-		return StringUtils.repeat(" ", intendationSpaces) + getClass().getSimpleName();
+		String commandString =  method != null ? ": ." + method + "(" + selector + ")" : "";
+		return StringUtils.repeat(" ", intendationSpaces) + getClass().getSimpleName() + commandString;
 	}
 
 	

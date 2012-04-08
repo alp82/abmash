@@ -1,4 +1,4 @@
-package com.abmash.api.query.predicate;
+package com.abmash.core.query;
 
 import java.util.ArrayList;
 

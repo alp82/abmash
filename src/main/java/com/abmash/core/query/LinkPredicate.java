@@ -1,4 +1,4 @@
-package com.abmash.api.query.predicate;
+package com.abmash.core.query;
 
 import com.abmash.core.jquery.JQueryFactory;
 
@@ -12,7 +12,8 @@ public class LinkPredicate extends Predicate {
 
 	@Override
 	public void buildCommands() {
-		jQueryList.add(JQueryFactory.select("'a'", 1));
+		jQueryList.add(JQueryFactory.select("'a'", 3).contains(name));
+		jQueryList.add(JQueryFactory.select("'a'", 2));
 		jQueryList.add(JQueryFactory.select("'button'", 1));
 	}
 }

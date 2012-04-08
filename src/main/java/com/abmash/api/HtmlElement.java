@@ -79,6 +79,7 @@ public class HtmlElement extends Element {
 
 	private String id;
 	private ArrayList<String> attributeNames;
+	private Map<String, String> attributes = new HashMap<String, String>();
 	// TODO attribute values cache
 //	private Object jsonRepresentation;
 	
@@ -530,6 +531,7 @@ public class HtmlElement extends Element {
 	
 	// cache handling
 	
+	// TODO remove
 	public static Map<String, JQuerySelector> getJQueryCommandsForCache() {
 		Map<String, JQuerySelector> javaScripts = new HashMap<String, JQuerySelector>();
 		
@@ -546,6 +548,7 @@ public class HtmlElement extends Element {
 		return javaScripts;
 	}
 	
+	// TODO remove
 	public void storeCacheData(Map<String, Object> data) {
 //		tagName = (String) data.get("tagName");
 		uniqueSelector = (String) data.get("uniqueSelector");
@@ -563,6 +566,38 @@ public class HtmlElement extends Element {
 		Double width = DataTypeConversion.longOrDoubleToDouble(size.get("width"));
 		Double height = DataTypeConversion.longOrDoubleToDouble(size.get("height"));
 		this.size = new Size(width, height);
+	}
+	
+	public void setTagName(String tagName) {
+		this.tagName = tagName;
+	}
+	
+	public void setText(String text) {
+		this.text = text;
+	}
+	
+	public void setSourceText(String sourceText) {
+		this.sourceText = sourceText;
+	}
+	
+	public void setAttributeNames(ArrayList<String> attributeNames) {
+		this.attributeNames = attributeNames;
+	}
+	
+	public void setAttributes(Map<String, String> attributes) {
+		this.attributes = attributes;
+	}
+	
+	public void setUniqueSelector(String uniqueSelector) {
+		this.uniqueSelector = uniqueSelector;
+	}
+	
+	public void setLocation(Location location) {
+		this.location = location;
+	}
+	
+	public void setSize(Size size) {
+		this.size = size;
 	}
 	
 	// TODO jquery command ?
@@ -648,6 +683,10 @@ public class HtmlElement extends Element {
 			}
 		}
 		return attributeNames;
+	}
+	
+	public Map<String, String> getAttributes() {
+		return attributes;
 	}
 	
 	/**
@@ -802,8 +841,9 @@ public class HtmlElement extends Element {
 	 * @return the value of the attribute, null if attribute not exists
 	 */
 	public String getAttribute(String name) {
-		switchToElementWindow();
-		return seleniumElement.getAttribute(name);
+//		switchToElementWindow();
+//		return seleniumElement.getAttribute(name);
+		return attributes.get(name);
 	}
 	
 	/**
@@ -1095,15 +1135,12 @@ public class HtmlElement extends Element {
 	 */
 	@Override
 	public String toString() {
-		String attributes = "";
+		String attributeString = "";
 		// retrieval of attribute names
-		// TODO bad performance, cache all attributes?
-		if(getAttributeNames() != null) {
-			for (String attributeName: attributeNames) {
-				attributes += " " + attributeName + "=\"" + getAttribute(attributeName) + "\"";
-			}
+		for (String attributeName: attributes.keySet()) {
+			attributeString += " " + attributeName + "=\"" + attributes.get(attributeName) + "\"";
 		}
-		return "<" + getTagName() + attributes + ">" + getText().replace("\n", " ").substring(0, Math.min(50, getText().length())) + "</" + getTagName() + ">";
+		return "<" + getTagName() + attributeString + ">" + getText().replace("\n", " ").substring(0, Math.min(50, getText().length())) + "</" + getTagName() + ">";
 	}
 	
 }

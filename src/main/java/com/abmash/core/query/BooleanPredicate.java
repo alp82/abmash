@@ -1,4 +1,4 @@
-package com.abmash.api.query.predicate;
+package com.abmash.core.query;
 
 import java.util.ArrayList;
 
@@ -6,6 +6,7 @@ import com.abmash.api.query.BooleanType;
 import com.abmash.api.query.Query;
 import com.abmash.core.jquery.JQuery;
 import com.abmash.core.jquery.JQueryCommandTODO;
+import com.abmash.core.jquery.JQueryFactory;
 import com.abmash.core.jquery.command.BooleanCommand;
 import com.abmash.core.jquery.command.Command;
 
@@ -44,7 +45,7 @@ public class BooleanPredicate extends Predicate {
 			// TODO there is no distinction between predicate jquery's yet
 			booleanCommand.addJQueryList(predicate.getJQueryList());
 		}
-		jQueryList.add(new JQuery(booleanCommand, null));
+		jQueryList.add(JQueryFactory.bool(booleanCommand));
 	}
 	
 	@Override

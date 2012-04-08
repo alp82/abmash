@@ -10,28 +10,28 @@ public class JQuery {
 	
 	ArrayList<Command> commands = new ArrayList<Command>();
 
+	String selector;
+	
 	Double weight;
 
-	public JQuery(Double weight) {
+	public JQuery(String selector, Double weight) {
+		this.selector = selector != null ? selector : "'*'";
 		this.weight = weight != null ? weight : 1;
 	}
 	
-	public JQuery(Command command, Double weight) {
-		this(weight);
-		addCommand(command);
+//	public JQuery(Command command) {
+//		this(null, null);
+//		addCommand(command);
+//	}
+	
+	public JQuery addCommand(Command command) {
+		commands.add(command);
+		return this;
 	}
 	
-	public JQuery(ArrayList<Command> commands, Double weight) {
-		this(weight);
-		addCommands(commands);
-	}
-	
-	public void addCommand(Command command) {
-		this.commands.add(command);
-	}
-	
-	public void addCommands(ArrayList<Command> commands) {
+	public JQuery addCommands(ArrayList<Command> commands) {
 		this.commands.addAll(commands);
+		return this;
 	}
 	
 	public ArrayList<Command> getCommands() {
@@ -64,7 +64,7 @@ public class JQuery {
 	}
 	
 	public JQuery filter(FilterCommand command) {
-		if(commands.isEmpty()) find(command.getSelector());
+//		if(commands.isEmpty()) return find(command.getSelector());
 		commands.add(command);
 		return this;
 	}
@@ -78,7 +78,7 @@ public class JQuery {
 	}
 	
 	public JQuery not(NotCommand command) {
-		if(commands.isEmpty()) find(command.getSelector());
+//		if(commands.isEmpty()) return find(command.getSelector());
 		commands.add(command);
 		return this;
 	}
@@ -92,25 +92,43 @@ public class JQuery {
 	}
 	
 	public JQuery add(AddCommand command) {
-		if(commands.isEmpty()) find(command.getSelector());
+//		if(commands.isEmpty()) return find(command.getSelector());
 		commands.add(command);
 		return this;
 	}
+	
+	public JQuery contains(String text) {
+		return contains(text, false);
+	}
 
+	public JQuery contains(String text, boolean caseSensitive) {
+		String containsSelector = caseSensitive ? "contains" : "containsCaseInsensitive";
+		return filter("':" + containsSelector + "(" + text + ")'");
+	}
+	
+	public JQuery containsAttribute(String text) {
+		String containsSelector = "attrCaseInsensitive";
+		return filter("':" + containsSelector + "(" + text + ")'");
+	}
+	
 //	public void merge(JQuery jQueryToMerge) {
 //		commands.add(new JQueryCommand(jQueryToMerge));
 //	}
 	
-	public String build() {
-		String jQuery = ""; 
-		for(Command command: commands) {
-			String selector = command.getSelector();
-			String method = command.getMethod();
-			if(selector instanceof String && method instanceof String) {
-				jQuery += "." + method + "(" + selector + ")";
-			}
-		}
-		return jQuery;
+//	public String build() {
+//		String jQuery = ""; 
+//		for(Command command: commands) {
+//			String selector = command.getSelector();
+//			String method = command.getMethod();
+//			if(selector instanceof String && method instanceof String) {
+//				jQuery += "." + method + "(" + selector + ")";
+//			}
+//		}
+//		return jQuery;
+//	}
+	
+	public String getSelector() {
+		return selector;
 	}
 	
 	public String toString() {
@@ -118,10 +136,11 @@ public class JQuery {
 	}	
 	
 	public String toString(int intendationSpaces) {
-		String jQueryAsString = "\n";
+		String jQueryAsString = "\n" + StringUtils.repeat(" ", intendationSpaces + 2);
+		jQueryAsString += !selector.equals("'*'") || !(commands.size() == 1 && commands.get(0).isBooleanCommand())  ? "jQuery(" + selector + ")\n" : "\n";
 		for(Command command: commands) {
 			jQueryAsString += StringUtils.repeat(" ", intendationSpaces) + command.toString(intendationSpaces + 2) + "\n";
 		}
-		return jQueryAsString;
+		return jQueryAsString.substring(0, jQueryAsString.length() - 1);
 	}
 }

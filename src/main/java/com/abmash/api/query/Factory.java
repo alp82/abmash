@@ -1,9 +1,9 @@
 package com.abmash.api.query;
 
-import com.abmash.api.query.predicate.BooleanPredicate;
-import com.abmash.api.query.predicate.LinkPredicate;
-import com.abmash.api.query.predicate.Predicate;
-import com.abmash.api.query.predicate.TagPredicate;
+import com.abmash.core.query.BooleanPredicate;
+import com.abmash.core.query.LinkPredicate;
+import com.abmash.core.query.Predicate;
+import com.abmash.core.query.TagPredicate;
 
 public class Factory {
 	
