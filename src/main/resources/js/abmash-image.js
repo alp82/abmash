@@ -60,10 +60,13 @@
 //			abmash.highlight(this);
 //			alert(color.toSource());
 //			alert(tolerance);
+//			alert(dominance);
 //			alert(abmash.filterColor("get", this, color, tolerance, dominance));
+//			alert(abmash.filterColor("has", this, color, tolerance, dominance));
 			node = filterHasColor(color, tolerance, dominance, this);
 			if(node) nodes.push(node);
 		});
+//		abmash.highlight(nodes);
 		
 		return this.pushStack(nodes, "filterHasColor", color, tolerance, dominance);
 	};
@@ -119,7 +122,7 @@
     		var imgdata = ctx.getImageData(left, top, width, height);
     		var img = imgdata.data;
     		
-    		var result;
+    		var result = false;
     		
     		if(type == 'is') {
     			result = isColor(img, color, tolerance);
@@ -157,7 +160,13 @@
 				blue: img[i+2],
 			};
 			var distance = colorDistance(pixelColor, color);
-			var normalizedDistance = data.transformedMaxDistance > 0 ? distance / data.transformedMaxDistance : 0;	
+			var normalizedDistance = data.maxDistance > 0 ? distance / data.maxDistance : 0;
+//			alert(pixelColor.toSource());
+//			alert(color.toSource());
+//			alert(data.transformedMaxDistance);
+//			alert(distance);
+//			alert(normalizedDistance);
+//			alert(tolerance);
 			if(normalizedDistance <= tolerance) sumMatchingPixels++;
 		}
 		
@@ -178,7 +187,7 @@
 				red: img[i],
 				green: img[i+1],
 				blue: img[i+2],
-			}
+			};
 			
 			sumR += pixelColor.red;
 			sumG += pixelColor.green;
@@ -194,18 +203,13 @@
 		var averageDistance = totalDistance / imageSize;
 		var averageColor = { red: sumR / imageSize, green: sumG / imageSize, blue: sumB / imageSize };
 		
-		var transformedMaxDistance = maxDistance - minDistance;
-		var transformedAverageDistance = averageDistance - minDistance;
-		
 		return {
 			imageSize: imageSize,
 			averageColor: averageColor,
 			minDistance: minDistance,
 			maxDistance: maxDistance,
 			averageDistance: averageDistance,
-			transformedMaxDistance: transformedMaxDistance,
-			transformedAverageDistance: transformedAverageDistance,
-			normalizedDistance: transformedAverageDistance / transformedMaxDistance,
+			normalizedDistance: maxDistance > 0 ? averageDistance / maxDistance : 0,
 		};
 	}
     

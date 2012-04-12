@@ -122,7 +122,8 @@
 		});
 		
 		if(!hasJQueryPredicates && result.length == 0) {
-			result = jQuery('*:visible').get();
+			result = jQuery('*:visible:not(html,head,head *)').get();
+			firstAnd = false;
 		}
 		
 		// process recursive predicates (direction and color)
@@ -134,12 +135,15 @@
 //				var directionType = predicate.type;
 				// TODO use weight of direction result elements
 				var directionResult = abmash.parsePredicates(predicate.predicates, 'OR');
+//				abmash.highlight(directionResult);
+//				abmash.highlight(result);
 				
 				switch(predicate.type) {
 				case "ABOVE":
 					predicateResult = jQuery(result).above(directionResult).get();
 					break;
 				case "BELOW":
+//					abmash.highlight(jQuery(result).get());
 					predicateResult = jQuery(result).below(directionResult).get();
 					break;
 				case "LEFTOF":
@@ -158,6 +162,10 @@
 				var tolerance = predicate.tolerance;
 				var dominance = predicate.dominance;
 				predicateResult = jQuery(result).filterHasColor(color, tolerance, dominance).get();
+//				abmash.highlight(predicateResult);
+//				abmash.highlight(result);
+//				alert(booleanType);
+//				alert(firstAnd);
 			}
 			
 			if(predicateResult != null) {
@@ -247,19 +255,18 @@
 		
 		jQuery.globalEval("abmash.setData('commandResult', " + jQueryEval + ");");
 		var commandResult = abmash.getData('commandResult');
-		jQuery.each(jQuery(commandResult), function() {
+		// TODO :visible optional?
+		// add element if it is visible
+		jQuery.each(jQuery(commandResult).filter(':visible:not(html,head,head *)'), function() {
 		    var element = jQuery(this);
-		    // add element if it is visible
-		    // TODO :visible optional?
-
-		    if(element.filter(':visible').length > 0 && element.parents('head').length == 0 && element.parents('html').length > 0) {
-		    	result.push(element.get(0));
-		    	// store priority for element based on selector weight
-		    	abmash.setElementWeight(element.get(0), weight);
-		    	// increment element count
-//		    	queryElementsFound++;
-//		    	if(groupLimit > 0 && groupResult.length >= groupLimit) return false;
-		    }
+		    
+	    	result.push(element.get(0));
+	    	// store priority for element based on selector weight
+	    	abmash.setElementWeight(element.get(0), weight);
+	    	
+	    	// increment element count
+//		    queryElementsFound++;
+//		    if(groupLimit > 0 && groupResult.length >= groupLimit) return false;
 		});
 		
 		return result;

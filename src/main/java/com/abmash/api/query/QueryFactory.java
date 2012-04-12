@@ -168,4 +168,12 @@ public class QueryFactory {
 		return color(colorName.getColor(), tolerance.getValue(), dominance.getValue());
 	}
 	
+	public static Predicate color(Color color) {
+		return color(color, Tolerance.MIDLOW, Dominance.HIGH);
+	}
+
+	public static Predicate color(ColorName colorName) {
+		return color(colorName.getColor());
+	}
+	
 }

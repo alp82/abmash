@@ -206,7 +206,7 @@
     
     jQuery.extend(abmash, {
     	elementsInDirection: function(closenessOptions) {
-			var resultElements = [];
+			var result = [];
 			
     		// use default options if not specified
 		    options = jQuery.extend({
@@ -219,30 +219,30 @@
 		    	directionHasToMatchAllTargets: false,
 		    }, closenessOptions);
 		    
-			// TODO remove
-			if(abmash.getData('debug2')) {
-				alert(options.sources.get());
-				alert(options.targets.get());
-				alert(options.direction);
-			}	
-
+//		    alert(options.direction);
+//			abmash.highlight(options.sources.get());
+//			abmash.highlight(options.targets.get());
 		    
 //			jQuery(options.sources).css('background-color', 'green');
 			jQuery.each(options.sources, function() {
 				var source = jQuery(this);
+//				alert(source.get());
 			    if(source.get().length > 0 && abmash.checkElementLocations(source)) {
-			    	resultElements.push(source.get(0));
+			    	result.push(source.get(0));
 			    }
+//				alert(result);
 			});
 			
-//			jQuery(resultElements).css('background-color', 'yellow');
+//			jQuery(result).css('background-color', 'yellow');
 			// now return the sorted result set
-			return resultElements.length > 0 ? resultElements.sort(sortByCloseness) : [];
+			result = result.length > 0 ? result.sort(sortByCloseness) : [];
+			return jQuery(result);
     	},
 		
     	checkElementLocations: function(source) {
 		    var result;
 		    
+		    // TODO remove this
 		    // closeTo is only about ordered results, no filter is applied
 		    if(options.direction == directionType.closeTo) {
 		    	return true;
