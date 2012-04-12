@@ -1,8 +1,8 @@
 package com.abmash.core.query.predicate;
 
 import java.awt.Color;
-
-import com.abmash.core.query.DirectionType;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ColorPredicate extends RecursivePredicate {
 	
@@ -22,6 +22,14 @@ public class ColorPredicate extends RecursivePredicate {
 		return color;
 	}
 	
+	public Map<String, Integer> getColorAsRGB() {
+		HashMap<String, Integer> colorAsRGB = new HashMap<String, Integer>();
+		colorAsRGB.put("red", color.getRed());
+		colorAsRGB.put("green", color.getGreen());
+		colorAsRGB.put("blue", color.getBlue());
+		return colorAsRGB;
+	}
+	
 	public Double getTolerance() {
 		return tolerance;
 	}
@@ -39,5 +47,6 @@ public class ColorPredicate extends RecursivePredicate {
 	public String toString(int intendationSpaces) {
 		return super.toString(intendationSpaces, " (color: " + color.toString() + ", tolerance: " + tolerance + ", dominance: " + dominance + ")");
 	}
+
 	
 }

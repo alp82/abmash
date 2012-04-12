@@ -1606,7 +1606,7 @@ public class HtmlQuery {
 		
 		// sort results
 		// TODO sorting completely in jquery
-		// TODO no sorting of ORed queries atm
+		// TODO no sorting of OR'ed queries atm
 		HtmlElements sortedElements = unsortedElements; 
 		for (Condition condition: conditions) {
 			// TODO what to do if there are several and/or different sorts?

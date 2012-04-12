@@ -144,19 +144,28 @@ public class QueryFactory {
 	
 	// color predicates
 	
-	public static Predicate color(ColorName colorName, Tolerance tolerance, Dominance dominance) {
-		return color(colorName.getColor(), tolerance.getValue(), dominance.getValue());
-	}
-	
-	public static Predicate color(ColorName colorName, double tolerance, double dominance) {
-		return color(colorName.getColor(), tolerance, dominance);
+	/**
+	 * Filters elements that match the desired color. Performs slow if no other predicates are used.
+	 * 
+	 * @param color
+	 * @param tolerance
+	 * @param dominance
+	 * @return
+	 */
+	public static Predicate color(Color color, double tolerance, double dominance) {
+		return new ColorPredicate(color, tolerance, dominance);
 	}
 	
 	public static Predicate color(Color color, Tolerance tolerance, Dominance dominance) {
 		return color(color, tolerance.getValue(), dominance.getValue());
 	}
 	
-	public static Predicate color(Color color, double tolerance, double dominance) {
-		return new ColorPredicate(color, tolerance, dominance);
+	public static Predicate color(ColorName colorName, double tolerance, double dominance) {
+		return color(colorName.getColor(), tolerance, dominance);
 	}
+	
+	public static Predicate color(ColorName colorName, Tolerance tolerance, Dominance dominance) {
+		return color(colorName.getColor(), tolerance.getValue(), dominance.getValue());
+	}
+	
 }

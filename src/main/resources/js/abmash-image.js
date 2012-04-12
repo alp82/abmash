@@ -51,18 +51,23 @@
 		});
 		
 		return this.pushStack(nodes, "filterIsColor", color, tolerance);
-	}
+	};
 	
 	jQuery.fn.filterHasColor = function(color, tolerance, dominance) {
 		var nodes = [];
 
 		this.each(function() {
+//			abmash.highlight(this);
+//			alert(color.toSource());
+//			alert(tolerance);
+//			alert(abmash.filterColor("get", this, color, tolerance, dominance));
 			node = filterHasColor(color, tolerance, dominance, this);
 			if(node) nodes.push(node);
 		});
 		
 		return this.pushStack(nodes, "filterHasColor", color, tolerance, dominance);
-	}
+	};
+	
 })(jQuery);
 
 (function(abmash) {
@@ -152,7 +157,7 @@
 				blue: img[i+2],
 			};
 			var distance = colorDistance(pixelColor, color);
-			var normalizedDistance = distance / data.transformedMaxDistance;	
+			var normalizedDistance = data.transformedMaxDistance > 0 ? distance / data.transformedMaxDistance : 0;	
 			if(normalizedDistance <= tolerance) sumMatchingPixels++;
 		}
 		

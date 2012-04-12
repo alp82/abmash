@@ -59,7 +59,7 @@
 	};
 	
 	abmash.query = function(jsonPredicates/*, closenessConditions, colorConditions, rootElements, elementsToFilter, referenceElements, labelElements, limit*/) {
-		// query, remove duplicates and sort afterwards
+		// query, remove duplicaates and sort afterwards
 		var result = abmash.parsePredicates(JSON.parse(jsonPredicates), 'AND');
 		result = jQuery.unique(result).sort(sortByWeight);
 		
@@ -90,42 +90,15 @@
 
 		// process jQueryLists
 		var firstAnd = true;
+		var hasJQueryPredicates = false;
 		jQuery.each(predicates, function() {
 			var predicate = this;
 			
 			if(predicate.jQueryList) {
 				var jQueryListResult = abmash.parseJQueryList(predicate.jQueryList, booleanType);
-				
-				switch (booleanType) {
-				case "OR":
-					// merge results
-					result = result.concat(jQueryListResult);
-					break;
-					
-				case "NOT":
-					// remove not result from query result
-					var allElements = jQuery('body, body *').get();
-					var notResult = jQuery.map(allElements, function(element) { return jQuery.inArray(element, jQueryListResult) < 0 ? element : null;});
-					jQueryListResult = notResult;
-					// do not break here, the not result will be treated like an AND expression
-					
-				case "AND":
-					// intersect results
-					if(firstAnd) {
-						result = result.concat(jQueryListResult);
-						firstAnd = false;
-					} else {
-//						abmash.highlight(predicateResult);
-//						abmash.highlight(result);
-						result = jQuery.map(result, function(element) { return jQuery.inArray(element, jQueryListResult) < 0 ? null : element;});
-//						abmash.highlight(result);
-					}
-					break;
-					
-				default:
-					alert("WRONG BOOLEAN TYPE: " + booleanType);
-					break;
-				};
+				result = abmash.mergeResult(result, jQueryListResult, booleanType, firstAnd);
+				firstAnd = false;
+				hasJQueryPredicates = true;
 				
 //				alert(jQueryList.toSource());
 //				alert(booleanType);
@@ -134,34 +107,46 @@
 //				alert(result);
 			}
 		});
-
-		var jQueryPredicatesResult = result;
-
-		// process recursive predicates (direction and color)
+		
+		// process boolean predicates
 		jQuery.each(predicates, function() {
 			var predicate = this;
-			var predicateResult = jQueryPredicatesResult;
 			
 			if(predicate.isBoolean) {
 //				var booleanType = predicate.type;
-				predicateResult = abmash.parsePredicates(predicate.predicates, predicate.type);
-			} else if(predicate.isDirection) {
+				var predicateResult = abmash.parsePredicates(predicate.predicates, predicate.type);
+				result = abmash.mergeResult(result, predicateResult, booleanType, firstAnd);
+				firstAnd = false;
+			}
+			
+		});
+		
+		if(!hasJQueryPredicates && result.length == 0) {
+			result = jQuery('*:visible').get();
+		}
+		
+		// process recursive predicates (direction and color)
+		jQuery.each(predicates, function() {
+			var predicate = this;
+			var predicateResult = null;
+			
+			if(predicate.isDirection) {
 //				var directionType = predicate.type;
 				// TODO use weight of direction result elements
 				var directionResult = abmash.parsePredicates(predicate.predicates, 'OR');
 				
 				switch(predicate.type) {
 				case "ABOVE":
-					predicateResult = jQuery(jQueryPredicatesResult).above(directionResult);
+					predicateResult = jQuery(result).above(directionResult).get();
 					break;
 				case "BELOW":
-					predicateResult = jQuery(jQueryPredicatesResult).below(directionResult);
+					predicateResult = jQuery(result).below(directionResult).get();
 					break;
 				case "LEFTOF":
-					predicateResult = jQuery(jQueryPredicatesResult).leftOf(directionResult);
+					predicateResult = jQuery(result).leftOf(directionResult).get();
 					break;
 				case "RIGHTOF":
-					predicateResult = jQuery(jQueryPredicatesResult).rightOf(directionResult);
+					predicateResult = jQuery(result).rightOf(directionResult).get();
 					break;
 					
 				default:
@@ -172,18 +157,54 @@
 				var color = predicate.color;
 				var tolerance = predicate.tolerance;
 				var dominance = predicate.dominance;
-				predicateResult = jQuery(jQueryPredicatesResult).filterHasColor(color, tolerance, dominance);
+				predicateResult = jQuery(result).filterHasColor(color, tolerance, dominance).get();
 			}
 			
-			// TODO is that always right? OR AND NOT?
-			jQueryPredicatesResult = predicateResult;
+			if(predicateResult != null) {
+				result = abmash.mergeResult(result, predicateResult, booleanType, firstAnd);
+				firstAnd = false;
+			}
 		});
-		
-		result = jQueryPredicatesResult;
 		
 		return result;
 	};
 	
+	abmash.mergeResult = function(result, newResult, booleanType, firstAnd) {
+		switch (booleanType) {
+		case "OR":
+			// merge results
+			result = result.concat(newResult);
+			break;
+			
+		case "NOT":
+			// remove not result from query result
+			var allElements = jQuery('body, body *').get();
+			var notResult = jQuery.map(allElements, function(element) { return jQuery.inArray(element, newResult) < 0 ? element : null;});
+			newResult = notResult;
+			// do not break here, the not result will be treated like an AND expression
+			
+		case "AND":
+			// intersect results
+			if(firstAnd) {
+//				abmash.highlight(result);
+//				abmash.highlight(newResult);
+				result = result.concat(newResult);
+			} else {
+//				abmash.highlight(result);
+//				abmash.highlight(newResult);
+				result = jQuery.map(result, function(element) { return jQuery.inArray(element, newResult) < 0 ? null : element;});
+//				abmash.highlight(result);
+			}
+			break;
+			
+		default:
+			alert("WRONG BOOLEAN TYPE: " + booleanType);
+			break;
+		};
+		
+		return result;
+	};
+
 	abmash.parseJQueryList = function(jQueryList, booleanType) {
 		var result = [];
 
