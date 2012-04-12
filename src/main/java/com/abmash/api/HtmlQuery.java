@@ -1597,7 +1597,7 @@ public class HtmlQuery {
 		
 		// fetch and store data for elements
 		// this needs to be done before sorting because of better performance
-		unsortedElements.fetchDataForCache();
+//		unsortedElements.fetchDataForCache();
 		
 		if(!elementTypes.isEmpty()) {
 			// set element types if specified by query

@@ -1,11 +1,10 @@
 String.prototype.trim = function() { return (this.replace(/^[\s\xA0]+/, "").replace(/[\s\xA0]+$/, "")); };
 
-String.prototype.contains = function(it) { return this.indexOf(it) != -1; };
+String.prototype.contains = function(str) { return this.indexOf(str) != -1; };
 
-//  /\bSTR2\b/gi
-String.prototype.containsWord = function(str) { return str.search('/' + this + '/i') >= 0; };
+String.prototype.containsWord = function(str) { return new RegExp('\\b' + str + '\\b').test(this); };
 
-String.prototype.beginsWith = function(str) { return this.match("^" + str) == str; };
+String.prototype.startsWith = function(str) { return this.match("^" + str) == str; };
 
 String.prototype.endsWith = function(str) { return this.match(str + "$") == str; };
 

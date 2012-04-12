@@ -1,7 +1,6 @@
 package com.abmash.api.query;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.json.JSONArray;
@@ -14,37 +13,75 @@ import com.abmash.api.HtmlElement;
 import com.abmash.api.HtmlElements;
 import com.abmash.core.element.Location;
 import com.abmash.core.element.Size;
-import com.abmash.core.htmlquery.selector.JQuerySelector;
 import com.abmash.core.jquery.JQuery;
-import com.abmash.core.jquery.command.BooleanCommand;
 import com.abmash.core.jquery.command.Command;
-import com.abmash.core.query.Predicate;
+import com.abmash.core.query.BooleanType;
+import com.abmash.core.query.predicate.BooleanPredicate;
+import com.abmash.core.query.predicate.ColorPredicate;
+import com.abmash.core.query.predicate.DirectionPredicate;
+import com.abmash.core.query.predicate.JQueryPredicate;
+import com.abmash.core.query.predicate.Predicate;
+import com.abmash.core.query.predicate.Predicates;
+import com.abmash.core.query.predicate.RecursivePredicate;
 import com.abmash.core.tools.DataTypeConversion;
 
 public class Query {
 
-	private Predicate[] predicates;
-	private ArrayList<JQuery> jQueryList;
+	private Predicates predicates = new Predicates();
+	
+	public Query(Predicates predicates) {
+		addPredicates(predicates);
+	}
 	
 	public Query(Predicate... predicates) {
-		this.predicates = predicates;
-		build();
+		addPredicates(predicates);
+	}
+
+	public void addPredicates(Predicates predicates) {
+		addPredicates((Predicate[]) predicates.toArray());
+	}
+	
+	public void addPredicates(Predicate... predicates) {
+		for(Predicate predicate: predicates) {
+			this.predicates.add(predicate);
+		}
 	}
 
 	public void union(Query... queries) {
+		Predicate andPredicate = new BooleanPredicate(BooleanType.AND, (Predicate[]) predicates.toArray());
+		BooleanPredicate orPredicate = new BooleanPredicate(BooleanType.OR, andPredicate);
 		for(Query query: queries) {
-			jQueryList.addAll(query.getjQueryList());
+			orPredicate.addPredicates((Predicate[]) query.getPredicates().toArray());
 		}
+		predicates = new Predicates(andPredicate);
 	}
 	
-	public ArrayList<JQuery> getjQueryList() {
-		return jQueryList;
+	public Predicates getPredicates() {
+		return predicates;
 	}
+	
+//	private JQueryLists build() {
+//		jQueryLists = new JQueryLists();
+//		for(Predicate predicate: predicates) {
+//			predicate.buildCommands();
+//			
+////			JQuery jQuery = new JQuery(null, null);
+////			for(JQuery predicateJQuery: predicate.getJQueryList()) {
+////				for(Command command: predicateJQuery.getCommands()) {
+////					jQuery.addCommand(command);
+////				}
+////			}
+////			jQueryList.add(jQuery);
+//			jQueryLists.add(predicate.getJQueryList());
+//		}
+//		
+//		return jQueryLists;
+//	}
 	
 	public HtmlElements execute(Browser browser) {
 		JSONArray jsonJQueryList = new JSONArray();
 		try {
-			jsonJQueryList = convertJQueryListToJSON(jQueryList);
+			jsonJQueryList = convertPredicatesToJSON(predicates);
 //			System.out.println(jsonJQueryList.toString(2));
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -63,7 +100,6 @@ public class Query {
 //				labelElements,
 //				limit
 		).getReturnValue();
-		System.out.println(resultElements);
 		
 		// converting selenium elements to abmash elements
 		HtmlElements tempElements = new HtmlElements();
@@ -95,36 +131,43 @@ public class Query {
 		return tempElements;
 	}
 	
-	private JSONArray convertJQueryListToJSON(ArrayList<JQuery> jQueryList) throws JSONException {
-		JSONArray jsonJQueryList = new JSONArray();
-		
-		for(JQuery jQuery: jQueryList) {
-			jsonJQueryList.put(convertJQueryToJSON(jQuery));
+	private JSONArray convertPredicatesToJSON(Predicates predicates) throws JSONException {
+		JSONArray jsonPredicates = new JSONArray();
+		for(Predicate predicate: predicates) {
+			JSONObject jsonPredicate = new JSONObject();
+			if(predicate instanceof RecursivePredicate) {
+				if(predicate instanceof BooleanPredicate) {
+					jsonPredicate.put("isBoolean", true);
+					jsonPredicate.put("type", ((BooleanPredicate) predicate).getType());
+				} else if(predicate instanceof DirectionPredicate) {
+					jsonPredicate.put("isDirection", true);
+					jsonPredicate.put("type", ((DirectionPredicate) predicate).getType());
+				} else if(predicate instanceof ColorPredicate) {
+					jsonPredicate.put("isColor", true);
+					jsonPredicate.put("color", ((ColorPredicate) predicate).getColor());
+					jsonPredicate.put("tolerance", ((ColorPredicate) predicate).getTolerance());
+					jsonPredicate.put("dominance", ((ColorPredicate) predicate).getDominance());
+				}
+				jsonPredicate.put("predicates", convertPredicatesToJSON(((RecursivePredicate) predicate).getPredicates()));
+			} else if(predicate instanceof JQueryPredicate) {
+				JSONArray jsonJQueryList = new JSONArray();
+				for(JQuery jQuery: ((JQueryPredicate) predicate).getJQueryList()) {
+					jsonJQueryList.put(convertJQueryToJSON(jQuery));
+				}
+				jsonPredicate.put("jQueryList", jsonJQueryList);
+			}
+			jsonPredicates.put(jsonPredicate);
 		}
 		
-		return jsonJQueryList;
-	}
+		return jsonPredicates;
+	}	
 	
 	private JSONObject convertJQueryToJSON(JQuery jQuery) throws JSONException {
 		JSONArray jsonCommands = new JSONArray();
 		for(Command command: jQuery.getCommands()) {
 			JSONObject jsonCommand = new JSONObject();
-			jsonCommand.put("isEval", command.isEvalCommand());
-			jsonCommand.put("isBoolean", command.isBooleanCommand());
-			jsonCommand.put("isCloseness", command.isClosenessCommand());
-			jsonCommand.put("isColor", command.isColorCommand());
-			if(command instanceof BooleanCommand) {
-				BooleanCommand booleanCommand = ((BooleanCommand) command);
-				jsonCommand.put("type", booleanCommand.getType());
-				JSONArray jsonJQueryLists = new JSONArray();
-				for(ArrayList<JQuery> jQueryList: booleanCommand.getJQueryLists()) {
-					jsonJQueryLists.put(convertJQueryListToJSON(jQueryList));
-				}
-				jsonCommand.put("jQueryLists", jsonJQueryLists);
-			} else {
-				jsonCommand.put("method", command.getMethod());
-				jsonCommand.put("selector", command.getSelector());
-			}
+			jsonCommand.put("method", command.getMethod());
+			jsonCommand.put("selector", command.getSelector());
 			jsonCommands.put(jsonCommand);
 		}
 		
@@ -135,22 +178,17 @@ public class Query {
 		return jsonJQuery;
 	}
 	
-	private ArrayList<JQuery> build() {
-		jQueryList = new ArrayList<JQuery>();
-		for(Predicate predicate: predicates) {
-			predicate.buildCommands();
-			
-//			JQuery jQuery = new JQuery(null, null);
-//			for(JQuery predicateJQuery: predicate.getJQueryList()) {
-//				for(Command command: predicateJQuery.getCommands()) {
-//					jQuery.addCommand(command);
-//				}
-//			}
-//			jQueryList.add(jQuery);
-			jQueryList.addAll(predicate.getJQueryList());
-		}
-		
-		return jQueryList;
+	@Override
+	public String toString() {
+		return toString(0);
 	}
-	
+
+	public String toString(int intendationSpaces) {
+		String str = "Query:";
+		for(Predicate predicate: predicates) {
+			str += "\n" + predicate.toString(intendationSpaces + 2);
+		}
+		return str;
+	}
+
 }

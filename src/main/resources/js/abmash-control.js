@@ -5,7 +5,29 @@
 	var elementWeight = {};
 	var elementWeightHistory = {};
 	
+
 	// public functions
+	
+	abmash.highlight = function(elements) {
+		var bgColors = {};
+		elements = jQuery.unique(jQuery(elements).get());
+		
+		jQuery.each(elements, function() {
+			var element = jQuery(this);
+			var path = element.getPath();
+			var bgColor = element.css('background-color');
+			bgColors[path] = bgColor;
+			element.css('background-color', 'yellow');
+		});
+		
+		alert(elements);
+		
+		jQuery.each(elements, function() {
+			var element = jQuery(this);
+			var path = element.getPath();
+			element.css('background-color', bgColors[path]);
+		});
+	};
 	
 	abmash.setData = function(key, value) {
 		queryData[key] = value;
@@ -36,23 +58,10 @@
 		return 1;
 	};
 	
-	abmash.processJqueryCommands = function(elements, jQueryCommands) {
-		var response = {};
-		jQuery.each(elements, function(id, element) {
-			abmash.setData('queryElements', element);
-			var elementData = {};
-			jQuery.each(jQueryCommands, function(type, jQueryCommand) {
-				jQuery.globalEval("abmash.setData('queryResults', " + jQueryCommand + ");");
-				elementData[type] = abmash.getData('queryResults');
-			});
-			response[id] = elementData;
-		});
-		return response;
-	};
-	
-	abmash.query = function(jsonJQueryList/*, closenessConditions, colorConditions, rootElements, elementsToFilter, referenceElements, labelElements, limit*/) {
+	abmash.query = function(jsonPredicates/*, closenessConditions, colorConditions, rootElements, elementsToFilter, referenceElements, labelElements, limit*/) {
 		// query, remove duplicates and sort afterwards
-		var result = abmash.queryJQueryList(JSON.parse(jsonJQueryList), null).unique().sort(sortByWeight);
+		var result = abmash.parsePredicates(JSON.parse(jsonPredicates), 'AND');
+		result = jQuery.unique(result).sort(sortByWeight);
 		
 		var elements = [];
 		jQuery.each(result, function() {
@@ -70,26 +79,126 @@
 				location: jQueryElement.offset(),
 				size: jQueryElement.dimension(),
 			};
-			
 			elements.push(element);
 		});
 		
 		return elements;
 	};
 	
-	abmash.queryJQueryList = function(jQueryList, relationalResult) {
+	abmash.parsePredicates = function(predicates, booleanType) {
 		var result = [];
 
-		jQuery.each(jQueryList, function() {
-			var JQuery = this;
-			// TODO should this be really OR?
-			result = result.concat(abmash.queryJQuery(JQuery, relationalResult));
+		// process jQueryLists
+		var firstAnd = true;
+		jQuery.each(predicates, function() {
+			var predicate = this;
+			
+			if(predicate.jQueryList) {
+				var jQueryListResult = abmash.parseJQueryList(predicate.jQueryList, booleanType);
+				
+				switch (booleanType) {
+				case "OR":
+					// merge results
+					result = result.concat(jQueryListResult);
+					break;
+					
+				case "NOT":
+					// remove not result from query result
+					var allElements = jQuery('body, body *').get();
+					var notResult = jQuery.map(allElements, function(element) { return jQuery.inArray(element, jQueryListResult) < 0 ? element : null;});
+					jQueryListResult = notResult;
+					// do not break here, the not result will be treated like an AND expression
+					
+				case "AND":
+					// intersect results
+					if(firstAnd) {
+						result = result.concat(jQueryListResult);
+						firstAnd = false;
+					} else {
+//						abmash.highlight(predicateResult);
+//						abmash.highlight(result);
+						result = jQuery.map(result, function(element) { return jQuery.inArray(element, jQueryListResult) < 0 ? null : element;});
+//						abmash.highlight(result);
+					}
+					break;
+					
+				default:
+					alert("WRONG BOOLEAN TYPE: " + booleanType);
+					break;
+				};
+				
+//				alert(jQueryList.toSource());
+//				alert(booleanType);
+//				alert(relationalResult);
+//				abmash.highlight(jQueryListResult);
+//				alert(result);
+			}
 		});
+
+		var jQueryPredicatesResult = result;
+
+		// process recursive predicates (direction and color)
+		jQuery.each(predicates, function() {
+			var predicate = this;
+			var predicateResult = jQueryPredicatesResult;
+			
+			if(predicate.isBoolean) {
+//				var booleanType = predicate.type;
+				predicateResult = abmash.parsePredicates(predicate.predicates, predicate.type);
+			} else if(predicate.isDirection) {
+//				var directionType = predicate.type;
+				// TODO use weight of direction result elements
+				var directionResult = abmash.parsePredicates(predicate.predicates, 'OR');
+				
+				switch(predicate.type) {
+				case "ABOVE":
+					predicateResult = jQuery(jQueryPredicatesResult).above(directionResult);
+					break;
+				case "BELOW":
+					predicateResult = jQuery(jQueryPredicatesResult).below(directionResult);
+					break;
+				case "LEFTOF":
+					predicateResult = jQuery(jQueryPredicatesResult).leftOf(directionResult);
+					break;
+				case "RIGHTOF":
+					predicateResult = jQuery(jQueryPredicatesResult).rightOf(directionResult);
+					break;
+					
+				default:
+					alert("WRONG CLOSENESS TYPE: " + predicate.type);
+					break;
+				}
+			} else if(predicate.isColor) {
+				var color = predicate.color;
+				var tolerance = predicate.tolerance;
+				var dominance = predicate.dominance;
+				predicateResult = jQuery(jQueryPredicatesResult).filterHasColor(color, tolerance, dominance);
+			}
+			
+			// TODO is that always right? OR AND NOT?
+			jQueryPredicatesResult = predicateResult;
+		});
+		
+		result = jQueryPredicatesResult;
 		
 		return result;
 	};
 	
-	abmash.queryJQuery = function(JQuery, relationalResult) {
+	abmash.parseJQueryList = function(jQueryList, booleanType) {
+		var result = [];
+
+		jQuery.each(jQueryList, function() {
+			var JQuery = this;
+//			alert(JQuery.toSource());
+			var jQueryResult = abmash.parseJQuery(JQuery, booleanType);
+//			abmash.highlight(jQueryResult);
+			result = result.concat(jQueryResult);
+		});
+			
+		return result;
+	};
+	
+	abmash.parseJQuery = function(JQuery, booleanType) {
 		var result = [];
 		var jQueryCommandList = [];
 		
@@ -99,60 +208,20 @@
 		
 		jQuery.each(jQueryCommands, function() {
 			var jQueryCommand = this;
-			if(jQueryCommand.isEval) {
-				// the command list will be evaluated with JQuery after all commands of this predicate are processed
-				jQueryCommandList.push(jQueryCommand.method + "(" + jQueryCommand.selector + ")");
-			}
+			// the command list will be evaluated with JQuery after all commands of this predicate are processed
+			jQueryCommandList.push(jQueryCommand.method + "(" + jQueryCommand.selector + ")");
 		});
 		
-		if(selector != "'*'" || jQueryCommandList.length > 0) {
-			var jQueryEval = "jQuery(" + selector + (relationalResult != null && false ? "," + relationalResult : "") + ")";
-			jQueryEval += jQueryCommandList.length > 0 ? "." + jQueryCommandList.join(".") : "";
-			result = result.concat(abmash.queryEvaluateJQuery(jQueryEval, relationalResult, weight));
-		}
-		
-		// TODO needed?
-		var firstAnd = true;
-		
-		jQuery.each(jQueryCommands, function() {
-			var jQueryCommand = this;
-			if(jQueryCommand.isBoolean) {
-				jQuery.each(jQueryCommand.jQueryLists, function() {
-					var jQueryList = this;
-					
-					booleanResult = result.concat(abmash.queryJQueryList(jQueryList, result));
-					switch (jQueryCommand.type) {
-					case "OR":
-						// merge results
-						result = result.concat(booleanResult);
-						break;
-						
-					case "NOT":
-						// remove not result from query result
-						result = jQuery.map(booleanResult, function(a) { return jQuery.inArray(a, result) < 0 ? a : null;});
-						break;
-						
-					case "AND":
-						// intersect results
-						if(firstAnd) {
-							result = result.concat(booleanResult);
-							firstAnd = false;
-						} else {
-							result = jQuery.map(booleanResult, function(a) { return jQuery.inArray(a, result) < 0 ? null : a;});
-						}
-						break;
-						
-					default:
-						alert("WRONG BOOLEAN TYPE: " + jQueryCommand.type);
-					}
-				});
-			}
-		});
+		var jQueryEval = "jQuery(" + selector + ")";
+		jQueryEval += jQueryCommandList.length > 0 ? "." + jQueryCommandList.join(".") : "";
+//		alert(jQueryEval);
+		result = result.concat(abmash.evaluateJQuery(jQueryEval, weight));
+//		abmash.highlight(result);
 		
 		return result;
 	};
 	
-	abmash.queryEvaluateJQuery = function(jQueryEval, relationalResult, weight) {
+	abmash.evaluateJQuery = function(jQueryEval, weight) {
 		var result = [];
 		
 		jQuery.globalEval("abmash.setData('commandResult', " + jQueryEval + ");");

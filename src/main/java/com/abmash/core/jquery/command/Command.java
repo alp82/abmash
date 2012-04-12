@@ -9,6 +9,7 @@ public abstract class Command {
 	
 	public Command(String selector) {
 		// TODO throw exception if selector empty or null
+		// but not for optional selectors like .parent()
 		this.selector = selector;
 	}
 	
@@ -20,34 +21,18 @@ public abstract class Command {
 		return selector;
 	}
 	
-	public boolean isEvalCommand() {
-		return false;
-	}
-	
-	public boolean isBooleanCommand() {
-		return false;
-	}
-	
-	public boolean isClosenessCommand() {
-		return false;
-	}
-	
-	public boolean isColorCommand() {
-		return false;
-	}
-	
 	/**
 	 * Returns the jQuery command as string
 	 * @return jQuery command string
 	 */		
 	public String toString() {
-		return toString(2);
+		return method + "(" + selector + ")";
 	}
 
-	public String toString(int intendationSpaces) {
-		String commandString =  method != null ? ": ." + method + "(" + selector + ")" : "";
-		return StringUtils.repeat(" ", intendationSpaces) + getClass().getSimpleName() + commandString;
-	}
+//	public String toString(int intendationSpaces) {
+//		String commandString =  method != null && selector != null ? ": ." + method + "(" + selector + ")" : "";
+//		return StringUtils.repeat(" ", intendationSpaces) + getClass().getSimpleName() + commandString;
+//	}
 
 	
 }

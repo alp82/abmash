@@ -106,8 +106,8 @@ public class JavaScript {
 		
 		// custom attribute selector which is case insensitive in jQuery
 		// Usage in JavaScript:
-		//   var addressElements = jQuery('div:containsCaseInsensitive("AdDresS")');
-		//   var searchInputs = jQuery('input:attrCaseInsensitive(value, "SUBMIT")');
+		//   var addressElements = jQuery('div').textMatch('CONTAINS', 'AdDresS')');
+		//   var searchInputs = jQuery('input').attrMatch('CONTAINS', 'value', "SUbmIT")');
 		prerequisiteScripts += getJsFromFile("jquery-caseinsensitive");
 		
 		// custom attribute names getter

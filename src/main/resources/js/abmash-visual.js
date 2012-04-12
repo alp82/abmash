@@ -57,8 +57,8 @@
 		hasLabelForSelect: 6,
 		above: 10,
 		below: 20,
-		leftTo: 30,
-		rightTo: 40,
+		leftOf: 30,
+		rightOf: 40,
 	};
 	var distanceType = {
 		topLeft: 1,
@@ -136,22 +136,22 @@
 		    	directionHasToMatchAllTargets: false,
 		    });
     	},
-    	leftTo: function(referenceElements) {
+    	leftOf: function(referenceElements) {
     		return abmash.elementsInDirection({
 		    	sources: this,
 		    	targets: jQuery(referenceElements),
-		    	direction: directionType.leftTo,
+		    	direction: directionType.leftOf,
 		    	distance: distanceType.right,
 		    	calculation: calculationType.min,
 		    	inBounds: false,
 		    	directionHasToMatchAllTargets: false,
 		    });
     	},
-    	rightTo: function(referenceElements) {
+    	rightOf: function(referenceElements) {
     		return abmash.elementsInDirection({
 		    	sources: this,
 		    	targets: jQuery(referenceElements),
-		    	direction: directionType.rightTo,
+		    	direction: directionType.rightOf,
 		    	distance: distanceType.left,
 		    	calculation: calculationType.min,
 		    	inBounds: false,
@@ -180,22 +180,22 @@
 		    	directionHasToMatchAllTargets: true,
     	    });
     	},
-    	leftToAll: function(referenceElements) {
+    	leftOfAll: function(referenceElements) {
     		return abmash.elementsInDirection({
 		    	sources: this,
 		    	targets: jQuery(referenceElements),
-		    	direction: directionType.leftTo,
+		    	direction: directionType.leftOf,
 		    	distance: distanceType.right,
 		    	calculation: calculationType.average,
 		    	inBounds: false,
 		    	directionHasToMatchAllTargets: true,
     	    });
     	},
-    	rightToAll: function(referenceElements) {
+    	rightOfAll: function(referenceElements) {
     		return abmash.elementsInDirection({
 		    	sources: this,
 		    	targets: jQuery(referenceElements),
-		    	direction: directionType.rightTo,
+		    	direction: directionType.rightOf,
 		    	distance: distanceType.left,
 		    	calculation: calculationType.average,
 		    	inBounds: false,
@@ -307,23 +307,23 @@
 					}
 				}
 				
-				if(options.direction == directionType.leftTo) {
-					var isLeftTo = abmash.isLeftTo(coords) && (!options.inBounds || abmash.isInVerticalBounds(coords));
-					if(options.directionHasToMatchAllTargets && !isLeftTo) {
+				if(options.direction == directionType.leftOf) {
+					var isLeftOf = abmash.isLeftOf(coords) && (!options.inBounds || abmash.isInVerticalBounds(coords));
+					if(options.directionHasToMatchAllTargets && !isLeftOf) {
 						result = false;
 						return false;
-					} else if(isLeftTo) {
+					} else if(isLeftOf) {
 						result = true;
 						return false;
 					}
 				}
 				
 				if(options.direction == directionType.rightTo) {
-					var isRightTo = abmash.isRightTo(coords) && (!options.inBounds || abmash.isInVerticalBounds(coords));
-					if(options.directionHasToMatchAllTargets && !isRightTo) {
+					var isRightOf = abmash.isRightOf(coords) && (!options.inBounds || abmash.isInVerticalBounds(coords));
+					if(options.directionHasToMatchAllTargets && !isRightOf) {
 						result = false;
 						return false;
-					} else if(isRightTo) {
+					} else if(isRightOf) {
 						result = true;
 						return false;
 					}
@@ -341,16 +341,16 @@
 			return coords.topSource > coords.bottomTarget;
 		},
 		
-		isLeftTo: function(coords) {
+		isLeftOf: function(coords) {
 			return coords.rightSource < coords.leftTarget;
 		},
 		
-		isRightTo: function(coords) {
+		isRightOf: function(coords) {
 			return coords.leftSource > coords.rightTarget;
 		},
 		
 		isInHorizontalBounds: function(coords) {
-			return !isLeftTo(coords) && !isRightTo(coords);
+			return !isLeftOf(coords) && !isRightOf(coords);
 		},
 		
 		isInVerticalBounds: function(coords) {

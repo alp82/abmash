@@ -548,26 +548,6 @@ public class HtmlElement extends Element {
 		return javaScripts;
 	}
 	
-	// TODO remove
-	public void storeCacheData(Map<String, Object> data) {
-//		tagName = (String) data.get("tagName");
-		uniqueSelector = (String) data.get("uniqueSelector");
-		attributeNames = (ArrayList<String>) data.get("attributeNames");
-		text = (String) data.get("text");
-		sourceText = (String) data.get("sourceText");
-		
-		// coordinates and dimension
-		Map<String, Object> location = (Map<String, Object>) data.get("location");
-		Double left = DataTypeConversion.longOrDoubleToDouble(location.get("left"));
-		Double top = DataTypeConversion.longOrDoubleToDouble(location.get("top"));
-		this.location = new Location(left, top);
-		
-		Map<String, Object> size = (Map<String, Object>) data.get("size");
-		Double width = DataTypeConversion.longOrDoubleToDouble(size.get("width"));
-		Double height = DataTypeConversion.longOrDoubleToDouble(size.get("height"));
-		this.size = new Size(width, height);
-	}
-	
 	public void setTagName(String tagName) {
 		this.tagName = tagName;
 	}

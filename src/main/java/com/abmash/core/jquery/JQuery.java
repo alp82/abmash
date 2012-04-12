@@ -5,8 +5,14 @@ import java.util.ArrayList;
 import org.apache.commons.lang.StringUtils;
 
 import com.abmash.core.jquery.command.*;
+import com.abmash.core.jquery.command.FilterCSSCommand.CSSAttributeComparator;
+import com.abmash.core.query.DirectionType;
 
 public class JQuery {
+	
+	public enum StringMatcher {
+		EXACT, WORD, STARTSWITH, ENDSWITH, CONTAINS, EXISTS
+	}
 	
 	ArrayList<Command> commands = new ArrayList<Command>();
 
@@ -18,11 +24,6 @@ public class JQuery {
 		this.selector = selector != null ? selector : "'*'";
 		this.weight = weight != null ? weight : 1;
 	}
-	
-//	public JQuery(Command command) {
-//		this(null, null);
-//		addCommand(command);
-//	}
 	
 	public JQuery addCommand(Command command) {
 		commands.add(command);
@@ -38,16 +39,18 @@ public class JQuery {
 		return commands;
 	}
 	
+	public String getSelector() {
+		return selector;
+	}
+	
 	public double getWeight() {
 		return weight;
 	}
+	
+	// main commands
 
 	public JQuery find(String selector) {
 		return find(new FindCommand(selector));
-	}
-	
-	public JQuery find(Command command) {
-		return find(new FindCommand(command.getSelector()));
 	}
 	
 	public JQuery find(FindCommand command) {
@@ -59,12 +62,7 @@ public class JQuery {
 		return filter(new FilterCommand(selector));
 	}
 	
-	public JQuery filter(Command command) {
-		return filter(new FilterCommand(command.getSelector()));
-	}
-	
 	public JQuery filter(FilterCommand command) {
-//		if(commands.isEmpty()) return find(command.getSelector());
 		commands.add(command);
 		return this;
 	}
@@ -73,12 +71,7 @@ public class JQuery {
 		return not(new NotCommand(selector));
 	}
 	
-	public JQuery not(Command command) {
-		return not(new NotCommand(command.getSelector()));
-	}
-	
 	public JQuery not(NotCommand command) {
-//		if(commands.isEmpty()) return find(command.getSelector());
 		commands.add(command);
 		return this;
 	}
@@ -87,60 +80,174 @@ public class JQuery {
 		return add(new AddCommand(selector));
 	}
 	
-	public JQuery add(Command command) {
-		return add(new AddCommand(command.getSelector()));
-	}
-	
 	public JQuery add(AddCommand command) {
-//		if(commands.isEmpty()) return find(command.getSelector());
 		commands.add(command);
 		return this;
 	}
 	
-	public JQuery contains(String text) {
-		return contains(text, false);
+	public JQuery containsText(StringMatcher stringMatcher, String text) {
+		return containsText(new ContainsTextCommand(stringMatcher, text));
+	}
+	
+	public JQuery containsText(ContainsTextCommand command) {
+		commands.add(command);
+		return this;
+	}
+	
+	public JQuery containsAttribute(StringMatcher stringMatcher, String attributeName, String text) {
+		return containsAttribute(new ContainsAttributeCommand(stringMatcher, attributeName, text));
+	}
+	
+	public JQuery containsAttribute(ContainsAttributeCommand command) {
+		commands.add(command);
+		return this;
+	}
+	
+	public JQuery has(String selector) {
+		return has(new HasCommand(selector));
+	}
+	
+	public JQuery has(HasCommand command) {
+		commands.add(command);
+		return this;
+	}
+	
+	// extended selector functionality
+	
+	public JQuery xPath(String selector) {
+		return xPath(new XPathCommand(selector));
+	}
+	
+	public JQuery xPath(XPathCommand command) {
+		commands.add(command);
+		return this;
+	}
+	
+	public JQuery regex(String selector) {
+		return regex(new RegExCommand(selector));
+	}
+	
+	public JQuery regex(RegExCommand command) {
+		commands.add(command);
+		return this;
 	}
 
-	public JQuery contains(String text, boolean caseSensitive) {
-		String containsSelector = caseSensitive ? "contains" : "containsCaseInsensitive";
-		return filter("':" + containsSelector + "(" + text + ")'");
+	public JQuery filterCSS(String attributeName, CSSAttributeComparator cssAttributeComparator, String value) {
+		commands.add(new FilterCSSCommand(attributeName, cssAttributeComparator, value));
+		return this;
 	}
 	
-	public JQuery containsAttribute(String text) {
-		String containsSelector = "attrCaseInsensitive";
-		return filter("':" + containsSelector + "(" + text + ")'");
+	// commands with optional selectors
+	
+	public JQuery parent() {
+		return parent("");
 	}
 	
-//	public void merge(JQuery jQueryToMerge) {
-//		commands.add(new JQueryCommand(jQueryToMerge));
-//	}
-	
-//	public String build() {
-//		String jQuery = ""; 
-//		for(Command command: commands) {
-//			String selector = command.getSelector();
-//			String method = command.getMethod();
-//			if(selector instanceof String && method instanceof String) {
-//				jQuery += "." + method + "(" + selector + ")";
-//			}
-//		}
-//		return jQuery;
-//	}
-	
-	public String getSelector() {
-		return selector;
+	public JQuery parent(String selector) {
+		return parent(new ParentCommand(selector));
 	}
+	
+	public JQuery parent(ParentCommand command) {
+		commands.add(command);
+		return this;
+	}
+	
+	public JQuery ancestors() {
+		return ancestors("");
+	}
+
+	public JQuery ancestors(String selector) {
+		return ancestors(new AncestorsCommand(selector));
+	}
+	
+	public JQuery ancestors(AncestorsCommand command) {
+		commands.add(command);
+		return this;
+	}
+	
+	public JQuery children() {
+		return children("");
+	}
+	
+	public JQuery children(String selector) {
+		return children(new ChildrenCommand(selector));
+	}
+	
+	public JQuery children(ChildrenCommand command) {
+		commands.add(command);
+		return this;
+	}
+	
+	public JQuery siblings() {
+		return siblings("");
+	}
+	
+	public JQuery siblings(String selector) {
+		return siblings(new SiblingsCommand(selector));
+	}
+	
+	public JQuery siblings(SiblingsCommand command) {
+		commands.add(command);
+		return this;
+	}
+	
+	public JQuery next() {
+		return next("");
+	}
+	
+	public JQuery next(String selector) {
+		return next(new NextCommand(selector));
+	}
+	
+	public JQuery next(NextCommand command) {
+		commands.add(command);
+		return this;
+	}
+	
+	public JQuery prev() {
+		return prev("");
+	}
+	
+	public JQuery prev(String selector) {
+		return prev(new PrevCommand(selector));
+	}
+	
+	public JQuery prev(PrevCommand command) {
+		commands.add(command);
+		return this;
+	}
+	
+	// closeness commands
+	
+//	public JQuery above(String selector) {
+//		commands.add(new ClosenessCommand(ClosenessType.ABOVE));
+//		return this;
+//	}	
+//	
+//	public JQuery below(String selector) {
+//		commands.add(new ClosenessCommand(ClosenessType.BELOW));
+//		return this;
+//	}	
+	
+	// general methods
 	
 	public String toString() {
 		return toString(0);
 	}	
 	
 	public String toString(int intendationSpaces) {
-		String jQueryAsString = "\n" + StringUtils.repeat(" ", intendationSpaces + 2);
-		jQueryAsString += !selector.equals("'*'") || !(commands.size() == 1 && commands.get(0).isBooleanCommand())  ? "jQuery(" + selector + ")\n" : "\n";
+		String str = StringUtils.repeat(" ", intendationSpaces) + "jQuery(" + selector + ")";
 		for(Command command: commands) {
-			jQueryAsString += StringUtils.repeat(" ", intendationSpaces) + command.toString(intendationSpaces + 2) + "\n";
+			str += "." + command.toString();
 		}
-		return jQueryAsString.substring(0, jQueryAsString.length() - 1);
+		return str;
+	}
+
+	public JQuery clone(double newWeight) {
+		JQuery jQuery = new JQuery(selector, newWeight);
+		for(Command command: commands) {
+			jQuery.addCommand(command);
+		}
+		return jQuery;
 	}
 }

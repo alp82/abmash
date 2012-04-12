@@ -1,32 +1,61 @@
-jQuery.expr[':'].isCaseInsensitive = function(node, stackIndex, properties) { 
-  return jQuery.trim((node.textContent || node.innerText || "").toLowerCase()) === jQuery.trim((properties[3] || "").toLowerCase());
-};
+// example for email adresses
+// jQuery('p').regex('[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}')
+jQuery.fn.extend({
+	regex: function (selector, options) {
+		var options = jQuery.extend({
+		}, options);
+		
+		var element = jQuery(this);
+		
+		var r = new RegExp(m[3], 'i');
+	    return r.test(element.text());
+	},
+	
+	textMatch: function (compareType, text, options) {
+		var options = jQuery.extend({
+		}, options);
+		
+		var nodes = [];
 
-jQuery.expr[':'].containsCaseInsensitive = function(node, stackIndex, properties) { 
-  return (node.textContent || node.innerText || "").toLowerCase().indexOf((properties[3] || "").toLowerCase()) >= 0; 
-};
+		this.each(function() {
+			var node = jQuery(this).get(0);
+			if(jQuery.inArray(node.tagName.toLowerCase(), ['html', 'head', 'script', 'meta', 'link']) < 0 &&
+				compareStrings((node.innerText || node.textContent || "").toLowerCase(), text.toLowerCase(), compareType.toUpperCase())) {
+				nodes.push(this);
+			}
+		});
 
-jQuery.expr[':'].attrCaseInsensitive = function(node, stackIndex, properties) {
-    var args = properties[3].split(',').map(function(arg) {
-        return arg.replace(/^\\s*[\"']|[\"']\\s*$/g, '');
-    });
+		return nodes;
+	},
+	
+	attrMatch: function (compareType, attributeName, text, options) {
+		var options = jQuery.extend({
+		}, options);
+		
+		var nodes = [];
 
-    var compareType = jQuery.trim(args[0]);
-    var attributeName = jQuery.trim(args[1]).toLowerCase();
-    var attrValueReference = jQuery.trim(args[2]).toLowerCase();
+		this.each(function() {
+			var node = jQuery(this).get(0);
+			if(jQuery.inArray(node.tagName.toLowerCase(), ['html', 'head', 'script', 'meta', 'link']) < 0) {
+				var textFound = false;
+			    jQuery.each(jQuery(node.attributes), function(index) {
+			        var attr = node.attributes[index];
+			        if (attributeName == "*" || attributeName == attr.name.toLowerCase()) {
+			            if (compareStrings(attr.value.toLowerCase(), text, compareType)) {
+			            	textFound = true;
+			            }
+			        }
+			    });
+			    
+			    if(textFound) {
+			    	nodes.push(this);
+			    }
+			}
+		});
 
-    var returnValue = false;
-    jQuery.each(jQuery(jQuery(node).get(0).attributes), function(index) {
-        var attr = jQuery(node).get(0).attributes[index];
-        if (attributeName == "*" || attributeName == attr.name.toLowerCase()) {
-            if (compareStrings(attr.value.toLowerCase(), attrValueReference, compareType)) {
-                returnValue = true;
-            }
-        }
-    });
-
-    return returnValue;
-};
+		return nodes;
+	},
+});
 
 compareStrings = function(str1, str2, type) {
     switch (type) {
@@ -36,8 +65,8 @@ compareStrings = function(str1, str2, type) {
         return str1 == str2;
     case "WORD":
         return str1.containsWord(str2);
-    case "BEGINSWITH":
-        return str1.beginsWith(str2);
+    case "STARTSWITH":
+        return str1.startsWith(str2);
     case "ENDSWITH":
         return str1.endsWith(str2);
     case "CONTAINS":
@@ -46,3 +75,27 @@ compareStrings = function(str1, str2, type) {
         return false;
     }
 };
+
+//levenshteinDistance = function(u, v) {
+//	var m = u.length;
+//	var n = v.length;
+//	var D = [];
+//	for(var i = 0; i <= m; i++) {
+//		D.push([]);
+//		for(var j = 0; j <= n; j++) {
+//			D[i][j] = 0;
+//		}
+//	}
+//	for(var i = 1; i <= m; i++) {
+//		for(var j = 1; j <= n; j++) {
+//			if (j == 0) {
+//				D[i][j] = i;
+//			} else if (i == 0) {
+//				D[i][j] = j;
+//			} else {
+//				D[i][j] = [D[i-1][j-1] + (u[i-1] != v[j-1]), D[i][j-1] + 1, D[i-1][j] + 1].sort()[0];
+//			}
+//		}
+//	}
+//	return D[m][n];
+//};

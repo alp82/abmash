@@ -81,35 +81,6 @@ public class HtmlElements extends ArrayList<HtmlElement> {
 	// element methods
 	
 	/**
-	 * 
-	 */
-	public void fetchDataForCache() {
-		// there is nothing to cache if the list of elements is empty
-		if(isEmpty()) return;
-		
-		Browser browser = get(0).getBrowser();
-
-		Map<String, WebElement> elements = new HashMap<String, WebElement>();
-		for(HtmlElement element: this) {
-			elements.put(element.getId(), element.getSeleniumElement());
-		}
-		
-		String script = "return abmash.processJqueryCommands(arguments[0], arguments[1]);";
-		Map<String, Map<String, Object>> results = (Map<String, Map<String, Object>>) browser.javaScript(script, elements, HtmlElement.getJQueryCommandsForCache()).getReturnValue();
-		
-		// TODO find more effective way to get corresponding element
-		for (Entry<String, Map<String, Object>> entry: results.entrySet()) {
-			for(HtmlElement element: this) {
-				if(element.getId().equals(entry.getKey())) {
-					element.storeCacheData(entry.getValue());
-				}
-			}
-		}
-		
-		
-	}
-	
-	/**
 	 * Creates {@link HtmlQuery} with this elements as root.
 	 * <p>
 	 * All found elements are descendant elements of these <code>HtmlElements</code>.

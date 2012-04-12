@@ -1,4 +1,4 @@
-package com.abmash.api.query;
+package com.abmash.core.query;
 
 public enum BooleanType {
 	AND, OR, NOT

@@ -1,23 +1,12 @@
-package com.abmash.core.query;
+package com.abmash.core.query.predicate;
 
-import java.util.ArrayList;
+import org.apache.commons.lang.StringUtils;
 
-import com.abmash.api.query.BooleanType;
-import com.abmash.core.jquery.JQuery;
+import com.abmash.core.jquery.command.Command;
+import com.abmash.core.query.BooleanType;
 
 public abstract class Predicate {
 
-//	protected ArrayList<Expression> expressions = new ArrayList<Expression>();
-//	public abstract ArrayList<Expression> buildExpressions();
-	
-	protected ArrayList<JQuery> jQueryList = new ArrayList<JQuery>();
-	
-	public abstract void buildCommands();
-	
-	public ArrayList<JQuery> getJQueryList() {
-		return jQueryList;
-	}
-	
 	// Infix notation (usually a lot more readable than the prefix-notation)
 	public Predicate and(Predicate... predicates) {
 		return new BooleanPredicate(BooleanType.AND, this).addPredicates(predicates);
@@ -33,7 +22,15 @@ public abstract class Predicate {
 	
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + " with jQueryList " + jQueryList;
+		return toString(0);
+	}	
+	
+	public String toString(int intendationSpaces) {
+		return toString(intendationSpaces, "");
 	}
-
+	
+	public String toString(int intendationSpaces, String additionalInformation) {
+		return StringUtils.repeat(" ", intendationSpaces) + getClass().getSimpleName() + additionalInformation + ":";
+	}
+	
 }
