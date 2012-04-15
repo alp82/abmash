@@ -26,13 +26,12 @@ public abstract class Command {
 	 * @return jQuery command string
 	 */		
 	public String toString() {
-		return method + "(" + selector + ")";
+		return toString(0);
 	}
 
-//	public String toString(int intendationSpaces) {
-//		String commandString =  method != null && selector != null ? ": ." + method + "(" + selector + ")" : "";
-//		return StringUtils.repeat(" ", intendationSpaces) + getClass().getSimpleName() + commandString;
-//	}
+	public String toString(int intendationSpaces) {
+		return method + "(" + selector + ")";
+	}
 
 	
 }

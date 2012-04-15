@@ -23,6 +23,7 @@ import com.abmash.core.element.Location;
 import com.abmash.core.element.Size;
 import com.abmash.core.jquery.JQuery;
 import com.abmash.core.jquery.command.Command;
+import com.abmash.core.jquery.command.CommandWithPredicates;
 import com.abmash.core.query.BooleanType;
 import com.abmash.core.query.predicate.BooleanPredicate;
 import com.abmash.core.query.predicate.ColorPredicate;
@@ -188,15 +189,14 @@ public class Query {
 
 	private JSONArray convertPredicatesToJSON(Predicates predicates) throws JSONException {
 		JSONArray jsonPredicates = new JSONArray();
+		ArrayList<JSONObject> directionPredicates = new ArrayList<JSONObject>();
 		for(Predicate predicate: predicates) {
 			JSONObject jsonPredicate = new JSONObject();
+			
 			if(predicate instanceof RecursivePredicate) {
 				if(predicate instanceof BooleanPredicate) {
 					jsonPredicate.put("isBoolean", true);
 					jsonPredicate.put("type", ((BooleanPredicate) predicate).getType());
-				} else if(predicate instanceof DirectionPredicate) {
-					jsonPredicate.put("isDirection", true);
-					jsonPredicate.put("type", ((DirectionPredicate) predicate).getType());
 				} else if(predicate instanceof ColorPredicate) {
 					jsonPredicate.put("isColor", true);
 					jsonPredicate.put("color", ((ColorPredicate) predicate).getColorAsRGB());
@@ -204,13 +204,25 @@ public class Query {
 					jsonPredicate.put("dominance", ((ColorPredicate) predicate).getDominance());
 				}
 				jsonPredicate.put("predicates", convertPredicatesToJSON(((RecursivePredicate) predicate).getPredicates()));
-			} else if(predicate instanceof JQueryPredicate) {
+			}
+			
+			if(predicate instanceof JQueryPredicate) {
 				JSONArray jsonJQueryList = new JSONArray();
 				for(JQuery jQuery: ((JQueryPredicate) predicate).getJQueryList()) {
 					jsonJQueryList.put(convertJQueryToJSON(jQuery));
 				}
 				jsonPredicate.put("jQueryList", jsonJQueryList);
 			}
+			
+			if(predicate instanceof DirectionPredicate) {
+				directionPredicates.add(jsonPredicate);
+			} else {
+				jsonPredicates.put(jsonPredicate);
+			}
+		}
+		
+		// put all direction predicates at the end
+		for(JSONObject jsonPredicate: directionPredicates) {
 			jsonPredicates.put(jsonPredicate);
 		}
 		
@@ -222,6 +234,9 @@ public class Query {
 		for(Command command: jQuery.getCommands()) {
 			JSONObject jsonCommand = new JSONObject();
 			jsonCommand.put("method", command.getMethod());
+			if(command instanceof CommandWithPredicates) {
+				jsonCommand.put("predicates", convertPredicatesToJSON(((CommandWithPredicates) command).getPredicates()));
+			}
 			jsonCommand.put("selector", command.getSelector());
 			jsonCommands.put(jsonCommand);
 		}
@@ -239,11 +254,7 @@ public class Query {
 	}
 
 	public String toString(int intendationSpaces) {
-		String str = "Query:";
-		for(Predicate predicate: predicates) {
-			str += "\n" + predicate.toString(intendationSpaces + 2);
-		}
-		return str;
+		return "Query:" + predicates.toString(intendationSpaces + 2);
 	}
 
 }

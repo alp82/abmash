@@ -7,6 +7,7 @@ import com.abmash.core.color.ColorName;
 import com.abmash.core.color.Dominance;
 import com.abmash.core.color.Tolerance;
 import com.abmash.core.query.BooleanType;
+import com.abmash.core.query.DirectionOptions;
 import com.abmash.core.query.DirectionType;
 import com.abmash.core.query.predicate.BooleanPredicate;
 import com.abmash.core.query.predicate.ClickablePredicate;
@@ -16,7 +17,7 @@ import com.abmash.core.query.predicate.ContainsPredicate;
 import com.abmash.core.query.predicate.HeadlinePredicate;
 import com.abmash.core.query.predicate.LinkPredicate;
 import com.abmash.core.query.predicate.Predicate;
-import com.abmash.core.query.predicate.TagPredicate;
+import com.abmash.core.query.predicate.SelectPredicate;
 import com.abmash.core.query.predicate.TextPredicate;
 import com.abmash.core.query.predicate.TypablePredicate;
 
@@ -56,8 +57,8 @@ public class QueryFactory {
 		return new ContainsPredicate(text);
 	}
 	
-	public static Predicate tag(String name) {
-		return new TagPredicate(name);
+	public static Predicate select(String name) {
+		return new SelectPredicate(name);
 	}
 	
 	public static Predicate text(String text) {
@@ -98,6 +99,14 @@ public class QueryFactory {
 	
 	// Direction Predicates
 	
+	public static Predicate closeTo(DirectionOptions options, Predicate... predicates) {
+		return new DirectionPredicate(options, predicates);
+	}
+	
+	public static Predicate closeTo(Predicate... predicates) {
+		return closeTo(new DirectionOptions(DirectionType.CLOSETO), predicates);
+	}
+	
 	/**
 	 * Finds elements <strong>above</strong> the elements which are matching the predicates.
 	 * <p>
@@ -127,19 +136,35 @@ public class QueryFactory {
 	 * @return Predicate with specified direction
 	 */
 	public static Predicate above(Predicate... predicates) {
-		return new DirectionPredicate(DirectionType.ABOVE, 0, predicates);
+		return closeTo(new DirectionOptions(DirectionType.ABOVE), predicates);
 	}
 	
 	public static Predicate below(Predicate... predicates) {
-		return new DirectionPredicate(DirectionType.BELOW, 0, predicates);
+		return closeTo(new DirectionOptions(DirectionType.BELOW), predicates);
 	}	
 
 	public static Predicate leftOf(Predicate... predicates) {
-		return new DirectionPredicate(DirectionType.LEFTOF, 0, predicates);
+		return closeTo(new DirectionOptions(DirectionType.LEFTOF), predicates);
 	}	
 	
 	public static Predicate rightOf(Predicate... predicates) {
-		return new DirectionPredicate(DirectionType.RIGHTOF, 0, predicates);
+		return closeTo(new DirectionOptions(DirectionType.RIGHTOF), predicates);
+	}
+	
+	public static Predicate aboveAll(Predicate... predicates) {
+		return closeTo(new DirectionOptions(DirectionType.ABOVE).setDirectionHasToMatchAllTargets(true), predicates);
+	}
+	
+	public static Predicate belowAll(Predicate... predicates) {
+		return closeTo(new DirectionOptions(DirectionType.BELOW).setDirectionHasToMatchAllTargets(true), predicates);
+	}	
+
+	public static Predicate leftOfAll(Predicate... predicates) {
+		return closeTo(new DirectionOptions(DirectionType.LEFTOF).setDirectionHasToMatchAllTargets(true), predicates);
+	}	
+	
+	public static Predicate rightOfAll(Predicate... predicates) {
+		return closeTo(new DirectionOptions(DirectionType.RIGHTOF).setDirectionHasToMatchAllTargets(true), predicates);
 	}
 	
 	// color predicates

@@ -1,26 +1,36 @@
 package com.abmash.core.query.predicate;
 
+import org.apache.commons.lang.StringUtils;
+
+import com.abmash.api.query.QueryFactory;
+import com.abmash.core.jquery.JQueryFactory;
+import com.abmash.core.query.DirectionOptions;
 import com.abmash.core.query.DirectionType;
 
-public class DirectionPredicate extends RecursivePredicate {
+public class DirectionPredicate extends JQueryPredicate {
 	
-	// TODO degree?
-	DirectionType type;
-	int distance;
+	DirectionOptions options;
+	Predicates predicates;
 
-	public DirectionPredicate(DirectionType type, int distance, Predicate... predicates) {
-		super(predicates);
-		this.type = type;
-		this.distance = distance;
+	public DirectionPredicate(DirectionOptions options, Predicate... predicates) {
+		super();
+		this.options = options;
+		this.predicates = new Predicates(predicates);
+		buildCommands();
 	}
 	
-	public DirectionType getType() {
-		return type;
+	public DirectionOptions getOptions() {
+		return options;
 	}
 	
-	public int getDistance() {
-		return distance;
-	}
+	public void buildCommands() {
+		closeTo(
+			// TODO null ersetzen durch selector oder vorige ergebnisse!! bei query nach hinten sortieren
+			JQueryFactory.select("abmash.getData('elementsForDirectionQuery')", 100),
+			options,
+			predicates
+		);
+	};
 	
 	@Override
 	public String toString() {
@@ -29,7 +39,7 @@ public class DirectionPredicate extends RecursivePredicate {
 	
 	@Override
 	public String toString(int intendationSpaces) {
-		return super.toString(intendationSpaces, " (" + type.toString() + ")");
+		return super.toString(intendationSpaces, " " + options.buildCommandSelector());
 	}
 	
 }

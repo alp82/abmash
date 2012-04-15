@@ -1,12 +1,17 @@
 package com.abmash.core.jquery;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.apache.commons.lang.StringUtils;
+import org.json.JSONException;
 
 import com.abmash.core.jquery.command.*;
 import com.abmash.core.jquery.command.FilterCSSCommand.CSSAttributeComparator;
+import com.abmash.core.query.DirectionOptions;
 import com.abmash.core.query.DirectionType;
+import com.abmash.core.query.predicate.Predicate;
+import com.abmash.core.query.predicate.Predicates;
 
 public class JQuery {
 	
@@ -21,7 +26,7 @@ public class JQuery {
 	Double weight;
 
 	public JQuery(String selector, Double weight) {
-		this.selector = selector != null ? selector : "'*'";
+		this.selector = selector != null && !selector.equals("") ? selector : "'*:not(html,head,head *)'";
 		this.weight = weight != null ? weight : 1;
 	}
 	
@@ -137,6 +142,11 @@ public class JQuery {
 		return this;
 	}
 	
+	public JQuery distinctDescendants() {
+		commands.add(new DistinctDescendantsCommand());
+		return this;
+	}
+	
 	// commands with optional selectors
 	
 	public JQuery parent() {
@@ -217,17 +227,38 @@ public class JQuery {
 		return this;
 	}
 	
-	// closeness commands
+	// closeness and direction commands
+
+	public JQuery closeTo(DirectionOptions options, Predicates predicates) {
+		commands.add(new CloseToCommand(options, predicates));
+		return this;
+	}
 	
-//	public JQuery above(String selector) {
-//		commands.add(new ClosenessCommand(ClosenessType.ABOVE));
-//		return this;
-//	}	
-//	
-//	public JQuery below(String selector) {
-//		commands.add(new ClosenessCommand(ClosenessType.BELOW));
-//		return this;
-//	}	
+	public JQuery closeToLabel(DirectionOptions options, Predicates predicates) {
+		return closeTo(options.setType(DirectionType.CLOSETOLABEL), predicates);
+	}	
+	
+	public JQuery closeToClickableLabel(DirectionOptions options, Predicates predicates) {
+		return closeTo(options.setType(DirectionType.CLOSETOCLICKABLELABEL), predicates);
+	}	
+	
+	public JQuery above(DirectionOptions options, Predicates predicates) {
+		return closeTo(options.setType(DirectionType.ABOVE), predicates);
+	}	
+	
+	public JQuery below(DirectionOptions options, Predicates predicates) {
+		return closeTo(options.setType(DirectionType.BELOW), predicates);
+	}	
+	
+	public JQuery leftOf(DirectionOptions options, Predicates predicates) {
+		return closeTo(options.setType(DirectionType.LEFTOF), predicates);
+	}	
+	
+	public JQuery rightOf(DirectionOptions options, Predicates predicates) {
+		return closeTo(options.setType(DirectionType.RIGHTOF), predicates);
+	}	
+	
+	// color commands
 	
 	// general methods
 	
@@ -238,11 +269,15 @@ public class JQuery {
 	public String toString(int intendationSpaces) {
 		String str = StringUtils.repeat(" ", intendationSpaces) + "jQuery(" + selector + ")";
 		for(Command command: commands) {
-			str += "." + command.toString();
+			str += "." + command.toString(intendationSpaces);
 		}
 		return str;
 	}
-
+	
+	public JQuery clone() {
+		return clone(weight);
+	}
+	
 	public JQuery clone(double newWeight) {
 		JQuery jQuery = new JQuery(selector, newWeight);
 		for(Command command: commands) {

@@ -37,6 +37,7 @@
 		return queryData[key];
 	};
 	
+	// TODO for subqueries (color, closeness)
 	abmash.setElementWeight = function(element, weight) {
 		elementWeight[jQuery(element).getPath()] = Math.max(weight, abmash.getElementWeight(element, { useHistory: false }));
 	};
@@ -87,6 +88,7 @@
 	
 	abmash.parsePredicates = function(predicates, booleanType) {
 		var result = [];
+		abmash.setData('elementsForDirectionQuery', jQuery('*:not(html,head,head *)'));
 
 		// process jQueryLists
 		var firstAnd = true;
@@ -97,6 +99,7 @@
 			if(predicate.jQueryList) {
 				var jQueryListResult = abmash.parseJQueryList(predicate.jQueryList, booleanType);
 				result = abmash.mergeResult(result, jQueryListResult, booleanType, firstAnd);
+				abmash.setData('elementsForDirectionQuery', jQuery(result));
 				firstAnd = false;
 				hasJQueryPredicates = true;
 				
@@ -126,38 +129,12 @@
 			firstAnd = false;
 		}
 		
-		// process recursive predicates (direction and color)
+		// process recursive predicates (color)
 		jQuery.each(predicates, function() {
 			var predicate = this;
 			var predicateResult = null;
 			
-			if(predicate.isDirection) {
-//				var directionType = predicate.type;
-				// TODO use weight of direction result elements
-				var directionResult = abmash.parsePredicates(predicate.predicates, 'OR');
-//				abmash.highlight(directionResult);
-//				abmash.highlight(result);
-				
-				switch(predicate.type) {
-				case "ABOVE":
-					predicateResult = jQuery(result).above(directionResult).get();
-					break;
-				case "BELOW":
-//					abmash.highlight(jQuery(result).get());
-					predicateResult = jQuery(result).below(directionResult).get();
-					break;
-				case "LEFTOF":
-					predicateResult = jQuery(result).leftOf(directionResult).get();
-					break;
-				case "RIGHTOF":
-					predicateResult = jQuery(result).rightOf(directionResult).get();
-					break;
-					
-				default:
-					alert("WRONG CLOSENESS TYPE: " + predicate.type);
-					break;
-				}
-			} else if(predicate.isColor) {
+			if(predicate.isColor) {
 				var color = predicate.color;
 				var tolerance = predicate.tolerance;
 				var dominance = predicate.dominance;
@@ -178,6 +155,8 @@
 	};
 	
 	abmash.mergeResult = function(result, newResult, booleanType, firstAnd) {
+		abmash.setData('elementsForDirectionQuery', jQuery(result));
+		
 		switch (booleanType) {
 		case "OR":
 			// merge results
@@ -238,7 +217,21 @@
 		jQuery.each(jQueryCommands, function() {
 			var jQueryCommand = this;
 			// the command list will be evaluated with JQuery after all commands of this predicate are processed
-			jQueryCommandList.push(jQueryCommand.method + "(" + jQueryCommand.selector + ")");
+			if(jQueryCommand.predicates) {
+				var subQueryId = "" + (new Date().getTime()) + ((Math.random() * 900) + 100);
+				
+				// temporarily save intermediate result
+				var tempElements = abmash.getData('elementsForDirectionQuery');
+				
+				// process subquery predicates
+				abmash.setData('subQuery' + subQueryId, abmash.parsePredicates(jQueryCommand.predicates, 'AND'));
+				jQueryCommandList.push(jQueryCommand.method + "(abmash.getData('subQuery" + subQueryId + "')," + jQueryCommand.selector + ")");
+				
+				// restore temporarily saved intermediate result
+				abmash.setData('elementsForDirectionQuery', tempElements);
+			} else {
+				jQueryCommandList.push(jQueryCommand.method + "(" + jQueryCommand.selector + ")");
+			}
 		});
 		
 		var jQueryEval = "jQuery(" + selector + ")";
@@ -253,15 +246,25 @@
 	abmash.evaluateJQuery = function(jQueryEval, weight) {
 		var result = [];
 		
-		jQuery.globalEval("abmash.setData('commandResult', " + jQueryEval + ");");
-		var commandResult = abmash.getData('commandResult');
-		// TODO :visible optional?
+//		jQuery.globalEval("abmash.setData('commandResult', " + jQueryEval + ");");
+		try {
+		  eval("abmash.setData('jQueryResult', " + jQueryEval + ");");
+		} catch(e) {
+		  var err = e.constructor('Error in Evaled Script: ' + e.message);
+		  // +3 because `err` has the line number of the `eval` line plus two.
+		  err.lineNumber = e.lineNumber - err.lineNumber + 3;
+		  alert(err);
+		  throw err;
+		}
+		var jQueryResult = abmash.getData('jQueryResult');
 		// add element if it is visible
-		jQuery.each(jQuery(commandResult).filter(':visible:not(html,head,head *)'), function() {
+		// TODO optionally with :visible? but does not work with closeTo command (return no result, i dont know why)
+		jQuery.each(jQuery(jQueryResult)/*.filter(':visible:not(html,head,head *)')*/, function() {
 		    var element = jQuery(this);
 		    
-	    	result.push(element.get(0));
+			result.push(element.get(0));
 	    	// store priority for element based on selector weight
+	    	// TODO make this dynamic for sub queries
 	    	abmash.setElementWeight(element.get(0), weight);
 	    	
 	    	// increment element count
@@ -269,6 +272,9 @@
 //		    if(groupLimit > 0 && groupResult.length >= groupLimit) return false;
 		});
 		
+//		alert(jQueryEval);
+//		abmash.highlight(jQueryResult);
+//		abmash.highlight(result);
 		return result;
 	};
 	

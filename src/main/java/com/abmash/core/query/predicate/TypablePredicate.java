@@ -7,6 +7,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.abmash.api.HtmlElement;
 import com.abmash.api.HtmlElements;
+import com.abmash.api.query.QueryFactory;
 import com.abmash.core.htmlquery.selector.CssSelector;
 import com.abmash.core.htmlquery.selector.DirectMatchSelector;
 import com.abmash.core.htmlquery.selector.JQuerySelector;
@@ -16,6 +17,8 @@ import com.abmash.core.jquery.JQuery;
 import com.abmash.core.jquery.JQueryFactory;
 import com.abmash.core.jquery.JQuery.StringMatcher;
 import com.abmash.core.jquery.command.FilterCSSCommand.CSSAttributeComparator;
+import com.abmash.core.query.DirectionOptions;
+import com.abmash.core.query.DirectionType;
 
 public class TypablePredicate extends JQueryPredicate {
 
@@ -32,9 +35,16 @@ public class TypablePredicate extends JQueryPredicate {
 				"input[type=password]", "input[type=text]", "input[type=email]", "input[type=url]",
 				"input[type=number]", "input[type=search]", "textarea");
 		if(text != null) {
-			containsAttribute("'" + StringUtils.join(inputSelectors, ',') + "'", "*", text);
+			// close to label
+			closeTo(
+				JQueryFactory.select("'" + StringUtils.join(inputSelectors, ',') + "'", 100),
+				new DirectionOptions(DirectionType.CLOSETO).setLimitPerTarget(1).setMaxDistance(300),
+				QueryFactory.contains(text),
+				QueryFactory.select(":not(input,textarea)")
+			);
 			
-			// TODO has label
+			containsText("'" + StringUtils.join(inputSelectors, ',') + "'", text);
+			containsAttribute("'" + StringUtils.join(inputSelectors, ',') + "'", "*", text);
 		} else {
 			add(JQueryFactory.select("'" + StringUtils.join(inputSelectors, ',') + "'", 50));
 		}
