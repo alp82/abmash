@@ -4,14 +4,13 @@ package com.abmash.api;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebElement;
 
+import com.abmash.api.query.Query;
+import com.abmash.api.query.QueryFactory;
 import com.abmash.core.htmlquery.condition.ElementCondition.ElementType;
 
 
@@ -80,24 +79,6 @@ public class HtmlElements extends ArrayList<HtmlElement> {
 
 	// element methods
 	
-	/**
-	 * Creates {@link HtmlQuery} with this elements as root.
-	 * <p>
-	 * All found elements are descendant elements of these <code>HtmlElements</code>.
-	 * 
-	 * @return HtmlQuery object
-	 * @see HtmlQuery#childOf(HtmlElements)
-	 */
-	public HtmlQuery query() {
-		try {
-			return get(0).getBrowser().query().childOf(this);
-		} catch (Exception e) {
-			// TODO error handler for empty list
-			e.printStackTrace();
-			return null;
-		}
-	}
-
 	/**
 	 * Clicks all elements.
 	 * <p>

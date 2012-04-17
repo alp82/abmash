@@ -4,6 +4,8 @@ package com.abmash.api.browser;
 import com.abmash.api.Browser;
 import com.abmash.api.HtmlElement;
 import com.abmash.api.HtmlQuery;
+import com.abmash.api.query.Query;
+import com.abmash.api.query.QueryFactory;
 import com.abmash.core.browser.waitcondition.ElementHasTextWaitCondition;
 import com.abmash.core.browser.waitcondition.ElementWaitCondition;
 import com.abmash.core.browser.waitcondition.JavaScriptEvaluatedWaitCondition;
@@ -63,14 +65,14 @@ public class WaitFor {
 	 * @param query the element query
 	 * @throws TimeoutException
 	 */
-	public void query(HtmlQuery query) throws TimeoutException {
+	public void query(Query query) throws TimeoutException {
 //		WebDriverWait wait = new WebDriverWait(browser.getWebDriver(), timeout);
 		FluentWait<WebDriver> wait = new FluentWait<WebDriver>(browser.getWebDriver())
 	       .withTimeout(timeout, TimeUnit.SECONDS)
 	       .pollingEvery(500, TimeUnit.MILLISECONDS);
 		
 		// start waiting for given element
-		wait.until(new ElementWaitCondition(query));
+		wait.until(new ElementWaitCondition(browser, query));
 	}
 	
 	/**
@@ -80,7 +82,7 @@ public class WaitFor {
 	 * @throws TimeoutException
 	 */
 	public void element(String query) throws TimeoutException {
-		query(browser.query().has(query));
+		query(browser.query(QueryFactory.contains(query)));
 	}
 
 	/**
@@ -110,7 +112,7 @@ public class WaitFor {
 		// wait until element is found
 		element(text);
 		// wait until element text is detected
-		elementText(browser.query().has(query).findFirst(), text);
+		elementText(browser.query(QueryFactory.contains(query)).findFirst(), text);
 	}
 
 	/**

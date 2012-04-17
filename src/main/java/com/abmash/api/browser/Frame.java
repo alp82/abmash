@@ -2,6 +2,7 @@ package com.abmash.api.browser;
 
 import com.abmash.api.Browser;
 import com.abmash.api.HtmlElement;
+import com.abmash.api.query.QueryFactory;
 
 
 /**
@@ -43,7 +44,7 @@ public class Frame {
 		// TODO only switch to parent frame if necessary
 		// TODO do not change the window, just use the root of the current window
 		switchToMain();
-		switchTo(browser.query().has(name).isFrame().findFirst());
+		switchTo(browser.query(QueryFactory.frame(name)).findFirst());
 	}
 	
 	/**

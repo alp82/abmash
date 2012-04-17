@@ -19,6 +19,8 @@ import org.openqa.selenium.Point;
 import org.openqa.selenium.remote.RemoteWebElement;
 
 import com.abmash.api.data.Table;
+import com.abmash.api.query.Query;
+import com.abmash.api.query.QueryFactory;
 import com.abmash.core.browser.interaction.Clear;
 import com.abmash.core.browser.interaction.Click;
 import com.abmash.core.browser.interaction.Click.ClickType;
@@ -331,13 +333,19 @@ public class HtmlElement extends Element {
 		// TODO year
 		// TODO exception handler if no element was found
 		// TODO first try with month name
-		browser.query().isChoosable().has("datepicker").findFirst().choose(String.valueOf(dateTime.getMonthOfYear() - 1));
+		browser.query(QueryFactory.choosable("datepicker"), QueryFactory.below(this)).findFirst().choose(String.valueOf(dateTime.getMonthOfYear() - 1));
 		// TODO exception handler if no element was found
-		browser.query().isClickable().has(String.valueOf(dateTime.getDayOfMonth())).closestTo(this).findFirst().click();
+		browser.query(
+			QueryFactory.clickable(String.valueOf(dateTime.getDayOfMonth())),
+			QueryFactory.below(this)
+		).findFirst().click();
 		// TODO time
 		DateTimeFormatter fmt = DateTimeFormat.forPattern("h:mm aa");
 		// TODO exception handler if no element was found
-		browser.query().isChoosable().has("time").closestTo(this).findFirst().choose(fmt.print(dateTime));
+		browser.query(
+			QueryFactory.choosable("time"),
+			QueryFactory.rightOf(this)
+		).findFirst().choose(fmt.print(dateTime));
 		
 		// TODO remove temp output
 //		ArrayList<RemoteWebElement> tmp = (ArrayList<RemoteWebElement>) browser.javaScript("return abmash.getData('tmp');").getReturnValue();
@@ -364,8 +372,8 @@ public class HtmlElement extends Element {
 	 * 
 	 * @return this {@link HtmlElement}
 	 */
-	// TODO check if possible
 	public HtmlElement submit() {
+		// TODO if element is not an input, choose the best input[type=submit] 
 		new Submit(browser, this, SubmitMethod.FORM).execute();
 		return this;
 	}
@@ -473,27 +481,14 @@ public class HtmlElement extends Element {
 	// selectors
 	
 	/**
-	 * Creates an {@link HtmlQuery} with this element as root.
-	 * <p>
-	 * All found elements are descendant elements of this <code>HtmlElement</code>.
-	 * 
-	 * @return HtmlQuery object
-	 * @see HtmlQuery
-	 * @see HtmlQuery#childOf(HtmlElements)
-	 */
-	public HtmlQuery query() {
-		return browser.query().childOf(this);
-	}
-	
-	/**
 	 * Creates an {@link HtmlQuery} to find elements below this one.
 	 * 
 	 * @return HtmlQuery object
 	 * @see HtmlQuery
 	 * @see HtmlQuery#below(HtmlElement)
 	 */
-	public HtmlQuery below() {
-		return browser.query().below(this);
+	public Query below() {
+		return browser.query(QueryFactory.below(this));
 	}
 	
 	/**
@@ -503,8 +498,8 @@ public class HtmlElement extends Element {
 	 * @see HtmlQuery
 	 * @see HtmlQuery#above(HtmlElement)
 	 */
-	public HtmlQuery above() {
-		return browser.query().above(this);
+	public Query above() {
+		return browser.query(QueryFactory.above(this));
 	}	
 	
 	/**
@@ -514,8 +509,8 @@ public class HtmlElement extends Element {
 	 * @see HtmlQuery
 	 * @see HtmlQuery#leftTo(HtmlElement)
 	 */
-	public HtmlQuery leftTo() {
-		return browser.query().leftTo(this);
+	public Query leftTo() {
+		return browser.query(QueryFactory.leftOf(this));
 	}	
 	
 	/**
@@ -525,28 +520,11 @@ public class HtmlElement extends Element {
 	 * @see HtmlQuery
 	 * @see HtmlQuery#rightTo(HtmlElement)
 	 */
-	public HtmlQuery rightTo() {
-		return browser.query().rightTo(this);
+	public Query rightTo() {
+		return browser.query(QueryFactory.rightOf(this));
 	}
 	
-	// cache handling
-	
-	// TODO remove
-	public static Map<String, JQuerySelector> getJQueryCommandsForCache() {
-		Map<String, JQuerySelector> javaScripts = new HashMap<String, JQuerySelector>();
-		
-		// TODO tag name does not work, javascript hangs completely
-//		javaScripts.put("tagName", new JQuerySelector("get(0).nodeName.toLowerCase()"));
-		javaScripts.put("uniqueSelector", new JQuerySelector("getPath()"));
-		// TODO attributes map
-		javaScripts.put("attributeNames", new JQuerySelector("getAttributeNames()"));
-		javaScripts.put("text", new JQuerySelector("text()"));
-		javaScripts.put("sourceText", new JQuerySelector("html()"));
-		javaScripts.put("location", new JQuerySelector("offset()"));
-		javaScripts.put("size", new JQuerySelector("dimension()"));
-		
-		return javaScripts;
-	}
+	// setters
 	
 	public void setTagName(String tagName) {
 		this.tagName = tagName;

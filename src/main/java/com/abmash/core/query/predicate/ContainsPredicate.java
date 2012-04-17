@@ -13,6 +13,7 @@ public class ContainsPredicate extends JQueryPredicate {
 
 	@Override
 	public void buildCommands() {
-		containsText(JQueryFactory.select("'*:not(html, head, head *)'", 1), text);
+		containsText(JQueryFactory.select("'*:not(html, head, head *)'", 0), text);
+		containsAttribute(JQueryFactory.select("'*:not(html, head, head *)'", 0), "*", text);
 	}
 }

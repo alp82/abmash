@@ -1,16 +1,5 @@
-// example for email adresses
-// jQuery('p').regex('[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}')
 jQuery.fn.extend({
-	regex: function (selector, options) {
-		var options = jQuery.extend({
-		}, options);
-		
-		var element = jQuery(this);
-		
-		var r = new RegExp(m[3], 'i');
-	    return r.test(element.text());
-	},
-	
+
 	textMatch: function (compareType, text, options) {
 		var options = jQuery.extend({
 		}, options);
@@ -25,7 +14,7 @@ jQuery.fn.extend({
 			}
 		});
 
-		return nodes;
+		return jQuery(nodes);
 	},
 	
 	attrMatch: function (compareType, attributeName, text, options) {
@@ -53,8 +42,45 @@ jQuery.fn.extend({
 			}
 		});
 
-		return nodes;
+		return jQuery(nodes);
 	},
+});
+
+jQuery.extend(jQuery.expr[':'], {
+	
+	textMatch: function(node, index, match) {
+	    var args = match[3].split(',').map(function(arg) {
+	        return arg.replace(/^\\s*[\"']|[\"']\\s*$/g, '');
+	    });
+
+	    var compareType = jQuery.trim(args[0]).toUpperCase();
+	    var text = jQuery.trim(args[1]).toLowerCase();
+	    var options = jQuery.trim(args[2]);
+	    
+        return jQuery(node).textMatch(compareType, text, options).length > 0;
+    },
+    
+	attrMatch: function(node, index, match) {
+	    var args = match[3].split(',').map(function(arg) {
+	        return arg.replace(/^\\s*[\"']|[\"']\\s*$/g, '');
+	    });
+
+	    var compareType = jQuery.trim(args[0]).toUpperCase();
+	    var attributeName = jQuery.trim(args[1]).toLowerCase();
+	    var text = jQuery.trim(args[2]).replace(/\"/g, '').toLowerCase();
+	    var options = jQuery.trim(args[3]);
+	    
+        return jQuery(node).attrMatch(compareType, attributeName, text, options).length > 0;
+    },
+    
+	// example for email adresses
+	// jQuery('p:regex([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4})')
+	regex: function (node, index, match) {
+		var element = jQuery(node);
+		var r = new RegExp(match[3], 'i');
+	    return r.test(element.text());
+	},
+    
 });
 
 compareStrings = function(str1, str2, type) {

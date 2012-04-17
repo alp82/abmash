@@ -4,7 +4,8 @@
 	var queryData = {};
 	var elementWeight = {};
 	var elementWeightHistory = {};
-	
+	var elementInIframe = {};
+	var referenceElements = {};
 
 	// public functions
 	
@@ -59,7 +60,13 @@
 		return 1;
 	};
 	
-	abmash.query = function(jsonPredicates/*, closenessConditions, colorConditions, rootElements, elementsToFilter, referenceElements, labelElements, limit*/) {
+	abmash.query = function(jsonPredicates, refElements) {
+		// prepare global variables
+		elementWeightHistory = jQuery.extend(elementWeightHistory, elementWeight);
+		elementWeight = {};
+		elementInIframe = {};
+		referenceElements = refElements;
+
 		// query, remove duplicaates and sort afterwards
 		var result = abmash.parsePredicates(JSON.parse(jsonPredicates), 'AND');
 		result = jQuery.unique(result).sort(sortByWeight);
@@ -80,6 +87,11 @@
 				location: jQueryElement.offset(),
 				size: jQueryElement.dimension(),
 			};
+			
+			if(typeof elementInIframe[jQueryElement.getPath()] != "undefined") {
+				element = jQuery.extend(element, { iframe: elementInIframe[jQueryElement.getPath()] });
+			}
+			
 			elements.push(element);
 		});
 		
@@ -89,9 +101,19 @@
 	abmash.parsePredicates = function(predicates, booleanType) {
 		var result = [];
 		abmash.setData('elementsForDirectionQuery', jQuery('*:not(html,head,head *)'));
+		
+		// process element predicates
+		var firstAnd = true;
+		jQuery.each(predicates, function() {
+			var predicate = this;
+			
+			if(predicate.referenceId) {
+				result = abmash.mergeResult(result, referenceElements[predicate.referenceId], booleanType, firstAnd);
+				firstAnd = false;
+			}
+		});
 
 		// process jQueryLists
-		var firstAnd = true;
 		var hasJQueryPredicates = false;
 		jQuery.each(predicates, function() {
 			var predicate = this;
@@ -129,7 +151,7 @@
 			firstAnd = false;
 		}
 		
-		// process recursive predicates (color)
+		// process color predicates
 		jQuery.each(predicates, function() {
 			var predicate = this;
 			var predicateResult = null;
@@ -224,7 +246,9 @@
 				var tempElements = abmash.getData('elementsForDirectionQuery');
 				
 				// process subquery predicates
+//				alert(jQueryCommand.predicates.toSource());
 				abmash.setData('subQuery' + subQueryId, abmash.parsePredicates(jQueryCommand.predicates, 'AND'));
+//				abmash.highlight(abmash.getData('subQuery' + subQueryId));
 				jQueryCommandList.push(jQueryCommand.method + "(abmash.getData('subQuery" + subQueryId + "')," + jQueryCommand.selector + ")");
 				
 				// restore temporarily saved intermediate result
@@ -247,22 +271,28 @@
 		var result = [];
 		
 //		jQuery.globalEval("abmash.setData('commandResult', " + jQueryEval + ");");
-		try {
-		  eval("abmash.setData('jQueryResult', " + jQueryEval + ");");
-		} catch(e) {
-		  var err = e.constructor('Error in Evaled Script: ' + e.message);
-		  // +3 because `err` has the line number of the `eval` line plus two.
-		  err.lineNumber = e.lineNumber - err.lineNumber + 3;
-		  alert(err);
-		  throw err;
-		}
+		abmash.eval("abmash.setData('jQueryResult', " + jQueryEval + ");");
 		var jQueryResult = abmash.getData('jQueryResult');
 		// add element if it is visible
 		// TODO optionally with :visible? but does not work with closeTo command (return no result, i dont know why)
 		jQuery.each(jQuery(jQueryResult)/*.filter(':visible:not(html,head,head *)')*/, function() {
 		    var element = jQuery(this);
 		    
+		    // check if element is located in iframe
+		    jQuery('iframe').each(function() {
+		    	try {
+			    	if(jQuery(this).contents().find(element.get(0).tagName).length > 0){
+			    		var iframe = jQuery(this);
+			    		elementInIframe[element.getPath()] = iframe.get(0);
+			    		return false;
+			    	}
+		    	} catch(e) {
+		    		// iframe is on another domain and cannot be accessed due to same origin policy
+		    	}
+		    });
+		    
 			result.push(element.get(0));
+			
 	    	// store priority for element based on selector weight
 	    	// TODO make this dynamic for sub queries
 	    	abmash.setElementWeight(element.get(0), weight);
@@ -277,6 +307,18 @@
 //		abmash.highlight(result);
 		return result;
 	};
+	
+	abmash.eval = function(evalString) {
+		try {
+		  eval(evalString);
+		} catch(e) {
+		  var err = e.constructor('Eval Error: ' + e.message + '\nScript: ' + evalString);
+		  // +3 because `err` has the line number of the `eval` line plus two.
+		  err.lineNumber = e.lineNumber - err.lineNumber + 3;
+		  alert(err);
+		  throw err;
+		}
+	}
 	
 	abmash.queryOld = function(conditions, closenessConditions, colorConditions, rootElements, elementsToFilter, referenceElements, labelElements, limit) {
 		queryLimit = limit;

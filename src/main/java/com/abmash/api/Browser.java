@@ -10,6 +10,8 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.abmash.api.query.QueryFactory.*;
+
 import com.abmash.api.browser.Debug;
 import com.abmash.api.browser.Frame;
 import com.abmash.api.browser.History;
@@ -19,9 +21,12 @@ import com.abmash.api.browser.Window;
 import com.abmash.api.data.JavaScriptResult;
 import com.abmash.api.data.List;
 import com.abmash.api.data.Table;
+import com.abmash.api.query.Query;
+import com.abmash.api.query.QueryFactory;
 import com.abmash.core.Document;
 import com.abmash.core.browser.BrowserConfig;
 import com.abmash.core.browser.interaction.OpenURL;
+import com.abmash.core.query.predicate.Predicate;
 import com.abmash.core.tools.IOTools;
 
 
@@ -343,41 +348,46 @@ public class Browser implements Document {
 	// HtmlQuery
 	// -----------------------------------------------------------------------
 
-	/**
-	 * Creates {@link HtmlQuery} instance to find elements on current page.
-	 * <p>
-	 * <strong>Examples:</strong>
-	 * <ul>
-	 * <li><code>browser.query().has("result").findFirst();</code> searches for elements containing the attribute or
-	 * inner text <em>result</em></li> 
-	 * <li><code>browser.query().isClickable().findFirst();</code> searches for clickable elements like links and buttons</li> 
-	 * <li>for more examples see {@link HtmlQuery}</li>
-	 * </ul>
-	 * <p>
-	 * <strong>Description:</strong>
-	 * <p>
-	 * Define conditions by chaining <code>is</code>, <code>has</code>, <code>tag</code> and <code>select</code>
-	 * methods. Get the query result by executing {@link HtmlQuery#find()} or {@link HtmlQuery#findFirst()}.
-	 * 
-	 * @return HtmlQuery instance to add an arbitrary number of find conditions
-	 * @see HtmlQuery
-	 */
-	public HtmlQuery query() {
-		return new HtmlQuery(this);
+	// TODO root elements?
+	public Query query(Predicate... predicates) {
+		return QueryFactory.query(this, predicates);
 	}
-	
-	/**
-	 * Creates {@link HtmlQuery} instance to filter elements on current page.
-	 * <p>
-	 * TODO examples
-	 * 
-	 * @return HtmlQuery instance to add an arbitrary number of find conditions
-	 * @see Browser#query()
-	 * @see HtmlQuery#subsetOf(HtmlElements)
-	 */
-	public HtmlQuery query(HtmlElements elementsToFilter) {
-		return new HtmlQuery(this).subsetOf(elementsToFilter);
-	}
+
+//	/**
+//	 * Creates {@link HtmlQuery} instance to find elements on current page.
+//	 * <p>
+//	 * <strong>Examples:</strong>
+//	 * <ul>
+//	 * <li><code>browser.query().has("result").findFirst();</code> searches for elements containing the attribute or
+//	 * inner text <em>result</em></li> 
+//	 * <li><code>browser.query().isClickable().findFirst();</code> searches for clickable elements like links and buttons</li> 
+//	 * <li>for more examples see {@link HtmlQuery}</li>
+//	 * </ul>
+//	 * <p>
+//	 * <strong>Description:</strong>
+//	 * <p>
+//	 * Define conditions by chaining <code>is</code>, <code>has</code>, <code>tag</code> and <code>select</code>
+//	 * methods. Get the query result by executing {@link HtmlQuery#find()} or {@link HtmlQuery#findFirst()}.
+//	 * 
+//	 * @return HtmlQuery instance to add an arbitrary number of find conditions
+//	 * @see HtmlQuery
+//	 */
+//	public HtmlQuery query() {
+//		return new HtmlQuery(this);
+//	}
+//	
+//	/**
+//	 * Creates {@link HtmlQuery} instance to filter elements on current page.
+//	 * <p>
+//	 * TODO examples
+//	 * 
+//	 * @return HtmlQuery instance to add an arbitrary number of find conditions
+//	 * @see Browser#query()
+//	 * @see HtmlQuery#subsetOf(HtmlElements)
+//	 */
+//	public HtmlQuery query(HtmlElements elementsToFilter) {
+//		return new HtmlQuery(this).subsetOf(elementsToFilter);
+//	}
 	
 	// -----------------------------------------------------------------------
 	// Browser Interaction with HtmlElements
@@ -399,12 +409,12 @@ public class Browser implements Document {
 	 * <p>
 	 * Note that if the page reloads after a click, all found {@link HtmlElement} instances may lose their validity.
 	 * 
-	 * @param query element attribute value or inner text containing this string
+	 * @param text element attribute value or inner text containing this string
 	 * @return HtmlElement to further interact with that element or {@code null} if element could not be found
 	 * @see HtmlElement#click()
 	 */
-	public HtmlElement click(String query) {
-		HtmlElement element = query().has(query).isClickable().findFirstWithWait();
+	public HtmlElement click(String text) {
+		HtmlElement element = query(clickable(text)).findFirstWithWait();
 		return element instanceof HtmlElement ? element.click() : null;
 	}
 	
@@ -422,12 +432,12 @@ public class Browser implements Document {
 	 * be added to the result set. The first result will be used for hovering. If you already have an
 	 * {@link HtmlElement} instance use {@link HtmlElement#hover()} instead.
 	 * 
-	 * @param query element attribute value or inner text containing this string
+	 * @param text element attribute value or inner text containing this string
 	 * @return HtmlElement to further interact with that element or {@code null} if element could not be found
 	 * @see HtmlElement#hover()
 	 */
-	public HtmlElement hover(String query) {
-		HtmlElement element = query().has(query).findFirstWithWait();
+	public HtmlElement hover(String text) {
+		HtmlElement element = query(contains(text)).findFirstWithWait();
 		return element instanceof HtmlElement ? element.hover() : null;
 	}
 	
@@ -446,14 +456,14 @@ public class Browser implements Document {
 	 * be added to the result set. The first result will be used for dragging. If you already have an
 	 * {@link HtmlElement} instance use {@link HtmlElement#dragTo(HtmlElement)} instead.
 	 * 
-	 * @param querySource source element attribute value or inner text containing this string
-	 * @param queryTarget target element attribute value or inner text containing this string
+	 * @param textSource source element attribute value or inner text containing this string
+	 * @param textTarget target element attribute value or inner text containing this string
 	 * @return HtmlElement to further interact with that element or {@code null} if element could not be found
 	 * @see HtmlElement#dragTo(HtmlElement)
 	 */
-	public HtmlElement dragTo(String querySource, String queryTarget) {
-		HtmlElement source = query().has(querySource).findFirstWithWait();
-		HtmlElement target = query().has(queryTarget).findFirstWithWait();
+	public HtmlElement dragTo(String textSource, String textTarget) {
+		HtmlElement source = query(contains(textSource)).findFirstWithWait();
+		HtmlElement target = query(contains(textTarget)).findFirstWithWait();
 		return source instanceof HtmlElement && target instanceof HtmlElement ? source.dragTo(target) : null;
 	}
 	
@@ -480,7 +490,7 @@ public class Browser implements Document {
 	 * @see HtmlElement#type(String)
 	 */
 	public HtmlElement type(String query, String text) {
-		HtmlElement element = query().has(query).isTypable().findFirstWithWait();
+		HtmlElement element = query(typable(query)).findFirstWithWait();
 		return element instanceof HtmlElement ? element.type(text) : null;
 	}
 	
@@ -498,14 +508,14 @@ public class Browser implements Document {
 	 * <p>
 	 * TODO Select description
 	 * 
-	 * @param query dropdown/select element
-	 * @param optionQuery the attribute value or text of the option to choose for selecting
+	 * @param text dropdown/select element
+	 * @param option the attribute value or text of the option to choose for selecting
 	 * @return HtmlElement to further interact with the form element, for instance to {@link HtmlElement#submit()} the form,
 	 * or {@code null} if element could not be found
 	 */
-	public HtmlElement choose(String query, String optionQuery) {
-		HtmlElement element = query().has(query).isChoosable().findFirstWithWait();
-		return element instanceof HtmlElement ? element.choose(optionQuery) : null;
+	public HtmlElement choose(String text, String option) {
+		HtmlElement element = query(choosable(text)).findFirstWithWait();
+		return element instanceof HtmlElement ? element.choose(option) : null;
 	}
 	
 	/**
@@ -522,14 +532,14 @@ public class Browser implements Document {
 	 * <p>
 	 * TODO Select description
 	 * 
-	 * @param query dropdown/select element
-	 * @param optionQuery the attribute value or text of the option to choose for deselecting
+	 * @param text dropdown/select element
+	 * @param option the attribute value or text of the option to choose for deselecting
 	 * @return HtmlElement to further interact with the form element, for instance to {@link HtmlElement#submit()} the form,
 	 * or {@code null} if element could not be found
 	 */
-	public HtmlElement unchoose(String query, String optionQuery) {
-		HtmlElement element = query().has(query).isChoosable().findFirstWithWait();
-		return element instanceof HtmlElement ? element.unchoose(optionQuery) : null;
+	public HtmlElement unchoose(String text, String option) {
+		HtmlElement element = query(choosable(text)).findFirstWithWait();
+		return element instanceof HtmlElement ? element.unchoose(option) : null;
 	}
 	
 	/**
@@ -546,13 +556,13 @@ public class Browser implements Document {
 	 * <p>
 	 * TODO Select description
 	 * 
-	 * @param query calendar/date picker element
+	 * @param text calendar/date picker element
 	 * @param dateTime the date to select
 	 * @return HtmlElement to further interact with the form element, for instance to {@link HtmlElement#submit()} the form,
 	 * or {@code null} if element could not be found
 	 */
-	public HtmlElement chooseDate(String query, DateTime dateTime) {
-		HtmlElement element = query().has(query).isDatepicker().findFirstWithWait();
+	public HtmlElement chooseDate(String text, DateTime dateTime) {
+		HtmlElement element = query(datepicker(text)).findFirstWithWait();
 		return element instanceof HtmlElement ? element.chooseDate(dateTime) : null;
 	}
 	
@@ -565,11 +575,11 @@ public class Browser implements Document {
 	 * </ul>
 	 * <p>
 	 * 
-	 * @param query form input element
+	 * @param text form input element
 	 * @return HtmlElement to further interact with the form element or {@code null} if element could not be found
 	 */
-	public HtmlElement submit(String query) {
-		HtmlElement element = query().has(query).cssSelector("form,input,button,textarea").findFirstWithWait();
+	public HtmlElement submit(String text) {
+		HtmlElement element = query(submittable(text)).findFirstWithWait();
 		return element instanceof HtmlElement ? element.submit() : null;
 	}
 	

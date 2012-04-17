@@ -1,7 +1,11 @@
 package com.abmash.api.query;
 
 import java.awt.Color;
+import java.util.ArrayList;
 
+import com.abmash.api.Browser;
+import com.abmash.api.HtmlElement;
+import com.abmash.api.HtmlElements;
 import com.abmash.api.HtmlQuery;
 import com.abmash.core.color.ColorName;
 import com.abmash.core.color.Dominance;
@@ -10,29 +14,37 @@ import com.abmash.core.query.BooleanType;
 import com.abmash.core.query.DirectionOptions;
 import com.abmash.core.query.DirectionType;
 import com.abmash.core.query.predicate.BooleanPredicate;
+import com.abmash.core.query.predicate.ChoosablePredicate;
 import com.abmash.core.query.predicate.ClickablePredicate;
 import com.abmash.core.query.predicate.ColorPredicate;
+import com.abmash.core.query.predicate.DatepickerPredicate;
 import com.abmash.core.query.predicate.DirectionPredicate;
 import com.abmash.core.query.predicate.ContainsPredicate;
+import com.abmash.core.query.predicate.ElementPredicate;
+import com.abmash.core.query.predicate.FramePredicate;
 import com.abmash.core.query.predicate.HeadlinePredicate;
+import com.abmash.core.query.predicate.ImagePredicate;
 import com.abmash.core.query.predicate.LinkPredicate;
 import com.abmash.core.query.predicate.Predicate;
 import com.abmash.core.query.predicate.SelectPredicate;
+import com.abmash.core.query.predicate.SubmittablePredicate;
 import com.abmash.core.query.predicate.TextPredicate;
 import com.abmash.core.query.predicate.TypablePredicate;
 
 public class QueryFactory {
 	
-//	public static final int CLICKABLE = 1;
-	
-	public static Query query(Predicate... predicates) {
-		return new Query(predicates);
+	public static Query query(Browser browser, Predicate... predicates) {
+		return new Query(browser, predicates);
 	}
-
+	
 	public static Query union(Query... queries) {
-		Query unionQuery = new Query(); 
+		Query unionQuery = null;
 		for (Query query: queries) {
-			unionQuery.union(query);
+			if(unionQuery == null) {
+				unionQuery = query;
+			} else {
+				unionQuery.union(query);
+			}
 		}
 		return unionQuery;
 	}
@@ -52,25 +64,29 @@ public class QueryFactory {
 	}
 	
 	// JQuery Predicates
-
-	public static Predicate contains(String text) {
-		return new ContainsPredicate(text);
-	}
 	
 	public static Predicate select(String name) {
 		return new SelectPredicate(name);
+	}
+	
+	public static Predicate contains(String text) {
+		return new ContainsPredicate(text);
 	}
 	
 	public static Predicate text(String text) {
 		return new TextPredicate(text);
 	}
 	
-	public static Predicate headline() {
-		return headline(null);
+	public static Predicate text() {
+		return text(null);
 	}
 	
 	public static Predicate headline(String text) {
 		return new HeadlinePredicate(text);
+	}
+	
+	public static Predicate headline() {
+		return headline(null);
 	}
 	
 	public static Predicate link() {
@@ -79,6 +95,14 @@ public class QueryFactory {
 	
 	public static Predicate link(String text) {
 		return new LinkPredicate(text);
+	}
+	
+	public static Predicate image() {
+		return image(null);
+	}
+	
+	public static Predicate image(String text) {
+		return new ImagePredicate(text);
 	}
 	
 	public static Predicate clickable() {
@@ -97,14 +121,70 @@ public class QueryFactory {
 		return new TypablePredicate(text);
 	}
 	
+	public static Predicate choosable() {
+		return choosable(null);
+	}
+	
+	public static Predicate choosable(String text) {
+		return new ChoosablePredicate(text);
+	}
+	
+	public static Predicate datepicker() {
+		return datepicker(null);
+	}
+	
+	public static Predicate datepicker(String text) {
+		return new DatepickerPredicate(text);
+	}
+	
+	public static Predicate submittable() {
+		return submittable(null);
+	}
+	
+	public static Predicate submittable(String text) {
+		return new SubmittablePredicate(text);
+	}
+		
+	public static Predicate frame(String text) {
+		return new FramePredicate(text);
+	}
+	
 	// Direction Predicates
 	
 	public static Predicate closeTo(DirectionOptions options, Predicate... predicates) {
 		return new DirectionPredicate(options, predicates);
 	}
 	
+	public static Predicate closeTo(DirectionOptions options, HtmlElements elements) {
+		return closeTo(options, new ElementPredicate(elements));
+	}
+	
+	public static Predicate closeTo(DirectionOptions options, HtmlElement element) {
+		return closeTo(options, new ElementPredicate(new HtmlElements(element)));
+	}
+	
+	public static Predicate closeTo(int maxDistance, Predicate... predicates) {
+		return new DirectionPredicate(new DirectionOptions(DirectionType.CLOSETO).setMaxDistance(maxDistance), predicates);
+	}
+	
+	public static Predicate closeTo(int maxDistance, HtmlElements elements) {
+		return closeTo(maxDistance, new ElementPredicate(elements));
+	}
+	
+	public static Predicate closeTo(int maxDistance, HtmlElement element) {
+		return closeTo(maxDistance, new HtmlElements(element));
+	}
+	
 	public static Predicate closeTo(Predicate... predicates) {
 		return closeTo(new DirectionOptions(DirectionType.CLOSETO), predicates);
+	}
+	
+	public static Predicate closeTo(HtmlElements elements) {
+		return closeTo(new ElementPredicate(elements));
+	}
+	
+	public static Predicate closeTo(HtmlElement element) {
+		return closeTo(new HtmlElements(element));
 	}
 	
 	/**
@@ -139,34 +219,98 @@ public class QueryFactory {
 		return closeTo(new DirectionOptions(DirectionType.ABOVE), predicates);
 	}
 	
+	public static Predicate above(HtmlElements elements) {
+		return above(new ElementPredicate(elements));
+	}
+	
+	public static Predicate above(HtmlElement element) {
+		return above(new HtmlElements(element));
+	}
+	
 	public static Predicate below(Predicate... predicates) {
 		return closeTo(new DirectionOptions(DirectionType.BELOW), predicates);
 	}	
-
+	
+	public static Predicate below(HtmlElements elements) {
+		return below(new ElementPredicate(elements));
+	}
+	
+	public static Predicate below(HtmlElement element) {
+		return below(new HtmlElements(element));
+	}
+	
 	public static Predicate leftOf(Predicate... predicates) {
 		return closeTo(new DirectionOptions(DirectionType.LEFTOF), predicates);
 	}	
 	
+	public static Predicate leftOf(HtmlElements elements) {
+		return leftOf(new ElementPredicate(elements));
+	}
+	
+	public static Predicate leftOf(HtmlElement element) {
+		return leftOf(new HtmlElements(element));
+	}
+	
 	public static Predicate rightOf(Predicate... predicates) {
 		return closeTo(new DirectionOptions(DirectionType.RIGHTOF), predicates);
+	}
+	
+	public static Predicate rightOf(HtmlElements elements) {
+		return rightOf(new ElementPredicate(elements));
+	}
+	
+	public static Predicate rightOf(HtmlElement element) {
+		return rightOf(new HtmlElements(element));
 	}
 	
 	public static Predicate aboveAll(Predicate... predicates) {
 		return closeTo(new DirectionOptions(DirectionType.ABOVE).setDirectionHasToMatchAllTargets(true), predicates);
 	}
 	
+	public static Predicate aboveAll(HtmlElements elements) {
+		return aboveAll(new ElementPredicate(elements));
+	}
+	
+	public static Predicate aboveAll(HtmlElement element) {
+		return aboveAll(new HtmlElements(element));
+	}
+	
 	public static Predicate belowAll(Predicate... predicates) {
 		return closeTo(new DirectionOptions(DirectionType.BELOW).setDirectionHasToMatchAllTargets(true), predicates);
 	}	
+	
+	public static Predicate belowAll(HtmlElements elements) {
+		return belowAll(new ElementPredicate(elements));
+	}
+	
+	public static Predicate belowAll(HtmlElement element) {
+		return belowAll(new HtmlElements(element));
+	}
 
 	public static Predicate leftOfAll(Predicate... predicates) {
 		return closeTo(new DirectionOptions(DirectionType.LEFTOF).setDirectionHasToMatchAllTargets(true), predicates);
-	}	
+	}
+	
+	public static Predicate leftOfAll(HtmlElements elements) {
+		return leftOfAll(new ElementPredicate(elements));
+	}
+	
+	public static Predicate leftOfAll(HtmlElement element) {
+		return leftOfAll(new HtmlElements(element));
+	}
 	
 	public static Predicate rightOfAll(Predicate... predicates) {
 		return closeTo(new DirectionOptions(DirectionType.RIGHTOF).setDirectionHasToMatchAllTargets(true), predicates);
 	}
 	
+	public static Predicate rightOfAll(HtmlElements elements) {
+		return rightOfAll(new ElementPredicate(elements));
+	}
+	
+	public static Predicate rightOfAll(HtmlElement element) {
+		return rightOfAll(new HtmlElements(element));
+	}
+
 	// color predicates
 	
 	/**

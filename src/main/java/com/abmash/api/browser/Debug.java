@@ -3,6 +3,7 @@ package com.abmash.api.browser;
 import com.abmash.api.Browser;
 import com.abmash.api.HtmlElement;
 import com.abmash.api.HtmlElements;
+import com.abmash.api.query.QueryFactory;
 
 
 /**
@@ -59,7 +60,7 @@ public class Debug {
 	 * @param query the element to highlight
 	 */
 	public void highlight(String query) {
-		highlight(browser.query().has(query).findFirst());
+		highlight(browser.query(QueryFactory.contains(query)).findFirst());
 	}
 	
 	/**

@@ -9,7 +9,7 @@ import com.abmash.core.jquery.JQueryFactory;
 
 public class LinkPredicate extends JQueryPredicate {
 
-	private String text;
+	protected String text;
 	
 	public LinkPredicate(String text) {
 		this.text = text;
@@ -18,7 +18,7 @@ public class LinkPredicate extends JQueryPredicate {
 
 	@Override
 	public void buildCommands() {
-		List<String> linkSelectors = Arrays.asList("a", "button", "*[onclick]");
+		List<String> linkSelectors = Arrays.asList("a", "*[onclick]");
 		if(text != null) {
 			containsText("'" + StringUtils.join(linkSelectors, ',') + "'", text);
 			containsAttribute("'" + StringUtils.join(linkSelectors, ',') + "'", "*", text);

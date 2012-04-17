@@ -213,7 +213,15 @@
 		    }, closenessOptions);
 		    
 		    options.sources = jQuery(options.sources).distinctDescendants();
-		    options.targets = jQuery(options.targets).distinctDescendants();
+		    options.targets = jQuery(options.targets)./*filter(function() {
+		    	var target = jQuery(this);
+		    	var isSourceElement = false;
+		    	jQuery.each(options.sources, function() {
+		    		var source = jQuery(this);
+		    		if(target.get(0) == source.get(0)) isSourceElement = true;
+		    	});
+		    	return !isSourceElement; 
+		    }).*/distinctDescendants();
 		    
 //		    abmash.highlight(options.sources.get());
 //			abmash.highlight(options.targets.get());
@@ -335,6 +343,8 @@
 		},
 		
 		compareElements: function(source, target) {
+			if(source.get(0) == target.get(0)) return false;
+			
 		    var coords = calculateCoordinates(source, target);
 			var distance = getDistance(source, target);
 			var distanceIsInRange = true;
@@ -346,12 +356,16 @@
 			
 			var directionMatches = true;
 			
+//			abmash.highlight(source);
+//			abmash.highlight(target);
+//			alert(coords.toSource());
+			
 			if(options.directionType == directionType.CLOSETOLABEL) {
 				directionMatches = abmash.isBelow(coords) || abmash.isRightOf(coords);
 			}
 			
 			if(options.directionType == directionType.CLOSETOCLICKABLELABEL) {
-				directionMatches = abmash.isLeftOf(coords);
+				directionMatches = abmash.isBelow(coords) || abmash.isLeftOf(coords) || abmash.isRightOf(coords);
 			}
 			
 			if(options.directionType == directionType.ABOVE) {
@@ -381,19 +395,19 @@
 		},
 		
 		isAbove: function(coords) {
-			return coords.bottomSource < coords.topTarget;
+			return coords.bottomSource <= coords.topTarget;
 		},
 		
 		isBelow: function(coords) {
-			return coords.topSource > coords.bottomTarget;
+			return coords.topSource >= coords.bottomTarget;
 		},
 		
 		isLeftOf: function(coords) {
-			return coords.rightSource < coords.leftTarget;
+			return coords.rightSource <= coords.leftTarget;
 		},
 		
 		isRightOf: function(coords) {
-			return coords.leftSource > coords.rightTarget;
+			return coords.leftSource >= coords.rightTarget;
 		},
 		
 		isInHorizontalBounds: function(coords) {

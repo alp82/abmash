@@ -117,6 +117,11 @@ public class JQuery {
 		return this;
 	}
 	
+	public JQuery contents() {
+		commands.add(new ContentsCommand());
+		return this;
+	}
+	
 	// extended selector functionality
 	
 	public JQuery xPath(String selector) {
@@ -261,6 +266,11 @@ public class JQuery {
 	// color commands
 	
 	// general methods
+	
+	public JQuery setWeight(double weight) {
+		this.weight = weight;
+		return this;
+	}
 	
 	public String toString() {
 		return toString(0);

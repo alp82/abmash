@@ -1,8 +1,10 @@
 package com.abmash.core.browser.waitcondition;
 
 
+import com.abmash.api.Browser;
 import com.abmash.api.HtmlElement;
 import com.abmash.api.HtmlQuery;
+import com.abmash.api.query.Query;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -13,9 +15,11 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
  */
 public class ElementWaitCondition implements ExpectedCondition<Boolean> {
 	 
-	HtmlQuery query = null;
+	private Browser browser;
+	private Query query;
  
-	public ElementWaitCondition(HtmlQuery query) {
+	public ElementWaitCondition(Browser browser, Query query) {
+		this.browser = browser;
 		this.query = query;
 	}
 		

@@ -13,6 +13,6 @@ public class SelectPredicate extends JQueryPredicate {
 
 	@Override
 	public void buildCommands() {
-		add(JQueryFactory.select("'" + name + "'", 1));
+		add(JQueryFactory.select(name != null && !name.equals("") ? "'" + name + "'" : null, 100));
 	}
 }
