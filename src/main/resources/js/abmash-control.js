@@ -3,7 +3,6 @@
 	var queryLimit = 0;
 	var queryData = {};
 	var elementWeight = {};
-	var elementWeightHistory = {};
 	var elementInIframe = {};
 	var referenceElements = {};
 
@@ -38,9 +37,13 @@
 		return queryData[key];
 	};
 	
+	abmash.deleteData = function(key) {
+		delete queryData[key];
+	};
+	
 	// TODO for subqueries (color, closeness)
 	abmash.setElementWeight = function(element, weight) {
-		elementWeight[jQuery(element).getPath()] = Math.max(weight, abmash.getElementWeight(element, { useHistory: false }));
+		elementWeight[jQuery(element).getPath()] = Math.max(weight, abmash.getElementWeight(element));
 	};
 
 	abmash.getElementWeight = function(element, options) {
@@ -52,22 +55,22 @@
 //		}		
 
 		options = jQuery.extend({
-			useHistory: true,
 		}, options);
 		
 		if(typeof elementWeight[jQuery(element).getPath()] != "undefined") return elementWeight[jQuery(element).getPath()];
-		if(options.useHistory && typeof elementWeightHistory[jQuery(element).getPath()] != "undefined") return elementWeightHistory[jQuery(element).getPath()];
 		return 1;
 	};
 	
 	abmash.query = function(jsonPredicates, refElements) {
 		// prepare global variables
-		elementWeightHistory = jQuery.extend(elementWeightHistory, elementWeight);
 		elementWeight = {};
 		elementInIframe = {};
 		referenceElements = refElements;
+		abmash.deleteData('elementsForFilteringQuery');
+		abmash.deleteData('weightForDirectionQuery');
+		abmash.deleteData('subQueryLevel');
 
-		// query, remove duplicaates and sort afterwards
+		// query, remove duplicates and sort afterwards
 		var result = abmash.parsePredicates(JSON.parse(jsonPredicates), 'AND');
 		result = jQuery.unique(result).sort(sortByWeight);
 		
@@ -76,6 +79,7 @@
 			resultElement = this;
 			jQueryElement = jQuery(resultElement);
 			
+			// return all element relevant data
 			var element = {
 				element: resultElement,
 				tag: resultElement.tagName.toLowerCase(),
@@ -88,10 +92,17 @@
 				size: jQueryElement.dimension(),
 			};
 			
+			// check if element is in iframe and return that information
 			if(typeof elementInIframe[jQueryElement.getPath()] != "undefined") {
 				element = jQuery.extend(element, { iframe: elementInIframe[jQueryElement.getPath()] });
 			}
 			
+//			if(abmash.getData('test')) {
+//				abmash.highlight(resultElement);
+//				alert(abmash.getElementWeight(resultElement));
+//			}
+			
+			// finally add the information to the result set
 			elements.push(element);
 		});
 		
@@ -100,7 +111,8 @@
 	
 	abmash.parsePredicates = function(predicates, booleanType) {
 		var result = [];
-		abmash.setData('elementsForDirectionQuery', jQuery('*:not(html,head,head *)'));
+		// TODO only if necessary (no "normal" jquerylist)
+		abmash.setData('elementsForFilteringQuery', jQuery('*:visible:not(html,head,head *)'));
 		
 		// process element predicates
 		var firstAnd = true;
@@ -121,9 +133,16 @@
 			if(predicate.jQueryList) {
 				var jQueryListResult = abmash.parseJQueryList(predicate.jQueryList, booleanType);
 				result = abmash.mergeResult(result, jQueryListResult, booleanType, firstAnd);
-				abmash.setData('elementsForDirectionQuery', jQuery(result));
+				abmash.setData('elementsForFilteringQuery', jQuery(result));
 				firstAnd = false;
 				hasJQueryPredicates = true;
+				
+//				if(abmash.getData('test') && abmash.getData('subQueryLevel') && abmash.getData('subQueryLevel') > 0) {
+//					abmash.highlight(jQueryListResult);
+//					alert(booleanType);
+//					alert(firstAnd);
+//					abmash.highlight(result);
+//				}
 				
 //				alert(jQueryList.toSource());
 //				alert(booleanType);
@@ -138,7 +157,6 @@
 			var predicate = this;
 			
 			if(predicate.isBoolean) {
-//				var booleanType = predicate.type;
 				var predicateResult = abmash.parsePredicates(predicate.predicates, predicate.type);
 				result = abmash.mergeResult(result, predicateResult, booleanType, firstAnd);
 				firstAnd = false;
@@ -146,39 +164,20 @@
 			
 		});
 		
-		if(!hasJQueryPredicates && result.length == 0) {
-			result = jQuery('*:visible:not(html,head,head *)').get();
-			firstAnd = false;
-		}
-		
-		// process color predicates
-		jQuery.each(predicates, function() {
-			var predicate = this;
-			var predicateResult = null;
-			
-			if(predicate.isColor) {
-				var color = predicate.color;
-				var tolerance = predicate.tolerance;
-				var dominance = predicate.dominance;
-				predicateResult = jQuery(result).filterHasColor(color, tolerance, dominance).get();
-//				abmash.highlight(predicateResult);
-//				abmash.highlight(result);
-//				alert(booleanType);
-//				alert(firstAnd);
-			}
-			
-			if(predicateResult != null) {
-				result = abmash.mergeResult(result, predicateResult, booleanType, firstAnd);
-				firstAnd = false;
-			}
-		});
+//		if(abmash.getData('test')) {
+//			alert(predicates.toSource());
+//			abmash.highlight(result);
+//			if(predicates[0].referenceId) {
+//				alert(predicates[0].referenceId);
+//				abmash.highlight(referenceElements[predicates[0].referenceId]);
+//			}
+//			abmash.highlight(abmash.getData('elementsForFilteringQuery'));
+//		}
 		
 		return result;
 	};
 	
 	abmash.mergeResult = function(result, newResult, booleanType, firstAnd) {
-		abmash.setData('elementsForDirectionQuery', jQuery(result));
-		
 		switch (booleanType) {
 		case "OR":
 			// merge results
@@ -187,7 +186,8 @@
 			
 		case "NOT":
 			// remove not result from query result
-			var allElements = jQuery('body, body *').get();
+			//var allElements = jQuery('body, body *').get();
+			var allElements = abmash.getData('elementsForFilteringQuery');
 			var notResult = jQuery.map(allElements, function(element) { return jQuery.inArray(element, newResult) < 0 ? element : null;});
 			newResult = notResult;
 			// do not break here, the not result will be treated like an AND expression
@@ -211,6 +211,7 @@
 			break;
 		};
 		
+		abmash.setData('elementsForFilteringQuery', jQuery(result));
 		return result;
 	};
 
@@ -236,23 +237,33 @@
 		var weight = JQuery.weight;
 		var jQueryCommands = JQuery.commands;
 		
+		var subQueryId = null;
+		
+		abmash.setData('weightForDirectionQuery', weight);
+		
 		jQuery.each(jQueryCommands, function() {
 			var jQueryCommand = this;
 			// the command list will be evaluated with JQuery after all commands of this predicate are processed
 			if(jQueryCommand.predicates) {
-				var subQueryId = "" + (new Date().getTime()) + ((Math.random() * 900) + 100);
+				subQueryId = "subQuery" + (new Date().getTime()) + ((Math.random() * 900) + 100);
 				
 				// temporarily save intermediate result
-				var tempElements = abmash.getData('elementsForDirectionQuery');
+				var tempElements = abmash.getData('elementsForFilteringQuery');
+				var tempWeight = abmash.getData('weightForDirectionQuery');
 				
 				// process subquery predicates
+//				if(abmash.getData('test')) alert(jQueryCommand.predicates.toSource());
 //				alert(jQueryCommand.predicates.toSource());
-				abmash.setData('subQuery' + subQueryId, abmash.parsePredicates(jQueryCommand.predicates, 'AND'));
+				abmash.setData('subQueryLevel', abmash.getData('subQueryLevel') ? abmash.getData('subQueryLevel') + 1 : 1);
+				abmash.setData(subQueryId, abmash.parsePredicates(jQueryCommand.predicates, 'AND'));
 //				abmash.highlight(abmash.getData('subQuery' + subQueryId));
-				jQueryCommandList.push(jQueryCommand.method + "(abmash.getData('subQuery" + subQueryId + "')," + jQueryCommand.selector + ")");
+//				if(abmash.getData('test')) abmash.highlight(abmash.getData('subQuery' + subQueryId));
+				jQueryCommandList.push(jQueryCommand.method + "(abmash.getData('" + subQueryId + "')," + jQueryCommand.selector + ")");
 				
 				// restore temporarily saved intermediate result
-				abmash.setData('elementsForDirectionQuery', tempElements);
+				abmash.setData('elementsForFilteringQuery', tempElements);
+				abmash.setData('weightForDirectionQuery', tempWeight);
+				abmash.setData('subQueryLevel', abmash.getData('subQueryLevel') - 1);
 			} else {
 				jQueryCommandList.push(jQueryCommand.method + "(" + jQueryCommand.selector + ")");
 			}
@@ -260,14 +271,17 @@
 		
 		var jQueryEval = "jQuery(" + selector + ")";
 		jQueryEval += jQueryCommandList.length > 0 ? "." + jQueryCommandList.join(".") : "";
+//		if(abmash.getData('test')) alert(jQueryEval);
 //		alert(jQueryEval);
-		result = result.concat(abmash.evaluateJQuery(jQueryEval, weight));
+		result = result.concat(abmash.evaluateJQuery(jQueryEval, weight, subQueryId));
+		abmash.deleteData(subQueryId);
 //		abmash.highlight(result);
+//		if(abmash.getData('test')) abmash.highlight(result);
 		
 		return result;
 	};
 	
-	abmash.evaluateJQuery = function(jQueryEval, weight) {
+	abmash.evaluateJQuery = function(jQueryEval, weight, subQueryId) {
 		var result = [];
 		
 //		jQuery.globalEval("abmash.setData('commandResult', " + jQueryEval + ");");
@@ -275,7 +289,7 @@
 		var jQueryResult = abmash.getData('jQueryResult');
 		// add element if it is visible
 		// TODO optionally with :visible? but does not work with closeTo command (return no result, i dont know why)
-		jQuery.each(jQuery(jQueryResult)/*.filter(':visible:not(html,head,head *)')*/, function() {
+		jQuery.each(jQuery(jQueryResult).distinctDescendants()/*.filter(':visible:not(html,head,head *)')*/, function() {
 		    var element = jQuery(this);
 		    
 		    // check if element is located in iframe
@@ -294,8 +308,10 @@
 			result.push(element.get(0));
 			
 	    	// store priority for element based on selector weight
-	    	// TODO make this dynamic for sub queries
-	    	abmash.setElementWeight(element.get(0), weight);
+			// TODO only if this is not a subquery
+//			if(subQueryId != null) {
+				abmash.setElementWeight(element.get(0), weight);
+//			}
 	    	
 	    	// increment element count
 //		    queryElementsFound++;
@@ -320,6 +336,16 @@
 		}
 	}
 	
+    function sortByWeight(firstElement, secondElement) {
+    	var firstWeight = abmash.getElementWeight(firstElement);
+    	var secondWeight = abmash.getElementWeight(secondElement);
+		return secondWeight - firstWeight;
+	}
+    
+    
+    
+    
+    
 	abmash.queryOld = function(conditions, closenessConditions, colorConditions, rootElements, elementsToFilter, referenceElements, labelElements, limit) {
 		queryLimit = limit;
 		queryElementsFound = 0;
@@ -478,11 +504,6 @@
 	function queryLimitReached() {
 		return queryLimit > 0 && queryElementsFound >= queryLimit;
 	}
-	
-    function sortByWeight(firstElement, secondElement) {
-    	var firstWeight = abmash.getElementWeight(firstElement);
-    	var secondWeight = abmash.getElementWeight(secondElement);
-		return secondWeight - firstWeight;
-	}
+
     
 })(window.abmash = window.abmash || {});

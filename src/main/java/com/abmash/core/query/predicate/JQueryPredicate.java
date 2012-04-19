@@ -38,7 +38,7 @@ public abstract class JQueryPredicate extends Predicate {
 	
 	protected void containsText(JQuery jQuery, String text) {
 		// TODO CACHE CLONED JQUERY RESULTS
-		add(jQuery.clone(jQuery.getWeight() + 80).containsText(StringMatcher.EXACT, text));
+		add(jQuery.clone(jQuery.getWeight() + 800).containsText(StringMatcher.EXACT, text));
 		add(jQuery.clone(jQuery.getWeight() + 60).containsText(StringMatcher.WORD, text));
 		add(jQuery.clone(jQuery.getWeight() + 40).containsText(StringMatcher.STARTSWITH, text));
 		add(jQuery.clone(jQuery.getWeight() + 35).containsText(StringMatcher.ENDSWITH, text));
@@ -50,7 +50,7 @@ public abstract class JQueryPredicate extends Predicate {
 	}
 	
 	protected void containsAttribute(JQuery jQuery, String attributeName, String text) {
-		add(jQuery.clone(jQuery.getWeight() + 70).containsAttribute(StringMatcher.EXACT, attributeName, text));
+		add(jQuery.clone(jQuery.getWeight() + 700).containsAttribute(StringMatcher.EXACT, attributeName, text));
 		add(jQuery.clone(jQuery.getWeight() + 50).containsAttribute(StringMatcher.WORD, attributeName, text));
 		add(jQuery.clone(jQuery.getWeight() + 30).containsAttribute(StringMatcher.STARTSWITH, attributeName, text));
 		add(jQuery.clone(jQuery.getWeight() + 25).containsAttribute(StringMatcher.ENDSWITH, attributeName, text));

@@ -35,6 +35,8 @@ public class TypablePredicate extends JQueryPredicate {
 				"input[type=password]", "input[type=text]", "input[type=email]", "input[type=url]",
 				"input[type=number]", "input[type=search]", "textarea");
 		
+		JQuery typableQuery = JQueryFactory.select("'" + StringUtils.join(inputSelectors, ',') + "'", 0).not("':attrMatch(CONTAINS, *, \"datepicker\")'");
+		
 		if(text != null) {
 			// tinymce support
 			// TODO add closeness (close to iframe and selection of inner #tinymce element)
@@ -42,15 +44,15 @@ public class TypablePredicate extends JQueryPredicate {
 			
 			// close to label
 			closeTo(
-				JQueryFactory.select("'" + StringUtils.join(inputSelectors, ',') + "'", 100),
+				typableQuery.setWeight(100),
 				new DirectionOptions(DirectionType.CLOSETOLABEL).setLimitPerTarget(1).setMaxDistance(300),
 				QueryFactory.text(text)
 			);
 			
-			containsText("'" + StringUtils.join(inputSelectors, ',') + "'", text);
-			containsAttribute("'" + StringUtils.join(inputSelectors, ',') + "'", "*", text);
+			containsText(typableQuery, text);
+			containsAttribute(typableQuery, "*", text);
 		} else {
-			add(JQueryFactory.select("'" + StringUtils.join(inputSelectors, ',') + "'", 50));
+			add(typableQuery);
 		}
 	}
 	

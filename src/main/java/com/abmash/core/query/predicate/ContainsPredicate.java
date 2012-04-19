@@ -1,5 +1,6 @@
 package com.abmash.core.query.predicate;
 
+import com.abmash.core.jquery.JQuery;
 import com.abmash.core.jquery.JQueryFactory;
 
 public class ContainsPredicate extends JQueryPredicate {
@@ -13,7 +14,8 @@ public class ContainsPredicate extends JQueryPredicate {
 
 	@Override
 	public void buildCommands() {
-		containsText(JQueryFactory.select("'*:not(html, head, head *)'", 0), text);
-		containsAttribute(JQueryFactory.select("'*:not(html, head, head *)'", 0), "*", text);
+		JQuery containsQuery = JQueryFactory.select("'*:visible:not(html, head, head *)'", 0);
+		containsText(containsQuery, text);
+		containsAttribute(containsQuery, "*", text);
 	}
 }

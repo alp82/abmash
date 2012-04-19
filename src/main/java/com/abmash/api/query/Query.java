@@ -212,8 +212,14 @@ public class Query {
 	private boolean hasColorPredicates(Predicates predicates) {
 		for(Predicate predicate: predicates) {
 			if(predicate instanceof ColorPredicate) return true;
-			if(predicate instanceof BooleanPredicate) {
-				if(hasColorPredicates(((BooleanPredicate) predicate).getPredicates())) {
+			if(predicate instanceof RecursivePredicate) {
+				if(hasColorPredicates(((RecursivePredicate) predicate).getPredicates())) {
+					return true;
+				}
+			}
+			// TODO DirectionPredicate should be subclass of RecursivePredicate
+			if(predicate instanceof DirectionPredicate) {
+				if(hasColorPredicates(((DirectionPredicate) predicate).getPredicates())) {
 					return true;
 				}
 			}
@@ -223,7 +229,7 @@ public class Query {
 
 	private JSONArray convertPredicatesToJSON(Predicates predicates) throws JSONException {
 		JSONArray jsonPredicates = new JSONArray();
-		ArrayList<JSONObject> directionPredicates = new ArrayList<JSONObject>();
+		ArrayList<JSONObject> filteringPredicates = new ArrayList<JSONObject>();
 		for(Predicate predicate: predicates) {
 			JSONObject jsonPredicate = new JSONObject();
 			
@@ -231,11 +237,6 @@ public class Query {
 				if(predicate instanceof BooleanPredicate) {
 					jsonPredicate.put("isBoolean", true);
 					jsonPredicate.put("type", ((BooleanPredicate) predicate).getType());
-				} else if(predicate instanceof ColorPredicate) {
-					jsonPredicate.put("isColor", true);
-					jsonPredicate.put("color", ((ColorPredicate) predicate).getColorAsRGB());
-					jsonPredicate.put("tolerance", ((ColorPredicate) predicate).getTolerance());
-					jsonPredicate.put("dominance", ((ColorPredicate) predicate).getDominance());
 				}
 				jsonPredicate.put("predicates", convertPredicatesToJSON(((RecursivePredicate) predicate).getPredicates()));
 			}
@@ -256,15 +257,15 @@ public class Query {
 			}
 			
 			// finally add the predicate to the list
-			if(predicate instanceof DirectionPredicate) {
-				directionPredicates.add(jsonPredicate);
+			if(predicate instanceof DirectionPredicate || predicate instanceof ColorPredicate) {
+				filteringPredicates.add(jsonPredicate);
 			} else {
 				jsonPredicates.put(jsonPredicate);
 			}
 		}
 		
 		// put all direction predicates at the end
-		for(JSONObject jsonPredicate: directionPredicates) {
+		for(JSONObject jsonPredicate: filteringPredicates) {
 			jsonPredicates.put(jsonPredicate);
 		}
 		

@@ -29,7 +29,7 @@ public class ChoosablePredicate extends JQueryPredicate {
 			
 			// close to label
 			closeTo(
-				JQueryFactory.select("'" + StringUtils.join(inputSelectors, ',') + "'", 100),
+				JQueryFactory.select("'" + StringUtils.join(inputSelectors, ',') + "'", 50),
 				new DirectionOptions(DirectionType.CLOSETOCLICKABLELABEL).setLimitPerTarget(1).setMaxDistance(300),
 				QueryFactory.text(text)
 			);

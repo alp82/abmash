@@ -4,38 +4,31 @@ import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ColorPredicate extends RecursivePredicate {
+import com.abmash.core.jquery.JQueryFactory;
+import com.abmash.core.query.ColorOptions;
+
+public class ColorPredicate extends JQueryPredicate {
 	
-	private Color color;
-	private Double tolerance;
-	private Double dominance;
+	private ColorOptions options;
 
 	// TODO no predicates needed
-	public ColorPredicate(Color color, Double tolerance, Double dominance, Predicate... predicates) {
-		super(predicates);
-		this.color = color;
-		this.tolerance = tolerance;
-		this.dominance = dominance;
+	public ColorPredicate(ColorOptions options) {
+		super();
+		this.options = options;
+		buildCommands();
 	}
 	
-	public Color getColor() {
-		return color;
+	public ColorPredicate(Color color, Double tolerance, Double dominance) {
+		this(new ColorOptions(color, tolerance, dominance));
 	}
 	
-	public Map<String, Integer> getColorAsRGB() {
-		HashMap<String, Integer> colorAsRGB = new HashMap<String, Integer>();
-		colorAsRGB.put("red", color.getRed());
-		colorAsRGB.put("green", color.getGreen());
-		colorAsRGB.put("blue", color.getBlue());
-		return colorAsRGB;
+	@Override
+	public void buildCommands() {
+		add(JQueryFactory.select("abmash.getData('elementsForFilteringQuery')", 50).color(options));
 	}
 	
-	public Double getTolerance() {
-		return tolerance;
-	}
-	
-	public Double getDominance() {
-		return dominance;
+	public Color getOptions() {
+		return options.getColor();
 	}
 	
 	@Override
@@ -45,7 +38,7 @@ public class ColorPredicate extends RecursivePredicate {
 	
 	@Override
 	public String toString(int intendationSpaces) {
-		return super.toString(intendationSpaces, " (color: " + color.toString() + ", tolerance: " + tolerance + ", dominance: " + dominance + ")");
+		return super.toString(intendationSpaces, " (color: " + options.getColor().toString() + ", tolerance: " + options.getTolerance() + ", dominance: " + options.getDominance() + ")");
 	}
 
 	

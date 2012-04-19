@@ -337,6 +337,7 @@ public class HtmlElement extends Element {
 		// TODO exception handler if no element was found
 		browser.query(
 			QueryFactory.clickable(String.valueOf(dateTime.getDayOfMonth())),
+			QueryFactory.select("*:attrMatch(CONTAINS, *, \"datepicker\") > a"),
 			QueryFactory.below(this)
 		).findFirst().click();
 		// TODO time

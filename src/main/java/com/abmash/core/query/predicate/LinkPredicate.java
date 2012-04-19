@@ -19,11 +19,15 @@ public class LinkPredicate extends JQueryPredicate {
 	@Override
 	public void buildCommands() {
 		List<String> linkSelectors = Arrays.asList("a", "*[onclick]");
+		
 		if(text != null) {
-			containsText("'" + StringUtils.join(linkSelectors, ',') + "'", text);
-			containsAttribute("'" + StringUtils.join(linkSelectors, ',') + "'", "*", text);
+			containsText(JQueryFactory.select("'a'", 50), text);
+			containsText(JQueryFactory.select("'*[onclick]'", 0), text);
+			containsAttribute(JQueryFactory.select("'a'", 50), "*", text);
+			containsAttribute(JQueryFactory.select("'*[onclick]'", 0), "*", text);
 		} else {
-			add(JQueryFactory.select("'" + StringUtils.join(linkSelectors, ',') + "'", 50));
+			add(JQueryFactory.select("'a'", 40));
+			add(JQueryFactory.select("'*[onclick]'", 20));
 		}
 	}
 }

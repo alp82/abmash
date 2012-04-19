@@ -542,6 +542,11 @@ public class Browser implements Document {
 		return element instanceof HtmlElement ? element.unchoose(option) : null;
 	}
 	
+	public HtmlElement checkToggle(String text) {
+		HtmlElement element = query(checkable(text)).findFirstWithWait();
+		return element instanceof HtmlElement ? element.click() : null;
+	}
+	
 	/**
 	 * Searches for calendar/date picker input fields and selects the specified date. Use {@link HtmlElement#submit()}
 	 * on the returned object to submit the form.

@@ -1,13 +1,16 @@
 package com.abmash.core.jquery;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.apache.commons.lang.StringUtils;
 import org.json.JSONException;
 
+import com.abmash.core.htmlquery.condition.ColorCondition;
 import com.abmash.core.jquery.command.*;
 import com.abmash.core.jquery.command.FilterCSSCommand.CSSAttributeComparator;
+import com.abmash.core.query.ColorOptions;
 import com.abmash.core.query.DirectionOptions;
 import com.abmash.core.query.DirectionType;
 import com.abmash.core.query.predicate.Predicate;
@@ -264,6 +267,15 @@ public class JQuery {
 	}	
 	
 	// color commands
+	
+	public JQuery color(ColorOptions options) {
+		commands.add(new ColorCommand(options));
+		return this;
+	}
+
+	public JQuery color(Color color, double tolerance, double dominance) {
+		return color(new ColorOptions(color, tolerance, dominance));
+	}
 	
 	// general methods
 	

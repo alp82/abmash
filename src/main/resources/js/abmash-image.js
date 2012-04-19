@@ -53,8 +53,14 @@
 		return this.pushStack(nodes, "filterIsColor", color, tolerance);
 	};
 	
-	jQuery.fn.filterHasColor = function(color, tolerance, dominance) {
+	jQuery.fn.filterHasColor = function(options) {
 		var nodes = [];
+
+//		alert(options.toSource());
+		
+		var color = options.color;
+		var tolerance = options.tolerance;
+		var dominance = options.dominance;
 
 		this.each(function() {
 //			abmash.highlight(this);
@@ -68,7 +74,7 @@
 		});
 //		abmash.highlight(nodes);
 		
-		return this.pushStack(nodes, "filterHasColor", color, tolerance, dominance);
+		return this.pushStack(nodes, "filterHasColor", options);
 	};
 	
 })(jQuery);
@@ -152,6 +158,8 @@
 		if(img && img.length < 4) return false;
     	var data = analyzeImage(img, color);
     	
+//    	alert(data.toSource());
+    	
     	var sumMatchingPixels = 0;
 		for(var i = 0, n = img.length; i < n-3; i += 4) {
 			var pixelColor = {
@@ -161,14 +169,19 @@
 			};
 			var distance = colorDistance(pixelColor, color);
 			var normalizedDistance = data.maxDistance > 0 ? distance / data.maxDistance : 0;
+			if(normalizedDistance <= tolerance) sumMatchingPixels++;
 //			alert(pixelColor.toSource());
 //			alert(color.toSource());
-//			alert(data.transformedMaxDistance);
+//			alert(data.maxDistance);
 //			alert(distance);
 //			alert(normalizedDistance);
 //			alert(tolerance);
-			if(normalizedDistance <= tolerance) sumMatchingPixels++;
+//			alert(normalizedDistance <= tolerance);
 		}
+		
+//		alert("sumMatchingPixels: " + sumMatchingPixels);
+//		alert("data.imageSize: " + data.imageSize);
+//		alert(sumMatchingPixels / data.imageSize);
 		
 		return sumMatchingPixels / data.imageSize;
     }
@@ -214,6 +227,8 @@
 	}
     
     function colorDistance(c1, c2) {
+//    	alert(c1.toSource());
+//    	alert(c2.toSource());
 		var rmean = (c1.red + c2.red) / 2;
 		var r = c1.red - c2.red;
 		var g = c1.green - c2.green;

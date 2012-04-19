@@ -67,7 +67,7 @@ jQuery.extend(jQuery.expr[':'], {
 
 	    var compareType = jQuery.trim(args[0]).toUpperCase();
 	    var attributeName = jQuery.trim(args[1]).toLowerCase();
-	    var text = jQuery.trim(args[2]).replace(/\"/g, '').toLowerCase();
+	    var text = jQuery.trim(args[2]).replace(/[\"']/g, '').toLowerCase();
 	    var options = jQuery.trim(args[3]);
 	    
         return jQuery(node).attrMatch(compareType, attributeName, text, options).length > 0;

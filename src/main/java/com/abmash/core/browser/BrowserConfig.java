@@ -74,15 +74,7 @@ public class BrowserConfig {
 			webDriver = (RemoteWebDriver) new FirefoxDriver(binary, profile);
 		} else if(properties.getProperty("browserType").equalsIgnoreCase("chrome")) {
 			System.setProperty("webdriver.chrome.driver", properties.getProperty("browserBin"));
-			ChromeDriverService cds = ChromeDriverService.createDefaultService();
-			try {
-				cds.start();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-//			ChromeOptions options = new ChromeOptions();
-//			options.setBinary(new File(properties.getProperty("browserBin")));
-			webDriver = (RemoteWebDriver) new ChromeDriver(cds);
+			webDriver = (RemoteWebDriver) new ChromeDriver();
 		}
 		
 		// TODO htmlunit does not work yet (RemoteWebElement is Firefox specific, CSS selectors do not work properly)

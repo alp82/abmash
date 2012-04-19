@@ -14,6 +14,7 @@ import com.abmash.core.query.BooleanType;
 import com.abmash.core.query.DirectionOptions;
 import com.abmash.core.query.DirectionType;
 import com.abmash.core.query.predicate.BooleanPredicate;
+import com.abmash.core.query.predicate.CheckablePredicate;
 import com.abmash.core.query.predicate.ChoosablePredicate;
 import com.abmash.core.query.predicate.ClickablePredicate;
 import com.abmash.core.query.predicate.ColorPredicate;
@@ -61,6 +62,11 @@ public class QueryFactory {
 	
 	public static Predicate not(Predicate... predicates) {
 		return new BooleanPredicate(BooleanType.NOT, predicates);
+	}
+	
+	// Direct Element Predicates
+	public static Predicate elements(HtmlElements elements) {
+		return new ElementPredicate(elements);
 	}
 	
 	// JQuery Predicates
@@ -129,6 +135,14 @@ public class QueryFactory {
 		return new ChoosablePredicate(text);
 	}
 	
+	public static Predicate checkable() {
+		return checkable(null);
+	}
+	
+	public static Predicate checkable(String text) {
+		return new CheckablePredicate(text);
+	}
+	
 	public static Predicate datepicker() {
 		return datepicker(null);
 	}
@@ -164,7 +178,7 @@ public class QueryFactory {
 	}
 	
 	public static Predicate closeTo(int maxDistance, Predicate... predicates) {
-		return new DirectionPredicate(new DirectionOptions(DirectionType.CLOSETO).setMaxDistance(maxDistance), predicates);
+		return closeTo(new DirectionOptions(DirectionType.CLOSETO).setMaxDistance(maxDistance), predicates);
 	}
 	
 	public static Predicate closeTo(int maxDistance, HtmlElements elements) {
@@ -176,7 +190,7 @@ public class QueryFactory {
 	}
 	
 	public static Predicate closeTo(Predicate... predicates) {
-		return closeTo(new DirectionOptions(DirectionType.CLOSETO), predicates);
+		return closeTo(300, predicates);
 	}
 	
 	public static Predicate closeTo(HtmlElements elements) {
@@ -338,7 +352,7 @@ public class QueryFactory {
 	}
 	
 	public static Predicate color(Color color) {
-		return color(color, Tolerance.MIDLOW, Dominance.HIGH);
+		return color(color, Tolerance.MIDHIGH, Dominance.MIDHIGH);
 	}
 
 	public static Predicate color(ColorName colorName) {

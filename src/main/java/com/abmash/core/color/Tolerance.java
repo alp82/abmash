@@ -1,12 +1,12 @@
 package com.abmash.core.color;
 
 public enum Tolerance {
-	VERYLOW(0.2),
-	LOW(0.4),
-	MIDLOW(0.55),
-	MIDHIGH(0.7),
-	HIGH(0.8),
-	VERYHIGH(0.9),
+	VERYLOW(0.15),
+	LOW(0.35),
+	MIDLOW(0.5),
+	MIDHIGH(0.65),
+	HIGH(0.75),
+	VERYHIGH(0.85),
 	HUGE(0.95);
 	
 	private double value;

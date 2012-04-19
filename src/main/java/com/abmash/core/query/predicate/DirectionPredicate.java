@@ -23,10 +23,14 @@ public class DirectionPredicate extends JQueryPredicate {
 		return options;
 	}
 	
+	public Predicates getPredicates() {
+		return predicates;
+	}
+	
 	public void buildCommands() {
 		closeTo(
-			// TODO null ersetzen durch selector oder vorige ergebnisse!! bei query nach hinten sortieren
-			JQueryFactory.select("abmash.getData('elementsForDirectionQuery')", 100),
+			// TODO bei query nach hinten sortieren
+			JQueryFactory.select("abmash.getData('elementsForFilteringQuery')", 50),
 			options,
 			predicates
 		);

@@ -28,7 +28,7 @@ public class ImagePredicate extends JQueryPredicate {
 		if(text != null) {
 			// close to label
 			closeTo(
-				JQueryFactory.select("'" + StringUtils.join(imageSelectors, ',') + "'", 100),
+				JQueryFactory.select("'" + StringUtils.join(imageSelectors, ',') + "'", 50),
 				new DirectionOptions(DirectionType.CLOSETO).setLimitPerTarget(1).setMaxDistance(300),
 				QueryFactory.text(text)
 			);
