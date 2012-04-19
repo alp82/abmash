@@ -32,6 +32,7 @@ import com.abmash.core.query.predicate.SelectPredicate;
 import com.abmash.core.query.predicate.SubmittablePredicate;
 import com.abmash.core.query.predicate.TextPredicate;
 import com.abmash.core.query.predicate.TypablePredicate;
+import com.abmash.core.query.predicate.XPathPredicate;
 
 public class QueryFactory {
 	
@@ -143,6 +144,21 @@ public class QueryFactory {
 	 */
 	public static Predicate select(String selector) {
 		return new SelectPredicate(selector);
+	}
+	
+	/**
+	 * Finds elements that match the given XPath selector.
+	 * <p> 
+	 * <strong>Example:</strong>
+	 * <pre>
+	 * xpath("//div[id=content]/p[class=info]/strong[name=author]")
+	 * </pre>
+	 * 
+	 * @param selector the XPath selector
+	 * @return {@link XPathPredicate}
+	 */
+	public static Predicate xPath(String selector) {
+		return new XPathPredicate(selector);
 	}
 	
 	/**

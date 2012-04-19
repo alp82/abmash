@@ -1,4 +1,4 @@
-package com.abmash.api.data;
+package com.abmash.core.browser;
 
 import java.util.List;
 import java.util.Map;

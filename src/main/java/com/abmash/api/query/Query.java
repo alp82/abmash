@@ -98,14 +98,31 @@ public class Query {
 		return predicates;
 	}
 	
+	/**
+	 * Finds all elements that match the given predicates.
+	 * 
+	 * @return the {@link HtmlElements} result
+	 */
 	public HtmlElements find() {
 		return doFind(browser);
 	}
 	
+	/**
+	 * Finds all elements that match the given predicates and returns the first result.
+	 * 
+	 * @return the {@link HtmlElements} result
+	 */
 	public HtmlElement findFirst() {
 		return find().first();
 	}
 	
+	/**
+	 * Finds all elements that match the given predicates. If the result is empty, the find process is
+	 * repeatedly called until at least one element is found or a timeout exception is thrown. This can
+	 * be useful to wait for an element to appear after triggering an AJAX request.
+	 * 
+	 * @return the {@link HtmlElements} result
+	 */
 	public HtmlElements findWithWait() {
 		HtmlElements elements = doFind(browser);
 		if(elements == null || elements.isEmpty()) {
@@ -120,6 +137,13 @@ public class Query {
 		return elements;
 	}
 
+	/**
+	 * Finds all elements that match the given predicates and returns the first result. If the result
+	 * is empty, the find process is repeatedly called until at least one element is found or a timeout exception
+	 * is thrown. This can be useful to wait for an element to appear after triggering an AJAX request.
+	 * 
+	 * @return the {@link HtmlElements} result
+	 */
 	public HtmlElement findFirstWithWait() {
 		return findWithWait().first();
 	}

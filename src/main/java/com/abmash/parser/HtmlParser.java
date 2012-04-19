@@ -3,6 +3,7 @@ package com.abmash.parser;
 import com.abmash.api.Browser;
 import com.abmash.api.HtmlElement;
 import com.abmash.api.HtmlElements;
+import com.abmash.api.query.QueryFactory;
 import com.abmash.parser.content.Header;
 import com.abmash.parser.content.Image;
 import com.abmash.parser.content.Input;
@@ -29,7 +30,7 @@ public class HtmlParser extends DocumentParser {
 	@Override
 	protected void parseVisibleText() {
 		// TODO visible text without html tags
-		visibleText = browser.query().tag("body").findFirst().getText();
+		visibleText = browser.query(QueryFactory.select("body")).findFirst().getText();
 //		browser.log().debug(content.getVisibleText());
 	}
 	
@@ -56,7 +57,7 @@ public class HtmlParser extends DocumentParser {
 	@Override
 	protected void parseHeaders() {
 		// parse headers
-		HtmlElements headerElements = browser.query().isTitle().find();
+		HtmlElements headerElements = browser.query(QueryFactory.headline()).find();
 		for (HtmlElement element: headerElements) {
 			Header header = new Header();
 			header.setText(element.getText());
@@ -69,7 +70,7 @@ public class HtmlParser extends DocumentParser {
 	@Override
 	protected void parseLinks() {
 		// parse links
-		HtmlElements linkElements = browser.query().tag("a").find();
+		HtmlElements linkElements = browser.query(QueryFactory.select("a")).find();
 		for (HtmlElement element: linkElements) {
 			Link link = new Link();
 			link.setUrl(element.getAttribute("href"));
@@ -82,7 +83,7 @@ public class HtmlParser extends DocumentParser {
 	@Override
 	protected void parseImages() {
 		// parse images
-		HtmlElements imageElements = browser.query().isImage().find();
+		HtmlElements imageElements = browser.query(QueryFactory.image()).find();
 		for (HtmlElement element: imageElements) {
 			Image image = new Image();
 			image.setUrl(element.getAttribute("src"));
@@ -96,7 +97,7 @@ public class HtmlParser extends DocumentParser {
 	@Override
 	protected void parseInputs() {
 		// parse forms
-		HtmlElements inputElements = browser.query().isTypable().find();
+		HtmlElements inputElements = browser.query(QueryFactory.typable()).find();
 		for (HtmlElement element: inputElements) {
 			Input input = new Input();
 			input.setLabel(""); //TODO find label

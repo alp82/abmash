@@ -9,7 +9,7 @@ import net.jsourcerer.webdriver.jserrorcollector.JavaScriptError;
 import org.openqa.selenium.JavascriptExecutor;
 
 import com.abmash.api.Browser;
-import com.abmash.api.data.JavaScriptResult;
+import com.abmash.core.browser.JavaScriptResult;
 import com.abmash.core.tools.JavaScriptParameterConverter;
 
 

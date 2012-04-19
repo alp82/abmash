@@ -1,4 +1,4 @@
-package com.abmash.api.data;
+package com.abmash.api.tabular;
 
 import java.util.HashMap;
 

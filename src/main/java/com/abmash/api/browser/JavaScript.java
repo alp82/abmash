@@ -3,7 +3,7 @@ package com.abmash.api.browser;
 import java.io.InputStream;
 
 import com.abmash.api.Browser;
-import com.abmash.api.data.JavaScriptResult;
+import com.abmash.core.browser.JavaScriptResult;
 import com.abmash.core.browser.interaction.JavaScriptExecution;
 import com.abmash.core.tools.IOTools;
 

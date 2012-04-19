@@ -3,7 +3,7 @@ package com.abmash.api.browser;
 
 import com.abmash.api.Browser;
 import com.abmash.api.HtmlElement;
-import com.abmash.api.data.JavaScriptResult;
+import com.abmash.core.browser.JavaScriptResult;
 import com.abmash.core.browser.Popup;
 import com.abmash.core.browser.Popups;
 
