@@ -2,10 +2,10 @@ package com.abmash.REMOVE.core.element.distance;
 
 
 
+import com.abmash.REMOVE.core.htmlquery.condition.ElementCondition.ElementType;
 import com.abmash.api.HtmlElement;
 import com.abmash.core.element.Location;
 import com.abmash.core.element.Size;
-import com.abmash.core.htmlquery.condition.ElementCondition.ElementType;
 
 import java.util.ArrayList;
 import java.util.Comparator;

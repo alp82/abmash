@@ -1,10 +1,10 @@
-package com.abmash.core.htmlquery.condition;
+package com.abmash.REMOVE.core.htmlquery.condition;
 
-import com.abmash.core.htmlquery.selector.CssSelector;
-import com.abmash.core.htmlquery.selector.JQuerySelector;
-import com.abmash.core.htmlquery.selector.Selector;
-import com.abmash.core.htmlquery.selector.SelectorGroup;
-import com.abmash.core.htmlquery.selector.XpathSelector;
+import com.abmash.REMOVE.core.htmlquery.selector.CssSelector;
+import com.abmash.REMOVE.core.htmlquery.selector.JQuerySelector;
+import com.abmash.REMOVE.core.htmlquery.selector.Selector;
+import com.abmash.REMOVE.core.htmlquery.selector.SelectorGroup;
+import com.abmash.REMOVE.core.htmlquery.selector.XpathSelector;
 
 public class SelectorCondition extends Condition {
 	

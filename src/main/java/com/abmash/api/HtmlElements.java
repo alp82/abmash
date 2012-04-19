@@ -9,9 +9,10 @@ import java.util.List;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebElement;
 
+import com.abmash.REMOVE.api.HtmlQuery;
+import com.abmash.REMOVE.core.htmlquery.condition.ElementCondition.ElementType;
 import com.abmash.api.query.Query;
 import com.abmash.api.query.QueryFactory;
-import com.abmash.core.htmlquery.condition.ElementCondition.ElementType;
 
 
 /**

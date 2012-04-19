@@ -1,4 +1,4 @@
-package com.abmash.core.htmlquery.condition;
+package com.abmash.REMOVE.core.htmlquery.condition;
 
 
 import java.util.ArrayList;
@@ -7,17 +7,17 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.abmash.REMOVE.core.htmlquery.condition.ClosenessCondition.Direction;
+import com.abmash.REMOVE.core.htmlquery.selector.CssSelector;
+import com.abmash.REMOVE.core.htmlquery.selector.DirectMatchSelector;
+import com.abmash.REMOVE.core.htmlquery.selector.JQuerySelector;
+import com.abmash.REMOVE.core.htmlquery.selector.Selector;
+import com.abmash.REMOVE.core.htmlquery.selector.SelectorGroup;
+import com.abmash.REMOVE.core.htmlquery.selector.XpathSelector;
+import com.abmash.REMOVE.core.htmlquery.selector.SelectorGroup.Type;
 import com.abmash.api.Browser;
 import com.abmash.api.HtmlElement;
 import com.abmash.api.HtmlElements;
-import com.abmash.core.htmlquery.condition.ClosenessCondition.Direction;
-import com.abmash.core.htmlquery.selector.CssSelector;
-import com.abmash.core.htmlquery.selector.DirectMatchSelector;
-import com.abmash.core.htmlquery.selector.JQuerySelector;
-import com.abmash.core.htmlquery.selector.Selector;
-import com.abmash.core.htmlquery.selector.SelectorGroup;
-import com.abmash.core.htmlquery.selector.SelectorGroup.Type;
-import com.abmash.core.htmlquery.selector.XpathSelector;
 
 public class ElementCondition extends Condition {
 	
@@ -206,15 +206,15 @@ public class ElementCondition extends Condition {
 		selectorGroups.add(checkElementText(linkNames, queryStrings, Arrays.asList(TextMatcher.EXACT, TextMatcher.CONTAINS)));
 
 		// find clickables by searching for closest fitting label
-		if(!queryStrings.isEmpty()) {
-			HtmlElements labelElements = browser.query().isText().has(queryStrings).limit(2).find();
-			if(!labelElements.isEmpty()) {
-				selectorGroups.addLabelElements(labelElements);
-				selectorGroups.setLabelType(Direction.SELECT);
-				// now add all checkboxes for closest label comparison
-				selectorGroups.add(new SelectorGroup(new JQuerySelector("find('input[type=checkbox], input[type=radio]')", Weight.VERYLOW.getValue()), Type.LABEL));
-			}
-		}
+//		if(!queryStrings.isEmpty()) {
+//			HtmlElements labelElements = browser.query().isText().has(queryStrings).limit(2).find();
+//			if(!labelElements.isEmpty()) {
+//				selectorGroups.addLabelElements(labelElements);
+//				selectorGroups.setLabelType(Direction.SELECT);
+//				// now add all checkboxes for closest label comparison
+//				selectorGroups.add(new SelectorGroup(new JQuerySelector("find('input[type=checkbox], input[type=radio]')", Weight.VERYLOW.getValue()), Type.LABEL));
+//			}
+//		}
 
 		// TODO elements with parent <a> tags are also clickable 
 		if(queryStrings.isEmpty()) {
@@ -261,11 +261,11 @@ public class ElementCondition extends Condition {
 				HtmlElement frame = tinymceElements.first();
 				browser.frame().switchTo(frame);
 				// TODO find with rootelements if needed
-				HtmlElement textarea = browser.query().cssSelector("#tinymce").findFirst();
-				if(textarea instanceof HtmlElement) {
-					textarea.setFrameElement(frame);
-					selectorGroups.add(new SelectorGroup(new DirectMatchSelector(new HtmlElements(textarea))));
-				}
+//				HtmlElement textarea = browser.query().cssSelector("#tinymce").findFirst();
+//				if(textarea instanceof HtmlElement) {
+//					textarea.setFrameElement(frame);
+//					selectorGroups.add(new SelectorGroup(new DirectMatchSelector(new HtmlElements(textarea))));
+//				}
 				// TODO switch to previously focused main content 
 				browser.window().switchToMainContent();
 			}
@@ -276,12 +276,12 @@ public class ElementCondition extends Condition {
 		// TODO find inputs with fitting labels by "id" and "for"
 		
 		// find inputs by searching for closest fitting label
-		if(!queryStrings.isEmpty()) {
-			HtmlElements labelElements = browser.query().isText().has(queryStrings).limit(2).find();
-			if(!labelElements.isEmpty()) {
-				selectorGroups.addLabelElements(labelElements);
-			}
-		}
+//		if(!queryStrings.isEmpty()) {
+//			HtmlElements labelElements = browser.query().isText().has(queryStrings).limit(2).find();
+//			if(!labelElements.isEmpty()) {
+//				selectorGroups.addLabelElements(labelElements);
+//			}
+//		}
 		
 		// find target by html attributes which match partially
 		selectorGroups.add(checkElementAttributes(elementNames, queryStrings, attributeNames, Arrays.asList(AttributeMatcher.WORD, AttributeMatcher.STARTSWITH, AttributeMatcher.ENDSWITH, AttributeMatcher.CONTAINS)));
@@ -338,12 +338,12 @@ public class ElementCondition extends Condition {
 		//selectors.add(new SelectorGroup(new JQuerySelector("find('select:has(option:containsCaseInsensitive(" + textQuery + "))')")));
 
 		// find datepickers by searching for closest fitting label
-		if(!queryStrings.isEmpty()) {
-			HtmlElements labelElements = browser.query().isText().has(queryStrings).limit(2).find();
-			if(!labelElements.isEmpty()) {
-				selectorGroups.addLabelElements(labelElements);
-			}
-		}
+//		if(!queryStrings.isEmpty()) {
+//			HtmlElements labelElements = browser.query().isText().has(queryStrings).limit(2).find();
+//			if(!labelElements.isEmpty()) {
+//				selectorGroups.addLabelElements(labelElements);
+//			}
+//		}
 		
 		// find target by html attributes
 		selectorGroups.add(checkElementAttributes(elementNames, Arrays.asList("datepicker"), attributeNames, Arrays.asList(AttributeMatcher.CONTAINS)));

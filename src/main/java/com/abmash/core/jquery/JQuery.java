@@ -7,7 +7,7 @@ import java.util.Arrays;
 import org.apache.commons.lang.StringUtils;
 import org.json.JSONException;
 
-import com.abmash.core.htmlquery.condition.ColorCondition;
+import com.abmash.REMOVE.core.htmlquery.condition.ColorCondition;
 import com.abmash.core.jquery.command.*;
 import com.abmash.core.jquery.command.FilterCSSCommand.CSSAttributeComparator;
 import com.abmash.core.query.ColorOptions;

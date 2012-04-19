@@ -1,4 +1,4 @@
-package com.abmash.api;
+package com.abmash.REMOVE.api;
 
 
 import java.awt.Color;
@@ -20,25 +20,28 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.remote.RemoteWebElement;
 
+import com.abmash.REMOVE.core.htmlquery.condition.ClosenessCondition;
+import com.abmash.REMOVE.core.htmlquery.condition.ColorCondition;
+import com.abmash.REMOVE.core.htmlquery.condition.Condition;
+import com.abmash.REMOVE.core.htmlquery.condition.Conditions;
+import com.abmash.REMOVE.core.htmlquery.condition.ElementCondition;
+import com.abmash.REMOVE.core.htmlquery.condition.SelectorCondition;
+import com.abmash.REMOVE.core.htmlquery.condition.TagnameCondition;
+import com.abmash.REMOVE.core.htmlquery.condition.ClosenessCondition.Direction;
+import com.abmash.REMOVE.core.htmlquery.condition.ElementCondition.ElementType;
+import com.abmash.REMOVE.core.htmlquery.condition.SelectorCondition.QueryType;
+import com.abmash.REMOVE.core.htmlquery.selector.Selector;
+import com.abmash.REMOVE.core.htmlquery.selector.SelectorGroup;
+import com.abmash.REMOVE.core.htmlquery.selector.SelectorGroups;
+import com.abmash.REMOVE.core.htmlquery.selector.SelectorGroup.Type;
+import com.abmash.api.Browser;
+import com.abmash.api.HtmlElement;
+import com.abmash.api.HtmlElements;
 import com.abmash.api.data.List;
 import com.abmash.api.data.Table;
 import com.abmash.core.color.ColorName;
 import com.abmash.core.color.Dominance;
 import com.abmash.core.color.Tolerance;
-import com.abmash.core.htmlquery.condition.ClosenessCondition;
-import com.abmash.core.htmlquery.condition.ClosenessCondition.Direction;
-import com.abmash.core.htmlquery.condition.ColorCondition;
-import com.abmash.core.htmlquery.condition.Condition;
-import com.abmash.core.htmlquery.condition.Conditions;
-import com.abmash.core.htmlquery.condition.ElementCondition;
-import com.abmash.core.htmlquery.condition.ElementCondition.ElementType;
-import com.abmash.core.htmlquery.condition.SelectorCondition;
-import com.abmash.core.htmlquery.condition.SelectorCondition.QueryType;
-import com.abmash.core.htmlquery.condition.TagnameCondition;
-import com.abmash.core.htmlquery.selector.Selector;
-import com.abmash.core.htmlquery.selector.SelectorGroup;
-import com.abmash.core.htmlquery.selector.SelectorGroup.Type;
-import com.abmash.core.htmlquery.selector.SelectorGroups;
 
 
 /**
@@ -65,14 +68,6 @@ import com.abmash.core.htmlquery.selector.SelectorGroups;
  */
 public class HtmlQuery {
 	
-	// TODO http://www.jarvana.com/jarvana/view/org/seleniumhq/selenium/selenium-support/2.0b3/selenium-support-2.0b3-javadoc.jar!/overview-summary.html
-	// TODO @CacheLookup - http://www.jarvana.com/jarvana/view/org/seleniumhq/selenium/selenium-support/2.0b3/selenium-support-2.0b3-javadoc.jar!/org/openqa/selenium/support/CacheLookup.html
-	// TODO ByChained - http://www.jarvana.com/jarvana/view/org/seleniumhq/selenium/selenium-support/2.0b3/selenium-support-2.0b3-javadoc.jar!/org/openqa/selenium/support/pagefactory/ByChained.html
-	// TODO hasParent(HtmlQuery), hasSibling(HtmlQuery)
-	// TODO inSameBlock(), inSameTable(), inNextBlock(), inPreviousBlock(), inThirdBlockAbove()
-	// TODO distinct text
-	// TODO if limit and no sorting condition, abort if there are enough results
-
 	private Browser browser;
 	private HtmlElements resultElements = null;
 	private HtmlElements rootElements = new HtmlElements();
@@ -567,7 +562,8 @@ public class HtmlQuery {
 	 * execute the query with {@link #find()} or {@link #findFirst()}
 	 */
 	public HtmlQuery closestTo(String query) {
-		return closestTo(new HtmlElements(browser.query().has(query).findFirst()), Direction.CLOSE);
+		return null;
+//		return closestTo(new HtmlElements(browser.query().has(query).findFirst()), Direction.CLOSE);
 	}
 	
 	/**
@@ -628,7 +624,8 @@ public class HtmlQuery {
 	 * execute the query with {@link #find()} or {@link #findFirst()}
 	 */
 	public HtmlQuery above(String query) {
-		return closestTo(new HtmlElements(browser.query().has(query).findFirst()), Direction.ABOVE);
+		return null;
+//		return closestTo(new HtmlElements(browser.query().has(query).findFirst()), Direction.ABOVE);
 	}
 	
 	/**
@@ -765,7 +762,8 @@ public class HtmlQuery {
 	 * execute the query with {@link #find()} or {@link #findFirst()}
 	 */
 	public HtmlQuery below(String query) {
-		return closestTo(new HtmlElements(browser.query().has(query).findFirst()), Direction.BELOW);
+		return null;
+//		return closestTo(new HtmlElements(browser.query().has(query).findFirst()), Direction.BELOW);
 	}
 	
 	/**
@@ -899,7 +897,8 @@ public class HtmlQuery {
 	 * execute the query with {@link #find()} or {@link #findFirst()}
 	 */
 	public HtmlQuery leftTo(String query) {
-		return closestTo(new HtmlElements(browser.query().has(query).findFirst()), Direction.LEFT);
+		return null;
+//		return closestTo(new HtmlElements(browser.query().has(query).findFirst()), Direction.LEFT);
 	}
 	
 	/**
@@ -1034,7 +1033,8 @@ public class HtmlQuery {
 	 * execute the query with {@link #find()} or {@link #findFirst()}
 	 */
 	public HtmlQuery rightTo(String query) {
-		return closestTo(new HtmlElements(browser.query().has(query).findFirst()), Direction.RIGHT);
+		return null;
+//		return closestTo(new HtmlElements(browser.query().has(query).findFirst()), Direction.RIGHT);
 	}
 	
 	/**
@@ -1368,13 +1368,13 @@ public class HtmlQuery {
 	public HtmlElements findWithWait() {
 		doFind();
 		if(resultElements == null || resultElements.isEmpty()) {
-			try {
-				browser.waitFor().query(this);
+//			try {
+//				browser.waitFor().query(this);
 				doFind();
-			} catch (TimeoutException e) {
+//			} catch (TimeoutException e) {
 				// element not found
-				browser.log().info("Query: element not found for query " + this.toString());
-			}
+//				browser.log().info("Query: element not found for query " + this.toString());
+//			}
 		}
 		return resultElements;
 	}

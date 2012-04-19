@@ -5,14 +5,14 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.abmash.REMOVE.core.htmlquery.selector.CssSelector;
+import com.abmash.REMOVE.core.htmlquery.selector.DirectMatchSelector;
+import com.abmash.REMOVE.core.htmlquery.selector.JQuerySelector;
+import com.abmash.REMOVE.core.htmlquery.selector.Selector;
+import com.abmash.REMOVE.core.htmlquery.selector.SelectorGroup;
 import com.abmash.api.HtmlElement;
 import com.abmash.api.HtmlElements;
 import com.abmash.api.query.QueryFactory;
-import com.abmash.core.htmlquery.selector.CssSelector;
-import com.abmash.core.htmlquery.selector.DirectMatchSelector;
-import com.abmash.core.htmlquery.selector.JQuerySelector;
-import com.abmash.core.htmlquery.selector.Selector;
-import com.abmash.core.htmlquery.selector.SelectorGroup;
 import com.abmash.core.jquery.JQuery;
 import com.abmash.core.jquery.JQueryFactory;
 import com.abmash.core.jquery.JQuery.StringMatcher;

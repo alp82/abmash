@@ -22,11 +22,16 @@ public class FramePredicate extends JQueryPredicate {
 	@Override
 	public void buildCommands() {
 		List<String> headlineSelectors = Arrays.asList("frame, iframe");
+		
+		JQuery frameQuery = JQueryFactory.select("'" + StringUtils.join(headlineSelectors, ',') + "'", 50);
+		
 		if(text != null) {
-			containsText("'" + StringUtils.join(headlineSelectors, ',') + "'", text);
-			containsAttribute("'" + StringUtils.join(headlineSelectors, ',') + "'", "*", text);
+			containsText(frameQuery, text);
+			containsAttribute(frameQuery, "*", text);
+			// TODO check contents of frames
+//			containsText(frameQuery.contents(), text);
 		} else {
-			add(JQueryFactory.select("'" + StringUtils.join(headlineSelectors, ',') + "'", 100));
+			add(frameQuery);
 		}
 	}
 }

@@ -1,9 +1,9 @@
 package com.abmash.core.browser.waitcondition;
 
 
+import com.abmash.REMOVE.api.HtmlQuery;
 import com.abmash.api.Browser;
 import com.abmash.api.HtmlElement;
-import com.abmash.api.HtmlQuery;
 import com.abmash.api.query.Query;
 
 import org.openqa.selenium.WebDriver;

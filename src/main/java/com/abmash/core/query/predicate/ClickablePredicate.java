@@ -20,7 +20,7 @@ public class ClickablePredicate extends LinkPredicate {
 	@Override
 	public void buildCommands() {
 		super.buildCommands();
-		List<String> clickableInputSelectors = Arrays.asList("input[type=checkbox]", "input[type=radio]", "input[type=submit]", "input[type=button]", "input[type=image]", "input[type=range]", "input[type=color]", "button");
+		List<String> clickableInputSelectors = Arrays.asList("input[type=checkbox]", "input[type=radio]", "input[type=submit]", "input[type=button]", "input[type=image]", "input[type=range]", "input[type=color]", "button", "*[onclick]");
 		
 		JQuery clickableQuery = JQueryFactory.select("'" + StringUtils.join(clickableInputSelectors, ',') + "'", 0); 
 				

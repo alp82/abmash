@@ -18,27 +18,27 @@
  * com.abmash.are <code>Browser</code>, <code>HtmlElement</code>, <code>HtmlElements</code> and <code>HtmlQuery</code>.
  * <p>
  * {@link com.abmash.api.Browser} is used to start a new browser session. Its main purpose is to find {@link com.abmash.api.HtmlElements}
- * by using the {@link com.abmash.api.HtmlQuery} methods, and interacting with them by using methods like
+ * by using the {@link com.abmash.REMOVE.api.HtmlQuery} methods, and interacting with them by using methods like
  * {@link com.abmash.api.Browser#click(String)} or {@link com.abmash.api.Browser#type(String, String)}.
  * <p>
  * <ul>
  * <li>{@link com.abmash.api.HtmlElement} represents an HTML element on the current page.</li>
  * <li>{@link com.abmash.api.HtmlElements} is a list of <code>HtmlElement</code> objects.</li>
- * <li>{@link com.abmash.api.HtmlQuery} is used to find HTML elements on the current page.</li>
+ * <li>{@link com.abmash.REMOVE.api.HtmlQuery} is used to find HTML elements on the current page.</li>
  * </ul>
  * <p>
  * An {@link com.abmash.api.HtmlElement} object is a representation of an HTML element on the current web page. It
  * can be used to interact with them, to parameterize other browser interaction tasks or to get the contents of that element.
- * {@link com.abmash.api.HtmlQuery#findFirst()} returns an <code>HtmlElement</code>.
+ * {@link com.abmash.REMOVE.api.HtmlQuery#findFirst()} returns an <code>HtmlElement</code>.
  * <p>
  * {@link com.abmash.api.HtmlElements} is a list of <code>HtmlElement</code> objects. It
  * can be used to interact with them, to parameterize other browser interaction tasks or to get the contents of that elements
- * {@link com.abmash.api.HtmlQuery#find()} returns an <code>HtmlElements</code> object.
+ * {@link com.abmash.REMOVE.api.HtmlQuery#find()} returns an <code>HtmlElements</code> object.
  * <p>
- * An {@link com.abmash.api.HtmlQuery} contains of an arbitrary number of search conditions to find {@link com.abmash.api.HtmlElements}.
+ * An {@link com.abmash.REMOVE.api.HtmlQuery} contains of an arbitrary number of search conditions to find {@link com.abmash.api.HtmlElements}.
  * 
  * @see com.abmash.api.Browser
- * @see com.abmash.api.HtmlQuery
+ * @see com.abmash.REMOVE.api.HtmlQuery
  * @see com.abmash.api.HtmlElement
  * @see com.abmash.api.HtmlElements
  */

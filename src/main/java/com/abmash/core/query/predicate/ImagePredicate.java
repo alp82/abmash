@@ -25,17 +25,21 @@ public class ImagePredicate extends JQueryPredicate {
 	@Override
 	public void buildCommands() {
 		List<String> imageSelectors = Arrays.asList("img");
+		
+		// TODO background-image
+		JQuery imageQuery = JQueryFactory.select("'" + StringUtils.join(imageSelectors, ',') + "'", 0);
+		
 		if(text != null) {
 			// close to label
 			closeTo(
-				JQueryFactory.select("'" + StringUtils.join(imageSelectors, ',') + "'", 50),
+				imageQuery.setWeight(100),
 				new DirectionOptions(DirectionType.CLOSETO).setLimitPerTarget(1).setMaxDistance(300),
 				QueryFactory.text(text)
 			);
 			
-			containsAttribute("'" + StringUtils.join(imageSelectors, ',') + "'", "*", text);
+			containsAttribute(imageQuery, "*", text);
 		} else {
-			add(JQueryFactory.select("'" + StringUtils.join(imageSelectors, ',') + "'", 100));
+			add(imageQuery);
 		}
 	}
 }

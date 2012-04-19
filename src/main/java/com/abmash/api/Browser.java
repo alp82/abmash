@@ -40,8 +40,8 @@ import com.abmash.core.tools.IOTools;
  * <li><code>browser.click("Save");</code> clicks on a link or button labeled <em>Save</em>
  * <li><code>browser.type("Username", "Jack");</code> enter the text <em>Jack</em> in the input field labeled <em>Username</em>
  * <li><code>browser.select("language", "english");</code> selects the options <em>english</em> in the dropdown/list labeled <em>language</em>
- * <li><code>HtmlElement firstTitle = browser.query().isTitle().findFirst();</code> finds the first title element on the current page and saves them</li>
- * <li><code>HtmlElements imagesLeftToTitle = browser.query().isImage().leftTo(title).find();</code> finds all image elements left to the previously found title</li>
+ * <li><code>HtmlElement firstTitle = browser.query(headline()).findFirst();</code> finds the first title element on the current page and saves them</li>
+ * <li><code>HtmlElements imagesLeftOfTitle = browser.query(image(), leftOf(title)).find();</code> finds all image elements left of the previously found title</li>
  * </ul>
  * <p>
  * Elements can be searched by queries to get their values and text, and to interact with them. Search queries are <strong>case-sensitive</strong>.
@@ -55,12 +55,14 @@ import com.abmash.core.tools.IOTools;
  * Use {@link Browser#choose(String, String)} to search for {@code <select>} elements (usually a dropdown selection or a box with a list
  * of options) with the specified name or label, get the best match and select the given option from the list.
  * <p>
- * Use {@link Browser#query()} to create an {@link HtmlQuery} instance and to search for {@link HtmlElement} instances. Search conditions
- * can be chained one after another. The call of {@link HtmlQuery#find()} or {@link HtmlQuery#findFirst()} will return the result(s).
+ * Use {@link Browser#query()} to create a {@link Query} instance and to search for {@link HtmlElements}. Predicates can be arbitrarily combined.
+ * The call of {@link Query#find()} or {@link Query#findFirst()} will return the result(s).
+ * <p>
  * Found elements can be further interacted with, see {@link HtmlElement}.
  * 
- * @see HtmlQuery
+ * @see Query
  * @see HtmlElement
+ * @see HtmlElements
  * @author Alper Ortac
  */
 public class Browser implements Document {

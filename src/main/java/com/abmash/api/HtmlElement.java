@@ -18,6 +18,9 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.remote.RemoteWebElement;
 
+import com.abmash.REMOVE.api.HtmlQuery;
+import com.abmash.REMOVE.core.htmlquery.condition.ElementCondition.ElementType;
+import com.abmash.REMOVE.core.htmlquery.selector.JQuerySelector;
 import com.abmash.api.data.Table;
 import com.abmash.api.query.Query;
 import com.abmash.api.query.QueryFactory;
@@ -37,8 +40,6 @@ import com.abmash.core.browser.interaction.Type;
 import com.abmash.core.element.Element;
 import com.abmash.core.element.Location;
 import com.abmash.core.element.Size;
-import com.abmash.core.htmlquery.condition.ElementCondition.ElementType;
-import com.abmash.core.htmlquery.selector.JQuerySelector;
 import com.abmash.core.tools.DataTypeConversion;
 
 
@@ -330,7 +331,9 @@ public class HtmlElement extends Element {
 		//type(dateTime.getDateString());
 		click();
 		// TODO Ajax Wait condition
+		
 		// TODO year
+		
 		// TODO exception handler if no element was found
 		// TODO first try with month name
 		browser.query(QueryFactory.choosable("datepicker"), QueryFactory.below(this)).findFirst().choose(String.valueOf(dateTime.getMonthOfYear() - 1));
@@ -347,12 +350,6 @@ public class HtmlElement extends Element {
 			QueryFactory.choosable("time"),
 			QueryFactory.rightOf(this)
 		).findFirst().choose(fmt.print(dateTime));
-		
-		// TODO remove temp output
-//		ArrayList<RemoteWebElement> tmp = (ArrayList<RemoteWebElement>) browser.javaScript("return abmash.getData('tmp');").getReturnValue();
-//		ArrayList<RemoteWebElement> tmp2 = (ArrayList<RemoteWebElement>) browser.javaScript("return abmash.getData('tmp2');").getReturnValue();
-//		System.out.println("tmp1: " + tmp);
-//		System.out.println("tmp2: " + tmp2);
 		
 		return this;
 	}

@@ -1,10 +1,10 @@
-package com.abmash.core.htmlquery.condition;
+package com.abmash.REMOVE.core.htmlquery.condition;
 
 
 import java.awt.Color;
 
-import com.abmash.core.htmlquery.selector.JQuerySelector;
-import com.abmash.core.htmlquery.selector.SelectorGroup;
+import com.abmash.REMOVE.core.htmlquery.selector.JQuerySelector;
+import com.abmash.REMOVE.core.htmlquery.selector.SelectorGroup;
 
 
 public class ColorCondition extends Condition {

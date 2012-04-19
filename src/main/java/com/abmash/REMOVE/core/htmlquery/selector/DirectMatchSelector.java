@@ -1,4 +1,4 @@
-package com.abmash.core.htmlquery.selector;
+package com.abmash.REMOVE.core.htmlquery.selector;
 
 
 import com.abmash.api.Browser;

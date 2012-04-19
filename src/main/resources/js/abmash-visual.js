@@ -423,11 +423,11 @@
 		},
 		
 		isInHorizontalBounds: function(coords) {
-			return !isLeftOf(coords) && !isRightOf(coords);
+			return !abmash.isLeftOf(coords) && !abmash.isRightOf(coords);
 		},
 		
 		isInVerticalBounds: function(coords) {
-			return !isAbove(coords) && !isBelow(coords);
+			return !abmash.isAbove(coords) && !abmash.isBelow(coords);
 		},
 		
     });

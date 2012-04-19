@@ -37,7 +37,25 @@ import com.abmash.core.query.predicate.Predicates;
 import com.abmash.core.query.predicate.RecursivePredicate;
 import com.abmash.core.tools.DataTypeConversion;
 
+/**
+ * Queries are used to find elements on the current web page. They contain {@link Predicates} which filter the elements
+ * by their visual properties. {@link HtmlElements} can be found by their location on screen and by their color. Predicates can be
+ * arbitrarily nested and combined with boolean operators.
+ * 
+ * The {@link Query} can be executed by using the {@link #find()} method. In case of AJAX interaction, the {@link #findWithWait()}
+ * method repeatedly tries to find the elements until a timeout occurs.
+ * 
+ * @author alp
+ */
 public class Query {
+
+	// TODO http://www.jarvana.com/jarvana/view/org/seleniumhq/selenium/selenium-support/2.0b3/selenium-support-2.0b3-javadoc.jar!/overview-summary.html
+	// TODO @CacheLookup - http://www.jarvana.com/jarvana/view/org/seleniumhq/selenium/selenium-support/2.0b3/selenium-support-2.0b3-javadoc.jar!/org/openqa/selenium/support/CacheLookup.html
+	// TODO ByChained - http://www.jarvana.com/jarvana/view/org/seleniumhq/selenium/selenium-support/2.0b3/selenium-support-2.0b3-javadoc.jar!/org/openqa/selenium/support/pagefactory/ByChained.html
+	// TODO hasParent(HtmlQuery), hasSibling(HtmlQuery)
+	// TODO inSameBlock(), inSameTable(), inNextBlock(), inPreviousBlock(), inThirdBlockAbove()
+	// TODO distinct text
+	// TODO if limit and no sorting condition, abort if there are enough results
 
 	private Browser browser = null;
 	private Predicates predicates = new Predicates();
@@ -79,24 +97,6 @@ public class Query {
 	public Predicates getPredicates() {
 		return predicates;
 	}
-	
-//	private JQueryLists build() {
-//		jQueryLists = new JQueryLists();
-//		for(Predicate predicate: predicates) {
-//			predicate.buildCommands();
-//			
-////			JQuery jQuery = new JQuery(null, null);
-////			for(JQuery predicateJQuery: predicate.getJQueryList()) {
-////				for(Command command: predicateJQuery.getCommands()) {
-////					jQuery.addCommand(command);
-////				}
-////			}
-////			jQueryList.add(jQuery);
-//			jQueryLists.add(predicate.getJQueryList());
-//		}
-//		
-//		return jQueryLists;
-//	}
 	
 	public HtmlElements find() {
 		return doFind(browser);

@@ -1,4 +1,4 @@
-package com.abmash.core.htmlquery.condition;
+package com.abmash.REMOVE.core.htmlquery.condition;
 
 
 import java.util.TreeSet;
@@ -6,10 +6,10 @@ import java.util.TreeSet;
 import com.abmash.REMOVE.core.element.distance.ElementDistanceComparator;
 import com.abmash.REMOVE.core.element.distance.ElementDistanceComparator.CalculationType;
 import com.abmash.REMOVE.core.element.distance.ElementDistanceComparator.DistanceType;
+import com.abmash.REMOVE.core.htmlquery.selector.JQuerySelector;
+import com.abmash.REMOVE.core.htmlquery.selector.SelectorGroup;
 import com.abmash.api.HtmlElement;
 import com.abmash.api.HtmlElements;
-import com.abmash.core.htmlquery.selector.JQuerySelector;
-import com.abmash.core.htmlquery.selector.SelectorGroup;
 
 
 public class ClosenessCondition extends Condition {

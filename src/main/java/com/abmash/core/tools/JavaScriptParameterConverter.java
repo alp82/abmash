@@ -3,8 +3,8 @@ package com.abmash.core.tools;
 import java.util.Collection;
 import java.util.Map;
 
+import com.abmash.REMOVE.core.htmlquery.selector.JQuerySelector;
 import com.abmash.api.HtmlElement;
-import com.abmash.core.htmlquery.selector.JQuerySelector;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Maps;

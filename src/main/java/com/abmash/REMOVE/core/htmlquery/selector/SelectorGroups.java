@@ -1,9 +1,9 @@
-package com.abmash.core.htmlquery.selector;
+package com.abmash.REMOVE.core.htmlquery.selector;
 
 import java.util.ArrayList;
 
+import com.abmash.REMOVE.core.htmlquery.condition.ClosenessCondition.Direction;
 import com.abmash.api.HtmlElements;
-import com.abmash.core.htmlquery.condition.ClosenessCondition.Direction;
 
 public class SelectorGroups extends ArrayList<SelectorGroup> {
 	

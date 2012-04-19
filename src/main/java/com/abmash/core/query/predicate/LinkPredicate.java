@@ -18,7 +18,7 @@ public class LinkPredicate extends JQueryPredicate {
 
 	@Override
 	public void buildCommands() {
-		List<String> linkSelectors = Arrays.asList("a", "*[onclick]");
+		List<String> linkSelectors = Arrays.asList("a");
 		
 		if(text != null) {
 			containsText(JQueryFactory.select("'a'", 50), text);
