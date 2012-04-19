@@ -553,7 +553,7 @@ public class QueryFactory {
 	/**
 	 * Finds elements visually close to the given {@link HtmlElements}. See {@link #closeTo(Predicate...)} for details.
 	 * 
-	 * @see QueryFactory#closeTo(Predicate...)
+	 * @see QueryFactory#closeTo(DirectionOptions, Predicate...)
 	 * @param options the parameters of this predicate, including maximum distance and allowed directions
 	 * @param elements the result elements are close to these {@link HtmlElements}
 	 * @return {@link DirectionPredicate}
@@ -565,7 +565,7 @@ public class QueryFactory {
 	/**
 	 * Finds elements visually close to the given {@link HtmlElement}. See {@link #closeTo(Predicate...)} for details.
 	 * 
-	 * @see QueryFactory#closeTo(Predicate...)
+	 * @see QueryFactory#closeTo(DirectionOptions, Predicate...)
 	 * @param options the parameters of this predicate, including maximum distance and allowed directions
 	 * @param element the result elements are close to this {@link HtmlElement}
 	 * @return {@link DirectionPredicate}
@@ -577,7 +577,7 @@ public class QueryFactory {
 	/**
 	 * Finds elements visually close to the elements that match the given predicates, with a maximum distance. See {@link #closeTo(Predicate...)} for details.
 	 * 
-	 * @see QueryFactory#closeTo(Predicate...)
+	 * @see QueryFactory#closeTo(DirectionOptions, Predicate...)
 	 * @param maxDistance the result elements` allowed maximum distance to the predicate results in pixels
 	 * @param predicates the result elements are close to the elements determined by this predicates
 	 * @return {@link DirectionPredicate}
@@ -589,7 +589,7 @@ public class QueryFactory {
 	/**
 	 * Finds elements visually close to the given {@link HtmlElements}, with a maximum distance. See {@link #closeTo(Predicate...)} for details.
 	 * 
-	 * @see QueryFactory#closeTo(Predicate...)
+	 * @see QueryFactory#closeTo(DirectionOptions, Predicate...)
 	 * @param maxDistance the result elements` allowed maximum distance to the predicate results in pixels
 	 * @param elements the result elements are close to these {@link HtmlElements}
 	 * @return {@link DirectionPredicate}
@@ -601,7 +601,7 @@ public class QueryFactory {
 	/**
 	 * Finds elements visually close to the given {@link HtmlElement}, with a maximum distance. See {@link #closeTo(Predicate...)} for details.
 	 * 
-	 * @see QueryFactory#closeTo(Predicate...)
+	 * @see QueryFactory#closeTo(DirectionOptions, Predicate...)
 	 * @param maxDistance the result elements` allowed maximum distance to the predicate results in pixels
 	 * @param element the result elements are close to this {@link HtmlElement}
 	 * @return {@link DirectionPredicate}
@@ -615,7 +615,7 @@ public class QueryFactory {
 	 * 
 	 * TODO make constant of 300 pixels configurable
 	 * 
-	 * @see QueryFactory#closeTo(Predicate...)
+	 * @see QueryFactory#closeTo(DirectionOptions, Predicate...)
 	 * @param predicates the result elements are close to the elements determined by this predicates
 	 * @return {@link DirectionPredicate}
 	 */
@@ -628,7 +628,7 @@ public class QueryFactory {
 	 * 
 	 * TODO make constant of 300 pixels configurable
 	 * 
-	 * @see QueryFactory#closeTo(Predicate...)
+	 * @see QueryFactory#closeTo(DirectionOptions, Predicate...)
 	 * @param elements the result elements are close to these {@link HtmlElements}
 	 * @return {@link DirectionPredicate}
 	 */
@@ -641,7 +641,7 @@ public class QueryFactory {
 	 * 
 	 * TODO make constant of 300 pixels configurable
 	 * 
-	 * @see QueryFactory#closeTo(Predicate...)
+	 * @see QueryFactory#closeTo(DirectionOptions, Predicate...)
 	 * @param element the result elements are close to these {@link HtmlElement}
 	 * @return {@link DirectionPredicate}
 	 */
@@ -671,9 +671,9 @@ public class QueryFactory {
 	 * In this example, both the {@code <div>} and the {@code <span>} are above the {@code <ul>}.
 	 * Also, the {@code <span>} is above the {@code <div>}, but the {@code <ul>} is not.
 	 * <p>
-	 * See {@link QueryFactory#closeTo(Predicate...)} for more details.
-	 * 
-	 * @see QueryFactory#closeTo(Predicate...) 
+	 * See {@link QueryFactory#closeTo(DirectionOptions, Predicate...)} for more details.
+	 *
+	 * @see QueryFactory#closeTo(DirectionOptions, Predicate...) 
 	 * @param predicates the result elements are above the elements determined by this predicates
 	 * @return {@link DirectionPredicate}
 	 */
@@ -725,9 +725,9 @@ public class QueryFactory {
 	 * In this example, the {@code <div>} and the {@code <span>} are below the {@code <ul>}.
 	 * Also, the {@code <span>} is below the {@code <div>}, but the {@code <ul>} is not.
 	 * <p>
-	 * See {@link QueryFactory#closeTo(Predicate...)} for more details.
-	 * 
-	 * @see QueryFactory#closeTo(Predicate...) 
+	 * See {@link QueryFactory#closeTo(DirectionOptions, Predicate...)} for more details.
+	 *
+	 * @see QueryFactory#closeTo(DirectionOptions, Predicate...) 
 	 * @param predicates the result elements are above the elements determined by this predicates
 	 * @return {@link DirectionPredicate}
 	 */
@@ -776,9 +776,9 @@ public class QueryFactory {
 	 * In this example, the {@code <ul>} is left of the {@code <span>} and the {@code <div>}, but the {@code <div>} is
 	 * not left of the {@code <span>}, because its right border is overlapping the left border of the {@code <span>}. 
 	 * <p>
-	 * See {@link QueryFactory#closeTo(Predicate...)} for more details.
-	 * 
-	 * @see QueryFactory#closeTo(Predicate...) 
+	 * See {@link QueryFactory#closeTo(DirectionOptions, Predicate...)} for more details.
+	 *
+	 * @see QueryFactory#closeTo(DirectionOptions, Predicate...) 
 	 * @param predicates the result elements are above the elements determined by this predicates
 	 * @return {@link DirectionPredicate}
 	 */
@@ -827,9 +827,9 @@ public class QueryFactory {
 	 * In this example, the {@code <span>} and the {@code <div>} are right of the {@code <ul>}, but the {@code <span>}
 	 * is not right of the {@code <div>} because its left border is overlapping the right border of the {@code <span>}.  
 	 * <p>
-	 * See {@link QueryFactory#closeTo(Predicate...)} for more details.
-	 * 
-	 * @see QueryFactory#closeTo(Predicate...) 
+	 * See {@link QueryFactory#closeTo(DirectionOptions, Predicate...)} for more details.
+	 *
+	 * @see QueryFactory#closeTo(DirectionOptions, Predicate...) 
 	 * @param predicates the result elements are above the elements determined by this predicates
 	 * @return {@link DirectionPredicate}
 	 */
@@ -877,10 +877,10 @@ public class QueryFactory {
 	 * }</pre>
 	 * In this example, only the {@code <span>} is above all the {@code <ul>} (or {@code <div>} respectively).
 	 * <p>
-	 * See {@link QueryFactory#closeTo(Predicate...)} for more details.
-	 * 
+	 * See {@link QueryFactory#closeTo(DirectionOptions, Predicate...)} for more details.
+	 *
+	 * @see QueryFactory#closeTo(DirectionOptions, Predicate...) 
 	 * @see QueryFactory#above(Predicate...) 
-	 * @see QueryFactory#closeTo(Predicate...) 
 	 * @param predicates the result elements are above the elements determined by this predicates
 	 * @return {@link DirectionPredicate}
 	 */
@@ -930,10 +930,10 @@ public class QueryFactory {
 	 * }</pre>
 	 * In this example, only the {@code <span>} is below all the {@code <ul>} (or {@code <div>} respectively).
 	 * <p>
-	 * See {@link QueryFactory#closeTo(Predicate...)} for more details.
-	 * 
+	 * See {@link QueryFactory#closeTo(DirectionOptions, Predicate...)} for more details.
+	 *
+	 * @see QueryFactory#closeTo(DirectionOptions, Predicate...) 
 	 * @see QueryFactory#below(Predicate...) 
-	 * @see QueryFactory#closeTo(Predicate...) 
 	 * @param predicates the result elements are above the elements determined by this predicates
 	 * @return {@link DirectionPredicate}
 	 */
@@ -985,10 +985,10 @@ public class QueryFactory {
 	 * }</pre>
 	 * In this example, only the {@code <span>} is left of all the {@code <ul>} (or {@code <div>} respectively).
 	 * <p>
-	 * See {@link QueryFactory#closeTo(Predicate...)} for more details.
-	 * 
+	 * See {@link QueryFactory#closeTo(DirectionOptions, Predicate...)} for more details.
+	 *
+	 * @see QueryFactory#closeTo(DirectionOptions, Predicate...) 
 	 * @see QueryFactory#leftOf(Predicate...) 
-	 * @see QueryFactory#closeTo(Predicate...) 
 	 * @param predicates the result elements are above the elements determined by this predicates
 	 * @return {@link DirectionPredicate}
 	 */
@@ -1040,10 +1040,10 @@ public class QueryFactory {
 	 * }</pre>
 	 * In this example, only the {@code <span>} is right of all the {@code <ul>} (or {@code <div>} respectively).
 	 * <p>
-	 * See {@link QueryFactory#closeTo(Predicate...)} for more details.
-	 * 
+	 * See {@link QueryFactory#closeTo(DirectionOptions, Predicate...)} for more details.
+	 *
+	 * @see QueryFactory#closeTo(DirectionOptions, Predicate...) 
 	 * @see QueryFactory#rightOf(Predicate...) 
-	 * @see QueryFactory#closeTo(Predicate...) 
 	 * @param predicates the result elements are above the elements determined by this predicates
 	 * @return {@link DirectionPredicate}
 	 */
