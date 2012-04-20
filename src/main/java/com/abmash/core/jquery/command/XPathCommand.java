@@ -7,7 +7,7 @@ package com.abmash.core.jquery.command;
 public class XPathCommand extends Command {
 	
 	public XPathCommand(String selector) {
-		super(selector);
+		super("'" + selector + "'");
 		method = "xpath";
 	}
 }

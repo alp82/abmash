@@ -54,23 +54,15 @@ public class TestAbmashCore {
     }
     
     @Test
-    public void bodyElementIsFoundExactlyOnceWithCSS() {
-		goToUrlAndDontReloadIfAlreadyOpen("http://acama-systems.de/");
-		HtmlElements elements = browser.query(select("html > body")).find();
-    	assertEquals(1, elements.size());
-    	assertEquals("body", elements.first().getTagName());
-    }
-    
-    @Test
     public void bodyElementIsFoundExactlyOnceWithXPath() {
 		goToUrlAndDontReloadIfAlreadyOpen("http://acama-systems.de/");
-		HtmlElements elements = browser.query(xPath("html/body")).find();
+		HtmlElements elements = browser.query(xPath("//html/body")).find();
     	assertEquals(1, elements.size());
     	assertEquals("body", elements.first().getTagName());
     }
     
     @Test
-    public void elementsAreFoundByTagSelector() {
+    public void elementsAreFoundBySelectPredicate() {
 		goToUrlAndDontReloadIfAlreadyOpen("http://acama-systems.de/");
 		HtmlElements elements = browser.query(select("a")).find();
 		assertThat(elements.size(), not(is(0)));
