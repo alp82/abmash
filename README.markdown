@@ -29,7 +29,7 @@ Here is an introductory screencast: [Abmash: Browser automation in Java](http://
 	// click it
 	firstResult.click();
 
-Query conditions like `below()` are based on the visual representation of the web
+Query predicates like `below()` are based on the visual representation of the web
 page, independently from the page source and DOM structure. Correspondingly,
 `isTitle()` not only selects `<h1>`, `<h2>`, ... elements, but also elements with a
 bigger font-size than the average on the current page.
