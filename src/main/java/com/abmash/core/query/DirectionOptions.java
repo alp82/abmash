@@ -3,6 +3,7 @@ package com.abmash.core.query;
 public class DirectionOptions {
 
 	DirectionType type;
+	DistanceType distanceType;
 	int limit = 0;
 	int limitPerTarget = 0;
 	int minDistance = 0;
@@ -16,6 +17,10 @@ public class DirectionOptions {
 
 	public DirectionType getType() {
 		return type;
+	}
+	
+	public DistanceType getDistanceType() {
+		return distanceType;
 	}
 
 	public int getLimit() {
@@ -45,6 +50,10 @@ public class DirectionOptions {
 	public DirectionOptions setType(DirectionType type) {
 		this.type = type;
 		return this;
+	}
+	
+	public void setDistanceType(DistanceType distanceType) {
+		this.distanceType = distanceType;
 	}
 
 	public DirectionOptions setLimit(int limit) {
@@ -80,6 +89,7 @@ public class DirectionOptions {
 	public String buildCommandSelector() {
 		String options = "{ " +
 			(type != null ? "directionType:'" + type.toString() + "'," : "") +
+			(distanceType != null ? "distanceType:'" + distanceType.toString() + "'," : "") +
 			(limit > 0 ? "limit: " + String.valueOf(limit) + "," : "") +
 			(limitPerTarget > 0 ? "limitPerTarget:" + String.valueOf(limitPerTarget) + "," : "") +
 			(minDistance > 0 ? "minDistance:" + String.valueOf(minDistance) + "," : "") +

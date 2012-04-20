@@ -61,20 +61,21 @@
 		RIGHTOF: "RIGHTOF",
 	};
 	var distanceType = {
-		topLeft: 1,
-		top: 2,
-		topRight: 3,
-		left: 4,
-		center: 5,
-		right: 6,
-		bottomLeft: 7,
-		bottom: 8,
-		bottomRight: 9,
-		average: 10,
+		TOPLEFT: "TOPLEFT",
+		TOP: "TOP",
+		TOPRIGHT: "TOPRIGHT",
+		LEFT: "LEFT",
+		CENTER: "CENTER",
+		RIGHT: "RIGHT",
+		BOTTOMLEFT: "BOTTOMLEFT",
+		BOTTOM: "BOTTOM",
+		BOTTOMRIGHT: "BOTTOMRIGHT",
+		AVERAGE: "AVERAGE",
 	};
+	// TODO calculation type
 	var calculationType = {
-		min: 1,
-		average: 2,
+		min: "MIN",
+		average: "AVERAGE",
 	};
 
 	// closeness query
@@ -86,109 +87,8 @@
 		    	sources: this,
 		    	targets: jQuery(referenceElements),
 		    	directionType: directionType.CLOSETO,
-		    	distanceType: distanceType.center,
 		    	calculationType: calculationType.min,
 		    	directionHasToMatchAllTargets: false,
-		    }, options));
-    	},
-    	closeToLabel: function(referenceElements, options) {
-    		return abmash.elementsInDirection(jQuery.extend({
-		    	sources: this,
-		    	targets: jQuery(referenceElements),
-		    	directionType: directionType.CLOSETOLABEL,
-		    	distanceType: distanceType.topLeft,
-		    	calculationType: calculationType.min,
-		    	directionHasToMatchAllTargets: false,
-		    }, options));
-    	},
-    	closeToClickableLabel: function(referenceElements, options) {
-    		return abmash.elementsInDirection(jQuery.extend({
-		    	sources: this,
-		    	targets: jQuery(referenceElements),
-		    	directionType: directionType.CLOSETOCLICKABLELABEL,
-		    	distanceType: distanceType.center,
-		    	calculationType: calculationType.min,
-		    	directionHasToMatchAllTargets: false,
-		    }, options));
-    	},
-    	above: function(referenceElements, options) {
-    		return abmash.elementsInDirection(jQuery.extend({
-		    	sources: this,
-		    	targets: jQuery(referenceElements),
-		    	directionType: directionType.ABOVE,
-		    	distanceType: distanceType.bottomLeft,
-		    	calculationType: calculationType.min,
-		    	directionHasToMatchAllTargets: false,
-		    }, options));
-    	},
-    	below: function(referenceElements, options) {
-    		return abmash.elementsInDirection(jQuery.extend({
-		    	sources: this,
-		    	targets: jQuery(referenceElements),
-		    	directionType: directionType.BELOW,
-		    	distanceType: distanceType.topLeft,
-		    	calculationType: calculationType.min,
-		    	directionHasToMatchAllTargets: false,
-		    }, options));
-    	},
-    	leftOf: function(referenceElements, options) {
-    		return abmash.elementsInDirection(jQuery.extend({
-		    	sources: this,
-		    	targets: jQuery(referenceElements),
-		    	directionType: directionType.LEFTOF,
-		    	distanceType: distanceType.right,
-		    	calculationType: calculationType.min,
-		    	directionHasToMatchAllTargets: false,
-		    }, options));
-    	},
-    	rightOf: function(referenceElements, options) {
-    		return abmash.elementsInDirection(jQuery.extend({
-		    	sources: this,
-		    	targets: jQuery(referenceElements),
-		    	directionType: directionType.RIGHTOF,
-		    	distanceType: distanceType.left,
-		    	calculationType: calculationType.min,
-		    	directionHasToMatchAllTargets: false,
-		    }, options));
-    	},
-    	aboveAll: function(referenceElements, options) {
-    		return abmash.elementsInDirection(jQuery.extend({
-		    	sources: this,
-		    	targets: jQuery(referenceElements),
-		    	directionType: directionType.ABOVE,
-		    	distanceType: distanceType.bottomLeft,
-		    	calculationType: calculationType.average,
-		    	directionHasToMatchAllTargets: true,
-		    }, options));
-    	},
-    	belowAll: function(referenceElements, options) {
-    		return abmash.elementsInDirection(jQuery.extend({
-		    	sources: this,
-		    	targets: jQuery(referenceElements),
-		    	directionType: directionType.BELOW,
-		    	distanceType: distanceType.topLeft,
-		    	calculationType: calculationType.average,
-		    	directionHasToMatchAllTargets: true,
-		    }, options));
-    	},
-    	leftOfAll: function(referenceElements, options) {
-    		return abmash.elementsInDirection(jQuery.extend({
-		    	sources: this,
-		    	targets: jQuery(referenceElements),
-		    	directionType: directionType.LEFTOF,
-		    	distanceType: distanceType.right,
-		    	calculationType: calculationType.average,
-		    	directionHasToMatchAllTargets: true,
-		    }, options));
-    	},
-    	rightOfAll: function(referenceElements, options) {
-    		return abmash.elementsInDirection(jQuery.extend({
-		    	sources: this,
-		    	targets: jQuery(referenceElements),
-		    	directionType: directionType.RIGHTOF,
-		    	distanceType: distanceType.left,
-		    	calculationType: calculationType.average,
-		    	directionHasToMatchAllTargets: true,
 		    }, options));
     	},
     });
@@ -211,6 +111,35 @@
 		    	limit: false,
 		    	limitPerTarget: false,
 		    }, closenessOptions);
+		    
+			// set fitting type for distance calculations
+			if(typeof options.distanceType == "undefined") {
+				switch (options.directionType) {
+					case directionType.CLOSETO:
+						options['distanceType'] = distanceType.AVERAGE;
+						break;
+					case directionType.CLOSETOLABEL:
+						options['distanceType'] = distanceType.TOPLEFT;
+						break;
+					case directionType.CLOSETOCLICKABLELABEL:
+						options['distanceType'] = distanceType.TOPLEFT;
+						break;
+					case directionType.ABOVE:
+						options['distanceType'] = distanceType.BOTTOMLEFT;
+						break;
+					case directionType.BELOW:
+						options['distanceType'] = distanceType.TOPLEFT;
+						break;
+					case directionType.LEFTOF:
+						options['distanceType'] = distanceType.RIGHT;
+						break;
+					case directionType.RIGHTOF:
+						options['distanceType'] = distanceType.LEFT;
+						break;
+					default:
+						options['distanceType'] = distanceType.AVERAGE;
+				}
+			}
 		    
 		    options.sources = jQuery(options.sources).distinctDescendants();
 		    options.targets = jQuery(options.targets).distinctDescendants();
@@ -495,20 +424,22 @@
 		var distanceBottom = euclideanDistance(coords.diffCenterX, coords.topSource - coords.bottomTarget);
 		var distanceBottomRight = euclideanDistance(coords.diffRight, coords.topSource - coords.bottomTarget);
 		
-		if(options.distanceType == distanceType.topLeft) return distanceTopLeft;
-		else if(options.distanceType == distanceType.top) return distanceTop;
-		else if(options.distanceType == distanceType.topRight) return distanceTopRight;
-		else if(options.distanceType == distanceType.left) return distanceLeft;
-		else if(options.distanceType == distanceType.center) return distanceCenter;
-		else if(options.distanceType == distanceType.right) return distanceRight;
-		else if(options.distanceType == distanceType.bottomLeft) return distanceBottomLeft;
-		else if(options.distanceType == distanceType.bottom) return distanceBottom;
-		else if(options.distanceType == distanceType.bottomRight) return distanceBottomRight;
-		// TODO if TYPABLE then distanceTopLeft
-		else return (distanceTopLeft + distanceCenter + distanceBottomRight) / 3;
+//		alert(coords.toSource());
+//		alert(options.toSource());
 		
-		// TODO this should throw an error
-		return;
+		if(options.distanceType == distanceType.TOPLEFT) return distanceTopLeft;
+		else if(options.distanceType == distanceType.TOP) return distanceTop;
+		else if(options.distanceType == distanceType.TOPRIGHT) return distanceTopRight;
+		else if(options.distanceType == distanceType.LEFT) return distanceLeft;
+		else if(options.distanceType == distanceType.CENTER) return distanceCenter;
+		else if(options.distanceType == distanceType.RIGHT) return distanceRight;
+		else if(options.distanceType == distanceType.BOTTOMLEFT) return distanceBottomLeft;
+		else if(options.distanceType == distanceType.BOTTOM) return distanceBottom;
+		else if(options.distanceType == distanceType.BOTTOMRIGHT) return distanceBottomRight;
+		else if(options.distanceType == distanceType.AVERAGE) return (distanceTopLeft + distanceCenter + distanceBottomRight) / 3;
+		
+		// we shouldn't reach this, throw an error
+		throw new Error('Distance calculation error: distanceType is ' + options.distanceType);
 	}
     
     function getWeight(target) {
