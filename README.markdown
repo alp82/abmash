@@ -9,7 +9,7 @@ Abmash is all about interacting with a browser as humans would do. Including AJA
 The goal is that programmers do not need any knowledge about the HTML/CSS source code of web pages.
 Instead, elements can be found by querying for visual attributes and visible text.
 
-TODO Screencast
+Here is an introductory screencast: [Abmash: Browser automation in Java](http://www.youtube.com/watch?v=Il0191C8fg8)
 
 *Example (Java):*
 
