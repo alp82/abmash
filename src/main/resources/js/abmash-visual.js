@@ -119,10 +119,10 @@
 						options['distanceType'] = distanceType.AVERAGE;
 						break;
 					case directionType.CLOSETOLABEL:
-						options['distanceType'] = distanceType.TOPLEFT;
+						options['distanceType'] = distanceType.LEFT;
 						break;
 					case directionType.CLOSETOCLICKABLELABEL:
-						options['distanceType'] = distanceType.TOPLEFT;
+						options['distanceType'] = distanceType.LEFT;
 						break;
 					case directionType.ABOVE:
 						options['distanceType'] = distanceType.BOTTOMLEFT;
@@ -417,9 +417,11 @@
 		var distanceTopLeft = euclideanDistance(coords.diffLeft, coords.bottomSource - coords.topTarget);
 		var distanceTop = euclideanDistance(coords.diffCenterX, coords.bottomSource - coords.topTarget);
 		var distanceTopRight = euclideanDistance(coords.diffRight, coords.bottomSource - coords.topTarget);
-		var distanceLeft = euclideanDistance(coords.rightSource - coords.leftTarget, coords.diffCenterY);
+//		var distanceLeft = euclideanDistance(coords.rightSource - coords.leftTarget, coords.diffCenterY);
+		var distanceLeft = euclideanDistance(coords.diffLeft, coords.diffCenterY);
 		var distanceCenter = euclideanDistance(coords.diffCenterX, coords.diffCenterY);
-		var distanceRight = euclideanDistance(coords.leftSource - coords.rightTarget, coords.diffCenterY);
+//		var distanceRight = euclideanDistance(coords.leftSource - coords.rightTarget, coords.diffCenterY);
+		var distanceRight = euclideanDistance(coords.diffRight, coords.diffCenterY);
 		var distanceBottomLeft = euclideanDistance(coords.diffLeft, coords.topSource - coords.bottomTarget);
 		var distanceBottom = euclideanDistance(coords.diffCenterX, coords.topSource - coords.bottomTarget);
 		var distanceBottomRight = euclideanDistance(coords.diffRight, coords.topSource - coords.bottomTarget);
