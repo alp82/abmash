@@ -8,8 +8,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeoutException;
 
 import javax.imageio.ImageIO;
 
@@ -21,27 +21,26 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.remote.RemoteWebElement;
 
 import com.abmash.REMOVE.core.htmlquery.condition.ClosenessCondition;
+import com.abmash.REMOVE.core.htmlquery.condition.ClosenessCondition.Direction;
 import com.abmash.REMOVE.core.htmlquery.condition.ColorCondition;
 import com.abmash.REMOVE.core.htmlquery.condition.Condition;
 import com.abmash.REMOVE.core.htmlquery.condition.Conditions;
 import com.abmash.REMOVE.core.htmlquery.condition.ElementCondition;
-import com.abmash.REMOVE.core.htmlquery.condition.SelectorCondition;
-import com.abmash.REMOVE.core.htmlquery.condition.TagnameCondition;
-import com.abmash.REMOVE.core.htmlquery.condition.ClosenessCondition.Direction;
 import com.abmash.REMOVE.core.htmlquery.condition.ElementCondition.ElementType;
+import com.abmash.REMOVE.core.htmlquery.condition.SelectorCondition;
 import com.abmash.REMOVE.core.htmlquery.condition.SelectorCondition.QueryType;
+import com.abmash.REMOVE.core.htmlquery.condition.TagnameCondition;
 import com.abmash.REMOVE.core.htmlquery.selector.Selector;
 import com.abmash.REMOVE.core.htmlquery.selector.SelectorGroup;
-import com.abmash.REMOVE.core.htmlquery.selector.SelectorGroups;
 import com.abmash.REMOVE.core.htmlquery.selector.SelectorGroup.Type;
+import com.abmash.REMOVE.core.htmlquery.selector.SelectorGroups;
 import com.abmash.api.Browser;
 import com.abmash.api.HtmlElement;
 import com.abmash.api.HtmlElements;
-import com.abmash.api.tabular.List;
-import com.abmash.api.tabular.Table;
 import com.abmash.core.color.ColorName;
 import com.abmash.core.color.Dominance;
 import com.abmash.core.color.Tolerance;
+import com.google.common.collect.Table;
 
 
 /**

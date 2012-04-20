@@ -20,10 +20,8 @@ import org.openqa.selenium.remote.RemoteWebElement;
 
 import com.abmash.REMOVE.api.HtmlQuery;
 import com.abmash.REMOVE.core.htmlquery.condition.ElementCondition.ElementType;
-import com.abmash.REMOVE.core.htmlquery.selector.JQuerySelector;
 import com.abmash.api.query.Query;
 import com.abmash.api.query.QueryFactory;
-import com.abmash.api.tabular.Table;
 import com.abmash.core.browser.interaction.Clear;
 import com.abmash.core.browser.interaction.Click;
 import com.abmash.core.browser.interaction.Click.ClickType;
@@ -40,7 +38,6 @@ import com.abmash.core.browser.interaction.Type;
 import com.abmash.core.element.Element;
 import com.abmash.core.element.Location;
 import com.abmash.core.element.Size;
-import com.abmash.core.tools.DataTypeConversion;
 
 
 /**
@@ -817,16 +814,16 @@ public class HtmlElement extends Element {
 	
 	// additional element references
 
-	/**
-	 * Get the table representation of this HTML element. Works only for {@code <table>} elements.
-	 * Throws an exception if element is not a table.
-	 * 
-	 * @return {@link Table} representation
-	 */
-	public Table getTable() {
-		// TODO surrounding table
-		return new Table(this);
-	}
+//	/**
+//	 * Get the table representation of this HTML element. Works only for {@code <table>} elements.
+//	 * Throws an exception if element is not a table.
+//	 * 
+//	 * @return {@link Table} representation
+//	 */
+//	public Table getTable() {
+//		// TODO surrounding table
+//		return new Table(this);
+//	}
 	
 	/**
 	 * Gets reference elements, which are needed for internal closeness calculations.

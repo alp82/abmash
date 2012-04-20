@@ -1,6 +1,7 @@
 package com.abmash.test;
 
 import static org.junit.Assert.*;
+
 //import static org.hamcrest.core.Is.is;
 //import static org.hamcrest.core.IsNot.not;
 //import static org.hamcrest.core.IsEqual.equalTo;
@@ -13,10 +14,11 @@ import static org.hamcrest.Matchers.*;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import org.hamcrest.core.IsEqual;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import static com.abmash.api.query.QueryFactory.*;
 
 import com.abmash.api.Browser;
 import com.abmash.api.HtmlElement;
@@ -46,7 +48,7 @@ public class TestAbmashCore {
     @Test
     public void bodyElementIsFoundExactlyOnceWithJQuery() {
 		goToUrlAndDontReloadIfAlreadyOpen("http://acama-systems.de/");
-    	HtmlElements elements = browser.query().jQuerySelector("find('html > body')").find();
+    	HtmlElements elements = browser.query(select("html > body")).find();
     	assertEquals(1, elements.size());
     	assertEquals("body", elements.first().getTagName());
     }
@@ -54,7 +56,7 @@ public class TestAbmashCore {
     @Test
     public void bodyElementIsFoundExactlyOnceWithCSS() {
 		goToUrlAndDontReloadIfAlreadyOpen("http://acama-systems.de/");
-		HtmlElements elements = browser.query().cssSelector("html > body").find();
+		HtmlElements elements = browser.query(select("html > body")).find();
     	assertEquals(1, elements.size());
     	assertEquals("body", elements.first().getTagName());
     }
@@ -62,7 +64,7 @@ public class TestAbmashCore {
     @Test
     public void bodyElementIsFoundExactlyOnceWithXPath() {
 		goToUrlAndDontReloadIfAlreadyOpen("http://acama-systems.de/");
-		HtmlElements elements = browser.query().xPathSelector("html/body").find();
+		HtmlElements elements = browser.query(xPath("html/body")).find();
     	assertEquals(1, elements.size());
     	assertEquals("body", elements.first().getTagName());
     }
@@ -70,7 +72,7 @@ public class TestAbmashCore {
     @Test
     public void elementsAreFoundByTagSelector() {
 		goToUrlAndDontReloadIfAlreadyOpen("http://acama-systems.de/");
-		HtmlElements elements = browser.query().tag("a").find();
+		HtmlElements elements = browser.query(select("a")).find();
 		assertThat(elements.size(), not(is(0)));
 		for (HtmlElement element: elements) {
 			assertThat("a", equalTo(element.getTagName()));
@@ -80,7 +82,7 @@ public class TestAbmashCore {
     @Test
     public void typableElementsAreFound() {
 		goToUrlAndDontReloadIfAlreadyOpen("http://acama-systems.de/");
-		HtmlElements elements = browser.query().isTypable().find();
+		HtmlElements elements = browser.query(typable()).find();
 		// TODO
 //		assertThat(0, not(is(elements.size())));
     }
@@ -88,7 +90,7 @@ public class TestAbmashCore {
     @Test
 	public void elementHasNoAttributes() {
 		goToUrlAndDontReloadIfAlreadyOpen("http://acama-systems.de/");
-		HtmlElement element = browser.query().jQuerySelector("find('html > body')").findFirst();
+		HtmlElement element = browser.query(select("html > body")).findFirst();
 		HashSet<String> expctdAttributeNames = new HashSet<String>();
 		HashSet<String> actualAttributeNames = new HashSet<String>(element.getAttributeNames());
 		assertEquals(expctdAttributeNames, actualAttributeNames);
@@ -97,7 +99,7 @@ public class TestAbmashCore {
 	@Test
 	public void elementHasOneAttribute() {
 		goToUrlAndDontReloadIfAlreadyOpen("http://acama-systems.de/");
-		HtmlElement element = browser.query().jQuerySelector("find('html > body > div#page_margins')").findFirst();
+		HtmlElement element = browser.query(select("html > body > div#page_margins")).findFirst();
 		HashSet<String> expctdAttributeNames = new HashSet<String>(Arrays.asList("id"));
 		HashSet<String> actualAttributeNames = new HashSet<String>(element.getAttributeNames());
 		assertEquals(expctdAttributeNames, actualAttributeNames);
@@ -106,7 +108,7 @@ public class TestAbmashCore {
 	@Test
 	public void elementHasMultipleAttributes() {
 		goToUrlAndDontReloadIfAlreadyOpen("http://acama-systems.de/");
-		HtmlElement element = browser.query().jQuerySelector("find('#topnav > a')").findFirst();
+		HtmlElement element = browser.query(select("#topnav > a")).findFirst();
 		HashSet<String> expctdAttributeNames = new HashSet<String>(Arrays.asList("class", "title", "href"));
 		HashSet<String> actualAttributeNames = new HashSet<String>(element.getAttributeNames());
 		assertEquals(expctdAttributeNames, actualAttributeNames);
@@ -116,7 +118,7 @@ public class TestAbmashCore {
 	public void popupsAreNotFocused() {
 		goToUrlAndDontReloadIfAlreadyOpen("http://jadranka.hr/");
 		Popups popups = browser.window().getPopups();
-		HtmlElements htmllinks = browser.query().tag("a").find();
+		HtmlElements htmllinks = browser.query(select("a")).find();
 		assertThat(popups.size(), is(1));
 		assertThat(htmllinks.size(), greaterThan(1));
 	}

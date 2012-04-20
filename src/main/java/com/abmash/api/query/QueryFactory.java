@@ -82,7 +82,9 @@ public class QueryFactory {
 		return unionQuery;
 	}
 
-	// Boolean Predicates
+	// -------------------------------------------
+	//  Boolean predicates
+	// -------------------------------------------
 	
 	/**
 	 * Defines a boolean "and" predicate. Elements are returned if all given predicates match.
@@ -117,6 +119,10 @@ public class QueryFactory {
 		return new BooleanPredicate(BooleanType.NOT, predicates);
 	}
 	
+	// -------------------------------------------
+	//  Element and document structure predicates
+	// -------------------------------------------
+	
 	/**
 	 * Returns the given {@link HtmlElements} as predicate result.
 	 * 
@@ -127,9 +133,19 @@ public class QueryFactory {
 		return new ElementPredicate(elements);
 	}
 	
-	// ------------------------------------------
+	/**
+	 * Returns the given {@link HtmlElements} as predicate result.
+	 * 
+	 * @param elements the elements are directly passed to the result set
+	 * @return the Predicate returning the provided {@link HtmlElements}
+	 */
+//	public static Predicate insideOf(HtmlElements elements) {
+//		return new ElementPredicate(elements);
+//	}
+	
+	// -------------------------------------------
 	//  JQuery predicates
-	// ------------------------------------------
+	// -------------------------------------------
 	
 	/**
 	 * Finds elements that match the given selector (CSS or jQuery).
@@ -441,9 +457,9 @@ public class QueryFactory {
 		return new FramePredicate(text);
 	}
 
-	// ------------------------------------------
+	// -------------------------------------------
 	//  Color predicates
-	// ------------------------------------------
+	// -------------------------------------------
 	
 	/**
 	 * Finds elements that match the desired color. Performs slow if no other predicates are used.
@@ -524,9 +540,9 @@ public class QueryFactory {
 		return color(colorName.getColor());
 	}
 	
-	// ------------------------------------------
+	// -------------------------------------------
 	//  Direction predicates
-	// ------------------------------------------
+	// -------------------------------------------
 	
 	/**
 	 * Finds elements visually close to the elements that match the given predicates. The result is dependent on the current

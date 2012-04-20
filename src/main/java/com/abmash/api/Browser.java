@@ -20,8 +20,6 @@ import com.abmash.api.browser.WaitFor;
 import com.abmash.api.browser.Window;
 import com.abmash.api.query.Query;
 import com.abmash.api.query.QueryFactory;
-import com.abmash.api.tabular.List;
-import com.abmash.api.tabular.Table;
 import com.abmash.core.Document;
 import com.abmash.core.browser.BrowserConfig;
 import com.abmash.core.browser.JavaScriptResult;
@@ -590,83 +588,83 @@ public class Browser implements Document {
 		return element instanceof HtmlElement ? element.submit() : null;
 	}
 	
-	/**
-	 * Finds the first list whose visible text or attribute values contains the given search query,
-	 * and the {@link List} representation.
-	 * <p> 
-	 * <strong>Example:</strong>
-	 * <ul>
-	 * <li><code>List ingredientTable = browser.getTable("Ingredient");</code> returns the first table which contains the
-	 * text <em>Ingredient</em>.</li> 
-	 * <li><code>ingredientTable.get(0);</code> returns the first list item.</li> 
-	 * </ul>
-	 * 
-	 * @param query text which is contained in the list (visible text or attribute value)
-	 * @return List representation of this element
-	 * @see List
-	 */
-	public List getList(String query) {
-		return new List(this, query);
-	}
-	
-	/**
-	 * Returns the {@link List} representation of a {@code <ul>}, {@code <ol>} or {@code <dl>} element.
-	 * <p> 
-	 * <strong>Example:</strong>
-	 * <ul>
-	 * <li><code>HtmlElement listTitle = browser.query().isTitle().has("Ingredients").findFirst();</code> Returns the first element being a title labeled <em>Ingredients</em></li>
-	 * <li><code>HtmlElement list = browser.query().isList().below(tableTitle).findFirst();</code> returns the first list below the previously selected title element</li>
-	 * <li><code>List ingredientList = browser.getList(table);</code> finally returns the list representation.</li> 
-	 * <li><code>ingredientList.get(0);</code> returns the first list item.</li> 
-	 * <li>See {@link List} for more examples on how to interact with the table.</li> 
-	 * </ul>
-	 * 
-	 * @param listElement has to be an {@link HtmlElement} with the tag {@code <ul>}, {@code <ol>} or {@code <dl>}
-	 * @return List representation of this element
-	 * @see List
-	 */
-	public List getList(HtmlElement listElement) {
-		return new List(listElement);
-	}
-	
-	/**
-	 * Finds the first table whose visible text or attribute values contains the given search query,
-	 * and the {@link Table} representation.
-	 * <p> 
-	 * <strong>Example:</strong>
-	 * <ul>
-	 * <li><code>Table userTable = browser.getTable("User");</code> returns the first table which contains the
-	 * text <em>User</em>.</li> 
-	 * <li><code>userTable.get(0, "email");</code> returns the <em>email</em> address of the user in the first row.</li> 
-	 * </ul>
-	 * 
-	 * @param query text which is contained in the table (visible text or attribute value)
-	 * @return Table representation of this element
-	 * @see Table
-	 */
-	public Table getTable(String query) {
-		return new Table(this, query);
-	}
-	
-	/**
-	 * Returns the {@link Table} representation of a {@code <table>} element.
-	 * <p> 
-	 * <strong>Example:</strong>
-	 * <ul>
-	 * <li><code>HtmlElement tableTitle = browser.query().isTitle().has("Userlist").findFirst();</code> Returns the first element being a title labeled <em>Userlist</em></li>
-	 * <li><code>HtmlElement table = browser.query().isTable().below(tableTitle).findFirst();</code> returns the first table below the previously selected title element</li>
-	 * <li><code>Table userTable = browser.getTable(table);</code> finally returns the table representation.</li> 
-	 * <li><code>userTable.getCell(0, "email");</code> returns the <em>email</em> address of the user in the first row.</li> 
-	 * <li>See {@link Table} for more examples on how to interact with the table.</li> 
-	 * </ul>
-	 * 
-	 * @param tableElement has to be an {@link HtmlElement} with the tag {@code <table>}
-	 * @return Table representation of this element
-	 * @see Table
-	 */
-	public Table getTable(HtmlElement tableElement) {
-		return new Table(tableElement);
-	}
+//	/**
+//	 * Finds the first list whose visible text or attribute values contains the given search query,
+//	 * and the {@link List} representation.
+//	 * <p> 
+//	 * <strong>Example:</strong>
+//	 * <ul>
+//	 * <li><code>List ingredientTable = browser.getTable("Ingredient");</code> returns the first table which contains the
+//	 * text <em>Ingredient</em>.</li> 
+//	 * <li><code>ingredientTable.get(0);</code> returns the first list item.</li> 
+//	 * </ul>
+//	 * 
+//	 * @param query text which is contained in the list (visible text or attribute value)
+//	 * @return List representation of this element
+//	 * @see List
+//	 */
+//	public List getList(String query) {
+//		return new List(this, query);
+//	}
+//	
+//	/**
+//	 * Returns the {@link List} representation of a {@code <ul>}, {@code <ol>} or {@code <dl>} element.
+//	 * <p> 
+//	 * <strong>Example:</strong>
+//	 * <ul>
+//	 * <li><code>HtmlElement listTitle = browser.query().isTitle().has("Ingredients").findFirst();</code> Returns the first element being a title labeled <em>Ingredients</em></li>
+//	 * <li><code>HtmlElement list = browser.query().isList().below(tableTitle).findFirst();</code> returns the first list below the previously selected title element</li>
+//	 * <li><code>List ingredientList = browser.getList(table);</code> finally returns the list representation.</li> 
+//	 * <li><code>ingredientList.get(0);</code> returns the first list item.</li> 
+//	 * <li>See {@link List} for more examples on how to interact with the table.</li> 
+//	 * </ul>
+//	 * 
+//	 * @param listElement has to be an {@link HtmlElement} with the tag {@code <ul>}, {@code <ol>} or {@code <dl>}
+//	 * @return List representation of this element
+//	 * @see List
+//	 */
+//	public List getList(HtmlElement listElement) {
+//		return new List(listElement);
+//	}
+//	
+//	/**
+//	 * Finds the first table whose visible text or attribute values contains the given search query,
+//	 * and the {@link Table} representation.
+//	 * <p> 
+//	 * <strong>Example:</strong>
+//	 * <ul>
+//	 * <li><code>Table userTable = browser.getTable("User");</code> returns the first table which contains the
+//	 * text <em>User</em>.</li> 
+//	 * <li><code>userTable.get(0, "email");</code> returns the <em>email</em> address of the user in the first row.</li> 
+//	 * </ul>
+//	 * 
+//	 * @param query text which is contained in the table (visible text or attribute value)
+//	 * @return Table representation of this element
+//	 * @see Table
+//	 */
+//	public Table getTable(String query) {
+//		return new Table(this, query);
+//	}
+//	
+//	/**
+//	 * Returns the {@link Table} representation of a {@code <table>} element.
+//	 * <p> 
+//	 * <strong>Example:</strong>
+//	 * <ul>
+//	 * <li><code>HtmlElement tableTitle = browser.query().isTitle().has("Userlist").findFirst();</code> Returns the first element being a title labeled <em>Userlist</em></li>
+//	 * <li><code>HtmlElement table = browser.query().isTable().below(tableTitle).findFirst();</code> returns the first table below the previously selected title element</li>
+//	 * <li><code>Table userTable = browser.getTable(table);</code> finally returns the table representation.</li> 
+//	 * <li><code>userTable.getCell(0, "email");</code> returns the <em>email</em> address of the user in the first row.</li> 
+//	 * <li>See {@link Table} for more examples on how to interact with the table.</li> 
+//	 * </ul>
+//	 * 
+//	 * @param tableElement has to be an {@link HtmlElement} with the tag {@code <table>}
+//	 * @return Table representation of this element
+//	 * @see Table
+//	 */
+//	public Table getTable(HtmlElement tableElement) {
+//		return new Table(tableElement);
+//	}
 
 	// -----------------------------------------------------------------------
 	// Content Output and Parser
