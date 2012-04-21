@@ -98,5 +98,3 @@ Then add this dependency:
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
-
-*TODO more information*
