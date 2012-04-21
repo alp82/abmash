@@ -76,7 +76,7 @@ Abmash is a Java framework to automate web applications, based on **[Selenium](h
 
 Maven
 -----
-Abmash snapshots are available as Maven repository.
+Abmash snapshots are available in a Maven repository.
 
 First put the following repository in your `pom.xml`:
 
