@@ -54,7 +54,7 @@ By the way, the `image()` predicate also retrieves elements with a background im
 
 Documentation
 -------------
-TODO Javadoc link
+Please refer to the [Abmash Javadoc](http://alp82.github.com/abmash/doc/).
 
 License
 -------
