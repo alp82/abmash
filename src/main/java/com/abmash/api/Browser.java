@@ -1,11 +1,19 @@
 package com.abmash.api;
 
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.imageio.ImageIO;
+
 import org.joda.time.DateTime;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -732,6 +740,30 @@ public class Browser implements Document {
 //		return (new JsonToWebElementConverter((RemoteWebDriver) webDriver)).apply(json);
 //	}
 
+
+	// -----------------------------------------------------------------------
+	// Take screenshots
+	// -----------------------------------------------------------------------
+	
+	public File getScreenshotAsFile() {
+		return ((TakesScreenshot) getWebDriver()).getScreenshotAs(OutputType.FILE);
+	}
+	
+	public byte[] getScreenshotAsByteArray() {
+		return ((TakesScreenshot) getWebDriver()).getScreenshotAs(OutputType.BYTES);
+	}
+	
+	public BufferedImage getScreenshotAsBufferedImage() throws IOException {
+		return ImageIO.read(new ByteArrayInputStream(getScreenshotAsByteArray()));
+	}
+	
+	public String getScreenshotAsBase64() {
+		return getScreenshotAsBase64(false);
+	}
+	
+	public String getScreenshotAsBase64(boolean withDataPrefix) {
+		return (withDataPrefix ? "data:image/png;base64," : "") + ((TakesScreenshot) getWebDriver()).getScreenshotAs(OutputType.BASE64);
+	}
 
 	// -----------------------------------------------------------------------
 	// Getters
