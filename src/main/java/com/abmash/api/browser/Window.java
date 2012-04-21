@@ -145,9 +145,7 @@ public class Window {
 	}
 	
 	/**
-	 * Switches to the specified popup.
-	 * 
-	 * @param popup
+	 * Switches to the last opened popup.
 	 */
 	public void switchToLastOpenedPopup() {
 		Popup popup = popups.get(popups.size() - 1);

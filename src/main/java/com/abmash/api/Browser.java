@@ -61,7 +61,7 @@ import com.abmash.core.tools.IOTools;
  * Use {@link Browser#choose(String, String)} to search for {@code <select>} elements (usually a dropdown selection or a box with a list
  * of options) with the specified name or label, get the best match and select the given option from the list.
  * <p>
- * Use {@link Browser#query()} to create a {@link Query} instance and to search for {@link HtmlElements}. Predicates can be arbitrarily combined.
+ * Use {@link Browser#query(Predicate...)} to create a {@link Query} instance and to search for {@link HtmlElements}. Predicates can be arbitrarily combined.
  * The call of {@link Query#find()} or {@link Query#findFirst()} will return the result(s).
  * <p>
  * Found elements can be further interacted with, see {@link HtmlElement}.
@@ -337,20 +337,20 @@ public class Browser implements Document {
 		return css(IOTools.convertStreamToString(stream).replace("\n", " "), flatImageFolder, args);
 	}
 	
-	/**
-	 * Reads PNG from a file and injects it into the current web page.
-	 * <p>
-	 * The files need to be placed in the src/main/resources/css directory.
-	 * 
-	 * @param stylesheet the stylesheet to load (without the file extension .css)
-	 * @return this browser instance
-	 */
-	/*public Browser imagePngFile(String imageFile) {
-		InputStream stream = BrowserJavaScript.class.getResourceAsStream("/images/" + imageFile + ".png");
-		String script = "jQuery('');";
-		javaScript(script).execute();
-		return this;
-	}*/
+//	/**
+//	 * Reads PNG from a file and injects it into the current web page.
+//	 * <p>
+//	 * The files need to be placed in the src/main/resources/css directory.
+//	 * 
+//	 * @param stylesheet the stylesheet to load (without the file extension .css)
+//	 * @return this browser instance
+//	 */
+//	public Browser imagePngFile(String imageFile) {
+//		InputStream stream = BrowserJavaScript.class.getResourceAsStream("/images/" + imageFile + ".png");
+//		String script = "jQuery('');";
+//		javaScript(script).execute();
+//		return this;
+//	}
 	
 	// -----------------------------------------------------------------------
 	// HtmlQuery

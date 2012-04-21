@@ -34,10 +34,17 @@ import com.abmash.core.query.predicate.TextPredicate;
 import com.abmash.core.query.predicate.TypablePredicate;
 import com.abmash.core.query.predicate.XPathPredicate;
 
+/**
+ * Create new query predicates. Use a static import in your class:
+ * <pre>
+ * <code>import static com.abmash.api.query.QueryFactory.*;</code>
+ * </pre>
+ * @author Alper Ortac
+ */
 public class QueryFactory {
 	
 	/**
-	 * Creates a new query to find elements in the specified browser and with the given predicates, used by calling {@link Browser#query()}.
+	 * Creates a new query to find elements in the specified browser and with the given predicates, used by calling {@link Browser#query(Predicate...)}.
 	 * <p>
 	 * <strong>Examples:</strong>
 	 * <ul>
@@ -53,12 +60,11 @@ public class QueryFactory {
 	 * <strong>Description:</strong>
 	 * <p>
 	 * Create a new query instance by calling <code>browser.query()</code>. Predicates can be chained and arbitrarily nested one after another.
-	 * To get the matching {@link HtmlElements} or {@link HtmlElement}, call {@link #find()} or {@link #findFirst()}.
+	 * To get the matching {@link HtmlElements} or {@link HtmlElement}, call {@link Query#find()} or {@link Query#findFirst()}.
 	 * 
-	 * @author Alper Ortac
 	 * @param browser
 	 * @param predicates
-	 * @return
+	 * @return the new query object with all predicates
 	 */
 	public static Query query(Browser browser, Predicate... predicates) {
 		return new Query(browser, predicates);
@@ -497,7 +503,7 @@ public class QueryFactory {
 	/**
 	 * Finds elements that match the desired color. See {@link #color(Color, double, double)} for details.
 	 * 
-	 * @param color the result elements have a similar color as the specified {@link ColorName}
+	 * @param colorName the result elements have a similar color as the specified {@link ColorName}
 	 * @param tolerance the higher the tolerance, the more distant colors are matching
 	 * @param dominance the higher the dominance, the less percent of the element can be covered by other colors
 	 * @return {@link ColorPredicate}
@@ -509,7 +515,7 @@ public class QueryFactory {
 	/**
 	 * Finds elements that match the desired color. See {@link #color(Color, double, double)} for details.
 	 * 
-	 * @param color the result elements have a similar color as the specified {@link ColorName}
+	 * @param colorName the result elements have a similar color as the specified {@link ColorName}
 	 * @param tolerance the higher the tolerance, the more distant colors are matching
 	 * @param dominance the higher the dominance, the less percent of the element can be covered by other colors
 	 * @return {@link ColorPredicate}
@@ -533,7 +539,7 @@ public class QueryFactory {
 	 * Finds elements that match the desired color. Tolerance and dominance are set to intermediate values.
 	 * See {@link #color(Color, double, double)} for details.
 	 * 
-	 * @param color the result elements have a similar color as the specified {@link ColorName}
+	 * @param colorName the result elements have a similar color as the specified {@link ColorName}
 	 * @return {@link ColorPredicate}
 	 */	
 	public static Predicate color(ColorName colorName) {
@@ -868,7 +874,7 @@ public class QueryFactory {
 	 * Finds elements visually <strong>right of</strong> the given {@link HtmlElement}. See {@link #rightOf(Predicate...)} for details.
 	 * 
 	 * @see #rightOf(Predicate...)
-	 * @param element the result elements are left of these {@link HtmlElement}
+	 * @param element the result elements are left of this {@link HtmlElement}
 	 * @return {@link DirectionPredicate}
 	 */	
 	public static Predicate rightOf(HtmlElement element) {
@@ -909,7 +915,7 @@ public class QueryFactory {
 	 * See {@link #aboveAll(Predicate...)} for more details.
 	 * 
 	 * @see QueryFactory#aboveAll(Predicate...)
-	 * @param predicates the result elements are above the elements determined by this predicates
+	 * @param elements the result elements are above all these {@link HtmlElements}
 	 * @return {@link DirectionPredicate}
 	 */
 	public static Predicate aboveAll(HtmlElements elements) {
@@ -921,7 +927,7 @@ public class QueryFactory {
 	 * See {@link #aboveAll(Predicate...)} for more details.
 	 * 
 	 * @see QueryFactory#aboveAll(Predicate...)
-	 * @param predicates the result elements are above the elements determined by this predicates
+	 * @param element the result elements are above all this {@link HtmlElement}
 	 * @return {@link DirectionPredicate}
 	 */	
 	public static Predicate aboveAll(HtmlElement element) {
@@ -962,7 +968,7 @@ public class QueryFactory {
 	 * See {@link #belowAll(Predicate...)} for more details.
 	 * 
 	 * @see QueryFactory#belowAll(Predicate...)
-	 * @param predicates the result elements are above the elements determined by this predicates
+	 * @param elements the result elements are below all these {@link HtmlElements}
 	 * @return {@link DirectionPredicate}
 	 */
 	public static Predicate belowAll(HtmlElements elements) {
@@ -974,7 +980,7 @@ public class QueryFactory {
 	 * See {@link #belowAll(Predicate...)} for more details.
 	 * 
 	 * @see QueryFactory#belowAll(Predicate...)
-	 * @param predicates the result elements are above the elements determined by this predicates
+	 * @param element the result elements are below all this {@link HtmlElement}
 	 * @return {@link DirectionPredicate}
 	 */
 	public static Predicate belowAll(HtmlElement element) {
@@ -1017,7 +1023,7 @@ public class QueryFactory {
 	 * See {@link #leftOfAll(Predicate...)} for more details.
 	 * 
 	 * @see QueryFactory#leftOfAll(Predicate...)
-	 * @param predicates the result elements are above the elements determined by this predicates
+	 * @param elements the result elements are left of all these {@link HtmlElements}
 	 * @return {@link DirectionPredicate}
 	 */
 	public static Predicate leftOfAll(HtmlElements elements) {
@@ -1029,7 +1035,7 @@ public class QueryFactory {
 	 * See {@link #leftOfAll(Predicate...)} for more details.
 	 * 
 	 * @see QueryFactory#leftOfAll(Predicate...)
-	 * @param predicates the result elements are above the elements determined by this predicates
+	 * @param element the result elements are left of all this {@link HtmlElement}
 	 * @return {@link DirectionPredicate}
 	 */	
 	public static Predicate leftOfAll(HtmlElement element) {
@@ -1072,7 +1078,7 @@ public class QueryFactory {
 	 * See {@link #rightOfAll(Predicate...)} for more details.
 	 * 
 	 * @see QueryFactory#rightOfAll(Predicate...)
-	 * @param predicates the result elements are above the elements determined by this predicates
+	 * @param elements the result elements are right of all these {@link HtmlElements}
 	 * @return {@link DirectionPredicate}
 	 */
 	public static Predicate rightOfAll(HtmlElements elements) {
@@ -1084,7 +1090,7 @@ public class QueryFactory {
 	 * See {@link #rightOfAll(Predicate...)} for more details.
 	 * 
 	 * @see QueryFactory#rightOfAll(Predicate...)
-	 * @param predicates the result elements are above the elements determined by this predicates
+	 * @param element the result elements are right of all this {@link HtmlElement}
 	 * @return {@link DirectionPredicate}
 	 */
 	public static Predicate rightOfAll(HtmlElement element) {

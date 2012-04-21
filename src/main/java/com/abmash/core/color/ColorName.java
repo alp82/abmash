@@ -3,7 +3,7 @@ package com.abmash.core.color;
 import java.awt.Color;
 
 /**
- * Colors from {@link http://www.w3.org/TR/SVG/types.html#ColorKeywords}
+ * The color list is available here: <a href="http://www.w3.org/TR/SVG/types.html#ColorKeywords">Recognized color keyword names</a>
  *  
  * @author alp
  */

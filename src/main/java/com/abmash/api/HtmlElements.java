@@ -18,7 +18,7 @@ import com.abmash.api.query.QueryFactory;
 /**
  * List of {@link HtmlElement} instances.
  * <p> 
- * Find <code>HtmlElements</code> by using the {@link Browser#query()} method.
+ * Find <code>HtmlElements</code> by using the {@link Browser#query(com.abmash.core.query.predicate.Predicate...)} method.
  * The {@link HtmlQuery#find()} method returns <code>HtmlElements</code>. See {@link HtmlQuery} how to find elements.
  * <p>
  * <strong>Example:</strong>
