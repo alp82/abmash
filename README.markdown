@@ -1,15 +1,28 @@
 Abmash
 ======
-**"Imitation of human interactions with a web browser, based on the visible rendered output."**
+Abmash is all about interacting with a browser as humans would do.
 
-Getting Started
----------------
-Abmash is all about interacting with a browser as humans would do. Including AJAX and forms.
+Including AJAX and forms.
 
-The goal is that programmers do not need any knowledge about the HTML/CSS source code of web pages.
-Instead, elements can be found by querying for visual attributes and visible text.
+Based on the visible rendered output.
 
 Here is an introductory screencast: [Abmash: Browser automation in Java](http://www.youtube.com/watch?v=Il0191C8fg8)
+
+Features
+--------
+* **Clicking**, using the **keyboard** or a combination of both ("CTRL + Click")
+* Interaction with **forms**
+* **Datepicker** support, just do `browser.chooseDate("arrival", new DateTime(2012, 10, 22, 14, 30));` 
+* **AJAX support without wait commands**, Abmash usually knows when it has to wait for an AJAX request to be completed
+* **Mouseover** + **Drag'n'Drop**
+* Searching for **visual closeness** in specific directions ("text below image")
+* Searching for **specific colors** ("red button")
+* Complex **boolean queries** ("blue image or headline which is not clickable")
+
+Description
+-----------
+The goal of Abmash is that programmers do not need any knowledge about the HTML/CSS source code of web pages.
+Instead, elements can be found by querying for visual attributes and visible text.
 
 *Example (Java):*
 
@@ -33,17 +46,6 @@ Query predicates like `below()` are based on the visual representation of the we
 page, independently from the page source and DOM structure. Correspondingly,
 `isTitle()` not only selects `<h1>`, `<h2>`, ... elements, but also elements with a
 bigger font-size than the average on the current page.
-
-Features
---------
-* **Clicking**, using the **keyboard** or a combination of both ("CTRL + Click")
-* Interaction with **forms**
-* **Datepicker** support, just do `browser.chooseDate("arrival", new DateTime(2012, 10, 22, 14, 30));` 
-* **AJAX support without wait commands**, Abmash usually knows when it has to wait for an AJAX request to be completed
-* **Mouseover** + **Drag'n'Drop**
-* Searching for **visual closeness** in specific directions ("text below image")
-* Searching for **specific colors** ("red button")
-* Complex **boolean queries** ("blue image or headline which is not clickable")
 
 Color Queries
 -------------
@@ -83,7 +85,7 @@ Implementation Details
 Abmash is a Java framework to automate web applications, based on **[Selenium](http://seleniumhq.org/)**,
 **[Firefox](http://www.mozilla.org/firefox/)**/**[Chrome](http://www.google.com/chrome/)** and **[jQuery](http://jquery.com/)**.
 
-**Abmash is still under heavy development. Please let me know if you are interested in this project.**
+Abmash is still in development. Please let me know if you are interested in this project.
 
 Maven
 -----
