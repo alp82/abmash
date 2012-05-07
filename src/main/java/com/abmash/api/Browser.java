@@ -417,12 +417,12 @@ public class Browser implements Document {
 	 * <p>
 	 * Note that if the page reloads after a click, all found {@link HtmlElement} instances may lose their validity.
 	 * 
-	 * @param text element attribute value or inner text containing this string
+	 * @param clickable element label
 	 * @return HtmlElement to further interact with that element or {@code null} if element could not be found
 	 * @see HtmlElement#click()
 	 */
-	public HtmlElement click(String text) {
-		HtmlElement element = query(clickable(text)).findFirstWithWait();
+	public HtmlElement click(String clickable) {
+		HtmlElement element = query(clickable(clickable)).findFirstWithWait();
 		return element instanceof HtmlElement ? element.click() : null;
 	}
 	
@@ -440,12 +440,12 @@ public class Browser implements Document {
 	 * be added to the result set. The first result will be used for hovering. If you already have an
 	 * {@link HtmlElement} instance use {@link HtmlElement#hover()} instead.
 	 * 
-	 * @param text element attribute value or inner text containing this string
+	 * @param clickable element which will be used for hovering with the mouse
 	 * @return HtmlElement to further interact with that element or {@code null} if element could not be found
 	 * @see HtmlElement#hover()
 	 */
-	public HtmlElement hover(String text) {
-		HtmlElement element = query(contains(text)).findFirstWithWait();
+	public HtmlElement hover(String clickable) {
+		HtmlElement element = query(clickable(clickable)).findFirstWithWait();
 		return element instanceof HtmlElement ? element.hover() : null;
 	}
 	
@@ -454,7 +454,7 @@ public class Browser implements Document {
 	 * <p>
 	 * <strong>Example:</strong>
 	 * <ul>
-	 * <li><code>browser.dragTo("Product", "Cart");</code> drags the element labeled <em>Product</em> to the
+	 * <li><code>browser.dragTo("product", "cart");</code> drags the element labeled <em>Product</em> to the
 	 * element labeled <em>Cart</em></li> 
 	 * </ul>
 	 * <p>
@@ -464,14 +464,14 @@ public class Browser implements Document {
 	 * be added to the result set. The first result will be used for dragging. If you already have an
 	 * {@link HtmlElement} instance use {@link HtmlElement#dragTo(HtmlElement)} instead.
 	 * 
-	 * @param textSource source element attribute value or inner text containing this string
-	 * @param textTarget target element attribute value or inner text containing this string
+	 * @param elementToDrag source element label; this is going to be dragged
+	 * @param elemenToDropOn target element label; the source element is dropped here
 	 * @return HtmlElement to further interact with that element or {@code null} if element could not be found
 	 * @see HtmlElement#dragTo(HtmlElement)
 	 */
-	public HtmlElement dragTo(String textSource, String textTarget) {
-		HtmlElement source = query(contains(textSource)).findFirstWithWait();
-		HtmlElement target = query(contains(textTarget)).findFirstWithWait();
+	public HtmlElement drag(String elementToDrag, String elemenToDropOn) {
+		HtmlElement source = query(contains(elementToDrag)).findFirstWithWait();
+		HtmlElement target = query(contains(elemenToDropOn)).findFirstWithWait();
 		return source instanceof HtmlElement && target instanceof HtmlElement ? source.dragTo(target) : null;
 	}
 	
@@ -491,14 +491,14 @@ public class Browser implements Document {
 	 * {@link HtmlElement} instance use {@link HtmlElement#type(String)} instead. Use {@link HtmlElement#submit()}
 	 * on the returned object to submit the form.
 	 * 
-	 * @param query element attribute value or inner text containing this string
+	 * @param typable the label of the input field
 	 * @param text the text to type in
 	 * @return HtmlElement to further interact with the form element, for instance to {@link HtmlElement#submit()} the form,
 	 * or {@code null} if element could not be found
 	 * @see HtmlElement#type(String)
 	 */
-	public HtmlElement type(String query, String text) {
-		HtmlElement element = query(typable(query)).findFirstWithWait();
+	public HtmlElement type(String typable, String text) {
+		HtmlElement element = query(typable(typable)).findFirstWithWait();
 		return element instanceof HtmlElement ? element.type(text) : null;
 	}
 	
@@ -516,13 +516,13 @@ public class Browser implements Document {
 	 * <p>
 	 * TODO Select description
 	 * 
-	 * @param text dropdown/select element
-	 * @param option the attribute value or text of the option to choose for selecting
+	 * @param choosable dropdown/select element
+	 * @param option the label or value of the option to select
 	 * @return HtmlElement to further interact with the form element, for instance to {@link HtmlElement#submit()} the form,
 	 * or {@code null} if element could not be found
 	 */
-	public HtmlElement choose(String text, String option) {
-		HtmlElement element = query(choosable(text)).findFirstWithWait();
+	public HtmlElement choose(String choosable, String option) {
+		HtmlElement element = query(choosable(choosable)).findFirstWithWait();
 		return element instanceof HtmlElement ? element.choose(option) : null;
 	}
 	
@@ -540,18 +540,35 @@ public class Browser implements Document {
 	 * <p>
 	 * TODO Select description
 	 * 
-	 * @param text dropdown/select element
-	 * @param option the attribute value or text of the option to choose for deselecting
+	 * @param choosable dropdown/select element
+	 * @param option the label or value of the option to deselect
 	 * @return HtmlElement to further interact with the form element, for instance to {@link HtmlElement#submit()} the form,
 	 * or {@code null} if element could not be found
 	 */
-	public HtmlElement unchoose(String text, String option) {
-		HtmlElement element = query(choosable(text)).findFirstWithWait();
+	public HtmlElement unchoose(String choosable, String option) {
+		HtmlElement element = query(choosable(choosable)).findFirstWithWait();
 		return element instanceof HtmlElement ? element.unchoose(option) : null;
 	}
 	
-	public HtmlElement checkToggle(String text) {
-		HtmlElement element = query(checkable(text)).findFirstWithWait();
+	/**
+	 * Searches for checkbox input field and toggles it. Use {@link HtmlElement#submit()}
+	 * on the returned object to submit the form.
+	 * <p>
+	 * <strong>Example:</strong>
+	 * <ul>
+	 * <li><code>browser.checkToggle("newsletter").submit();</code> toggles the checkbox labeled <em>newsletter</em>.</li> 
+	 * </ul>
+	 * <p>
+	 * <strong>Description:</strong>
+	 * <p>
+	 * TODO Select description
+	 * 
+	 * @param checkable checkbox element
+	 * @return HtmlElement to further interact with the form element, for instance to {@link HtmlElement#submit()} the form,
+	 * or {@code null} if element could not be found
+	 */	
+	public HtmlElement checkToggle(String checkable) {
+		HtmlElement element = query(checkable(checkable)).findFirstWithWait();
 		return element instanceof HtmlElement ? element.click() : null;
 	}
 	
@@ -569,13 +586,13 @@ public class Browser implements Document {
 	 * <p>
 	 * TODO Select description
 	 * 
-	 * @param text calendar/date picker element
+	 * @param datepicker calendar/date picker element
 	 * @param dateTime the date to select
 	 * @return HtmlElement to further interact with the form element, for instance to {@link HtmlElement#submit()} the form,
 	 * or {@code null} if element could not be found
 	 */
-	public HtmlElement chooseDate(String text, DateTime dateTime) {
-		HtmlElement element = query(datepicker(text)).findFirstWithWait();
+	public HtmlElement chooseDate(String datepicker, DateTime dateTime) {
+		HtmlElement element = query(datepicker(datepicker)).findFirstWithWait();
 		return element instanceof HtmlElement ? element.chooseDate(dateTime) : null;
 	}
 	
@@ -588,11 +605,11 @@ public class Browser implements Document {
 	 * </ul>
 	 * <p>
 	 * 
-	 * @param text form input element
+	 * @param submittable form submit element
 	 * @return HtmlElement to further interact with the form element or {@code null} if element could not be found
 	 */
-	public HtmlElement submit(String text) {
-		HtmlElement element = query(submittable(text)).findFirstWithWait();
+	public HtmlElement submit(String submittable) {
+		HtmlElement element = query(submittable(submittable)).findFirstWithWait();
 		return element instanceof HtmlElement ? element.submit() : null;
 	}
 	
