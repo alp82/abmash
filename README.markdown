@@ -58,7 +58,7 @@ Please refer to the [Abmash Javadoc](http://alp82.github.com/abmash/doc/).
 
 License
 -------
-You may use any Abmash project under the terms of either the MIT License or the GNU General Public License (GPL) Version 2.
+You may use any Abmash project under the terms of either the MIT License or the GNU General Public License (GPL) Version 3.
 
 The MIT License is recommended for most projects. It is simple and easy to understand and it places almost no restrictions
 on what you can do with a Abmash project.
@@ -98,3 +98,14 @@ Then add this dependency:
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
+
+Eclipse Tutorial
+----------------
+1. Install the Maven plugin for Eclipse: [Installing m2eclipse](http://www.eclipse.org/m2e/download/)
+2. Create a new project and choose `Maven Project`
+3. Select the option `Create a simple project (skip archetype selection)`
+4. Choose any group id, for example `com.myproject`
+5. Choose any artifact id, for example `myproject`
+6. The other fields are not mandatory, just click on `Finish`
+7. Open the newly created `pom.xml` and edit the XML source by adding the code as described in the last section `Maven`
+8. Save the file and you are done! Eclipse will now automatically download Abmash and all its dependencies 
