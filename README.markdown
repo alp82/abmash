@@ -1,12 +1,12 @@
 Abmash
 ======
-Abmash is all about interacting with a browser as humans would do.
+Abmash is all about **interacting with a browser as humans would do**.
 
-Including AJAX and forms.
+*Including AJAX and forms.*
 
-Based on the visible rendered output.
+*Based on the visible rendered output.*
 
-Here is an introductory screencast: [Abmash: Browser automation in Java](http://www.youtube.com/watch?v=Il0191C8fg8)
+Here is an introductory screencast: [**Abmash: Browser automation in Java**](http://www.youtube.com/watch?v=Il0191C8fg8)
 
 Features
 --------
