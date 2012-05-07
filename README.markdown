@@ -34,6 +34,17 @@ page, independently from the page source and DOM structure. Correspondingly,
 `isTitle()` not only selects `<h1>`, `<h2>`, ... elements, but also elements with a
 bigger font-size than the average on the current page.
 
+Features
+--------
+* **Clicking**, using the **keyboard** or a combination of both ("CTRL + Click")
+* Interaction with **forms**
+* **Datepicker** support, just do `browser.chooseDate("arrival", new DateTime(2012, 10, 22, 14, 30));` 
+* **No wait commands**, Abmash usually knows when it has to wait for an AJAX request to be completed
+* **Mouseover** + **Drag'n'Drop**
+* Searching for **visual closeness** in specific directions ("text below image")
+* Searching for **specific colors** ("red button")
+* Complex **boolean queries** ("blue image or headline which is not clickable")
+
 Color Queries
 -------------
 Colors are an important part of the visual representation of a web page. Therefore, Abmash allows you to
