@@ -61,7 +61,9 @@ A list of all named colors can be found at [Recognized color keyword names](http
 Custom RGB values are possible too.
 
 Optionally, the color predicate takes the two additional parameters `tolerance` and `dominance`.
+
 The *Tolerance* defines how close the specified color has to match.
+
 The *Dominance* controls how many percent of the element's pixels need to match these constraints.
 By the way, the `image()` predicate also retrieves elements with a background image.
 
