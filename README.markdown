@@ -1,6 +1,6 @@
 Abmash
 ======
-Abmash is all about **interacting with a browser as humans would do**.
+Abmash is a Java library and all about **interacting with a browser as humans would do**.
 
 *Including AJAX and forms.*
 
@@ -19,17 +19,19 @@ Features
 * Searching for **specific colors** ("red button")
 * Complex **boolean queries** ("blue image or headline which is not clickable")
 
-Description
+Getting Started
 -----------
 The goal of Abmash is that programmers do not need any knowledge about the HTML/CSS source code of web pages.
 Instead, elements can be found by querying for visual attributes and visible text.
 
-*Example (Java):*
+**Example:**
+
+*Imports:*
 
 	// you need a static import for the query methods (e.g. headline() or link())
 	import static com.abmash.api.query.QueryFactory.*;
 	
-	...
+*Main application:*
 
 	// open new browser window and visit Google
 	Browser browser = new Browser("http://google.com");
@@ -39,20 +41,24 @@ Instead, elements can be found by querying for visual attributes and visible tex
 	// you could use "search" or "lucky" too, if you use the English localized Google
 	HtmlElement searchField = browser.type("google", "Abmash").submit();
 
-	// find the first result (predicates can be arbitrarily chained and nested)
+	// find the first result containing "github"
+	// (predicates can be arbitrarily chained and nested)
 	HtmlElement firstResult = browser.query(
 	    headline(),
 	    link("github"),
 	    below(searchField) // alternative: below(typable("google"))
 	).findFirstWithWait();
 	
-	// click it
+	// finally click it
 	firstResult.click();
 
+*Explanation:*
+
 Query predicates like `below()` are based on the visual representation of the web
-page, independently from the page source and DOM structure. Correspondingly,
-`isTitle()` not only selects `<h1>`, `<h2>`, ... elements, but also elements with a
-bigger font-size than the average on the current page.
+page, independently from the page source and DOM structure.
+
+Correspondingly, `isTitle()` not only selects `<h1>`, `<h2>`, ... elements, but also
+elements with a bigger font-size than the average on the current page.
 
 Color Queries
 -------------
