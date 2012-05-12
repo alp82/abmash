@@ -37,12 +37,12 @@ Instead, elements can be found by querying for visual attributes and visible tex
 	// type text in search query input field and submit the search
 	// "google" is the visible label of the input field
 	// you could use "search" or "lucky" too, if you use the English localized Google
-	HtmlElement searchField = browser.type("google", "Browser Automation");
+	HtmlElement searchField = browser.type("google", "Abmash").submit();
 
 	// find the first result (predicates can be arbitrarily chained and nested)
 	HtmlElement firstResult = browser.query(
 	    headline(),
-	    link(),
+	    link("github"),
 	    below(searchField) // alternative: below(typable("google"))
 	).findFirstWithWait();
 	
