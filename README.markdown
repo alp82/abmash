@@ -31,19 +31,21 @@ Instead, elements can be found by querying for visual attributes and visible tex
 	
 	...
 
-	// open new browser window
+	// open new browser window and visit Google
 	Browser browser = new Browser("http://google.com");
   
 	// type text in search query input field and submit the search
-	HtmlElement searchBox = browser.type("search", "Browser Automation").submit();
-  
+	// "google" is the visible label of the input field
+	// you could use "search" or "lucky" too, if you use the English localized Google
+	HtmlElement searchField = browser.type("google", "Browser Automation");
+
 	// find the first result (predicates can be arbitrarily chained and nested)
 	HtmlElement firstResult = browser.query(
-		headline(),
-		link(),
-		below(searchBox)
-	).findFirst();
-  
+	    headline(),
+	    link(),
+	    below(searchField) // alternative: below(typable("google"))
+	).findFirstWithWait();
+	
 	// click it
 	firstResult.click();
 
@@ -113,7 +115,7 @@ Then add this dependency:
 		<dependency>
 			<groupId>com.abmash</groupId>
 			<artifactId>abmash</artifactId>
-			<version>0.2.1-SNAPSHOT</version>
+			<version>0.2.2-SNAPSHOT</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
