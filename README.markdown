@@ -26,6 +26,11 @@ Instead, elements can be found by querying for visual attributes and visible tex
 
 *Example (Java):*
 
+	// you need a static import for the query methods (e.g. headline() or link())
+	import static com.abmash.api.query.QueryFactory.*;
+	
+	...
+
 	// open new browser window
 	Browser browser = new Browser("http://google.com");
   
