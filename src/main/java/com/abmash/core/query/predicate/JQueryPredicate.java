@@ -39,10 +39,10 @@ public abstract class JQueryPredicate extends Predicate {
 	protected void containsText(JQuery jQuery, String text) {
 		// TODO CACHE CLONED JQUERY RESULTS
 		add(jQuery.clone(jQuery.getWeight() + 800).containsText(StringMatcher.EXACT, text));
-		add(jQuery.clone(jQuery.getWeight() + 60).containsText(StringMatcher.WORD, text));
-		add(jQuery.clone(jQuery.getWeight() + 40).containsText(StringMatcher.STARTSWITH, text));
-		add(jQuery.clone(jQuery.getWeight() + 35).containsText(StringMatcher.ENDSWITH, text));
-		add(jQuery.clone(jQuery.getWeight() + 20).containsText(StringMatcher.CONTAINS, text));
+		add(jQuery.clone(jQuery.getWeight() + 200).containsText(StringMatcher.WORD, text));
+		add(jQuery.clone(jQuery.getWeight() + 150).containsText(StringMatcher.STARTSWITH, text));
+		add(jQuery.clone(jQuery.getWeight() + 120).containsText(StringMatcher.ENDSWITH, text));
+		add(jQuery.clone(jQuery.getWeight() + 100).containsText(StringMatcher.CONTAINS, text));
 	}
 
 	protected void containsAttribute(String selector, String attributeName, String text) {
@@ -51,10 +51,10 @@ public abstract class JQueryPredicate extends Predicate {
 	
 	protected void containsAttribute(JQuery jQuery, String attributeName, String text) {
 		add(jQuery.clone(jQuery.getWeight() + 700).containsAttribute(StringMatcher.EXACT, attributeName, text));
-		add(jQuery.clone(jQuery.getWeight() + 50).containsAttribute(StringMatcher.WORD, attributeName, text));
-		add(jQuery.clone(jQuery.getWeight() + 30).containsAttribute(StringMatcher.STARTSWITH, attributeName, text));
-		add(jQuery.clone(jQuery.getWeight() + 25).containsAttribute(StringMatcher.ENDSWITH, attributeName, text));
-		add(jQuery.clone(jQuery.getWeight() + 10).containsAttribute(StringMatcher.CONTAINS, attributeName, text));
+		add(jQuery.clone(jQuery.getWeight() + 180).containsAttribute(StringMatcher.WORD, attributeName, text));
+		add(jQuery.clone(jQuery.getWeight() + 140).containsAttribute(StringMatcher.STARTSWITH, attributeName, text));
+		add(jQuery.clone(jQuery.getWeight() + 110).containsAttribute(StringMatcher.ENDSWITH, attributeName, text));
+		add(jQuery.clone(jQuery.getWeight() + 90).containsAttribute(StringMatcher.CONTAINS, attributeName, text));
 	}
 	
 	@Override
