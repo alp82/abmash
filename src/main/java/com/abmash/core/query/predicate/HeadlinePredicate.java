@@ -29,8 +29,8 @@ public class HeadlinePredicate extends JQueryPredicate {
 		if(text != null) {
 			containsText("'" + StringUtils.join(headlineSelectors, ',') + "'", text);
 			containsAttribute("'" + StringUtils.join(headlineSelectors, ',') + "'", "*", text);
-			containsText(elementsWithBiggerFontSize.setWeight(-10), text);
-			containsAttribute(elementsWithBiggerFontSize.setWeight(-10), "*", text);
+			containsText(elementsWithBiggerFontSize, text);
+			containsAttribute(elementsWithBiggerFontSize, "*", text);
 		} else {
 			add(JQueryFactory.select("'" + StringUtils.join(headlineSelectors, ',') + "'", 100));
 			add(elementsWithBiggerFontSize);

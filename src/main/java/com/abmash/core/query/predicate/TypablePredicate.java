@@ -45,7 +45,7 @@ public class TypablePredicate extends JQueryPredicate {
 			// close to label
 			closeTo(
 				typableQuery.setWeight(100),
-				new DirectionOptions(DirectionType.CLOSETOLABEL).setLimitPerTarget(1).setMaxDistance(300),
+				new DirectionOptions(DirectionType.CLOSETOLABEL).setLimitPerTarget(1).setMaxDistance(500),
 				QueryFactory.text(text)
 			);
 			

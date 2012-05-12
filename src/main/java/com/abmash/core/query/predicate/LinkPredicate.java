@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.abmash.core.jquery.JQuery;
 import com.abmash.core.jquery.JQueryFactory;
 
 public class LinkPredicate extends JQueryPredicate {
@@ -20,14 +21,13 @@ public class LinkPredicate extends JQueryPredicate {
 	public void buildCommands() {
 		List<String> linkSelectors = Arrays.asList("a");
 		
+		JQuery linkQuery = JQueryFactory.select("'" + StringUtils.join(linkSelectors, ',') + "'", 0); 
+
 		if(text != null) {
-			containsText(JQueryFactory.select("'a'", 50), text);
-			containsText(JQueryFactory.select("'*[onclick]'", 0), text);
-			containsAttribute(JQueryFactory.select("'a'", 50), "*", text);
-			containsAttribute(JQueryFactory.select("'*[onclick]'", 0), "*", text);
+			containsText(linkQuery, text);
+			containsAttribute(linkQuery, "*", text);
 		} else {
-			add(JQueryFactory.select("'a'", 40));
-			add(JQueryFactory.select("'*[onclick]'", 20));
+			add(linkQuery.setWeight(50));
 		}
 	}
 }
