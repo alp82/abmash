@@ -72,6 +72,7 @@
 
 		// query, remove duplicates and sort afterwards
 		var result = abmash.parsePredicates(JSON.parse(jsonPredicates), 'AND');
+		result = jQuery(result).distinctDescendants().get();
 		result = jQuery.unique(result).sort(sortByWeight);
 		
 		var elements = [];
@@ -289,7 +290,7 @@
 		var jQueryResult = abmash.getData('jQueryResult');
 		// add element if it is visible
 		// TODO optionally with :visible? but does not work with closeTo command (return no result, i dont know why)
-		jQuery.each(jQuery(jQueryResult).distinctDescendants()/*.filter(':visible:not(html,head,head *)')*/, function() {
+		jQuery.each(jQuery(jQueryResult)/*.distinctDescendants()/*.filter(':visible:not(html,head,head *)')*/, function() {
 		    var element = jQuery(this);
 		    
 		    // check if element is located in iframe
