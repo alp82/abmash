@@ -1,15 +1,26 @@
 Abmash
-======
-Abmash is a Java library and all about **interacting with a browser as humans would do**.
-
-*Including AJAX and forms.*
-
-*Based on the visible rendered output.*
+=
+Abmash is a Java library that allows **interacting with a browser as humans would do**.
+* *Based on the visible rendered output.*
+* *Including AJAX and forms.*
 
 Here is an introductory screencast: [**Abmash: Browser automation in Java**](http://www.youtube.com/watch?v=Il0191C8fg8)
 
+Table of Contents
+-
+1. [Features](#features)
+2. [Installation](#installation)
+3. [Dependencies](#dependencies)
+4. [Getting Started](#getting-started)
+5. [Color Queries](#color-queries)
+6. [Documentation](#documentation)
+7. [Implementation](#implementation)
+8. [Issues](#issues)
+9. [Maven](#maven)
+10. [Eclipse Tutorial](#eclipse-tutorial)
+
 Features
---------
+-
 * **Clicking**, using the **keyboard** or a combination of both ("CTRL + Click")
 * Interaction with **forms**
 * **Datepicker** support, just do `browser.chooseDate("arrival", new DateTime(2012, 10, 22, 14, 30));` 
@@ -20,13 +31,13 @@ Features
 * Complex **boolean queries** ("blue image or headline which is not clickable")
 
 Installation
------------
+-
 The recommended way of installing Abmash is using Maven. See below in section [`Maven`](#maven) and [`Eclipse Tutorial`](#eclipse-tutorial).
 
 You can also download the JAR file directly. The current version is 0.2.3-SNAPSHOT: [`abmash-0.2.3-SNAPSHOT.jar`](https://github.com/alp82/alp-mvn-repo/blob/master/snapshots/com/abmash/abmash/0.2.3-SNAPSHOT/abmash-0.2.3-SNAPSHOT.jar)
 
 Dependencies
------------
+-
 If you chose to install Abmash via Maven, you can ignore this section because Maven automatically downloads all needed dependencies.
 
 In case you downloaded the [Abmash JAR file](https://github.com/alp82/alp-mvn-repo/blob/master/snapshots/com/abmash/abmash/0.2.3-SNAPSHOT/abmash-0.2.3-SNAPSHOT.jar), here is a list of all dependencies:
@@ -37,7 +48,7 @@ In case you downloaded the [Abmash JAR file](https://github.com/alp82/alp-mvn-re
 * hamcrest-library
 
 Getting Started
------------
+-
 The goal of Abmash is that programmers do not need any knowledge about the HTML/CSS source code of web pages.
 Instead, elements can be found by querying for visual attributes and visible text.
 
@@ -78,7 +89,7 @@ Correspondingly, `isTitle()` not only selects `<h1>`, `<h2>`, ... elements, but 
 elements with a bigger font-size than the average on the current page.
 
 Color Queries
--------------
+-
 Colors are an important part of the visual representation of a web page. Therefore, Abmash allows you to
 find elements by their color. Example:
 
@@ -98,11 +109,11 @@ The *Dominance* controls how many percent of the element's pixels need to match 
 By the way, the `image()` predicate also retrieves elements with a background image.
 
 Documentation
--------------
+-
 Please refer to the [Abmash Javadoc](http://alp82.github.com/abmash/doc/).
 
 License
--------
+-
 You may use any Abmash project under the terms of either the MIT License or the GNU General Public License (GPL) Version 3.
 
 The **MIT License** is recommended for most projects. It is simple and easy to understand and it places almost no restrictions
@@ -112,13 +123,13 @@ If the **GPL** suits your project better you are also free to use an Abmash proj
 
 You can use Abmash in commercial projects as long as the copyright is left intact.
 
-Implementation Details
-----------------------
+Implementation
+-
 Abmash is a Java framework to automate web applications, based on **[Selenium](http://seleniumhq.org/)**,
 **[Firefox](http://www.mozilla.org/firefox/)**/**[Chrome](http://www.google.com/chrome/)** and **[jQuery](http://jquery.com/)**.
 
-Problems
-----------------------
+Issues
+-
 Abmash is still in development. Therefore, there are still some problems:
 
 * Tutorial is missing, we are working on this currently
@@ -127,7 +138,7 @@ Abmash is still in development. Therefore, there are still some problems:
 * Configuration of the Browser is possible but not well integrated 
 
 Maven
------
+-
 Abmash snapshots are available in a Maven repository.
 
 First put the following repository in your `pom.xml`:
@@ -152,7 +163,7 @@ Then add this dependency:
 	</dependencies>
 
 Eclipse Tutorial
-----------------
+-
 1. Install the Maven plugin for Eclipse: [Installing m2eclipse](http://www.eclipse.org/m2e/download/)
 2. Create a new project and choose `Maven Project`
 3. Select the option `Create a simple project (skip archetype selection)`
