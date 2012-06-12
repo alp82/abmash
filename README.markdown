@@ -23,12 +23,12 @@ Features
 -
 * **Clicking**, using the **keyboard** or a combination of both ("CTRL + Click")
 * Interaction with **forms**
-* **Datepicker** support, just do `browser.chooseDate("arrival", new DateTime(2012, 10, 22, 14, 30));` 
 * **AJAX support without wait commands**, Abmash usually knows when it has to wait for an AJAX request to be completed
 * **Mouseover** + **Drag'n'Drop**
 * Searching for **visual closeness** in specific directions ("text below image")
 * Searching for **specific colors** ("red button")
 * Complex **boolean queries** ("blue image or headline which is not clickable")
+* **Datepicker** support, just run `browser.chooseDate("arrival", new DateTime(2012, 10, 22, 14, 30));` (experimental) 
 
 Installation
 -
