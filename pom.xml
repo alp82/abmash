@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.abmash</groupId>
-	<version>0.2.3-SNAPSHOT</version>
+	<version>0.2.4-SNAPSHOT</version>
 	<artifactId>abmash</artifactId>
 	<packaging>jar</packaging>
 	<name>Abmash</name>
@@ -23,16 +23,8 @@
 		<url>http://acama-systems.de</url>
 	</organization>
 	<repositories>
-		<repository>
-			<id>org.activiti</id>
-			<url>http://maven.alfresco.com/nexus/content/repositories/activiti</url>
-		</repository>
-		<repository>
-			<releases>
-			</releases>
-			<id>maven-restlet</id>
-			<url>http://maven.restlet.org</url>
-		</repository>
+		<!-- <repository> <id>maven-restlet</id> <name>Public online Restlet repository</name> 
+			<url>http://maven.restlet.org</url> </repository> -->
 	</repositories>
 	<pluginRepositories>
 	</pluginRepositories>
@@ -78,22 +70,102 @@
 	<build>
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.5.1</version>
 				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
+					<!-- put your configurations here -->
 				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>2.5</version>
+				<executions>
+					<execution>
+						<id>auto-clean</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>clean</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
-				<version>2.2.2</version>
+				<version>2.3.1</version>
+				<!-- <configuration> <tagBase>https://svn.apache.org/repos/asf/maven/components/releases</tagBase> 
+					</configuration> -->
 			</plugin>
-			<!--plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-deploy-plugin</artifactId> 
-				<version>2.6</version> <dependencies> <dependency> <groupId>com.google.code.maven-svn-wagon</groupId> 
-				<artifactId>maven-svn-wagon</artifactId> <version>1.4</version> </dependency> 
-				</dependencies> </plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.1.2</version>
+				<configuration>
+					<attach>true</attach>
+				</configuration>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.8.1</version>
+				<configuration>
+				</configuration>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>com.abmash.api.Browser</mainClass>
+						</manifest>
+					</archive>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id> <!-- this is used for inheritance merges -->
+						<phase>package</phase> <!-- bind to the packaging phase -->
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>2.7</version>
+				<dependencies>
+					<dependency>
+						<groupId>com.google.code.maven-svn-wagon</groupId>
+						<artifactId>maven-svn-wagon</artifactId>
+						<version>1.4</version>
+					</dependency>
+				</dependencies>
+			</plugin>
 		</plugins>
+		<!--
 		<extensions>
 			<extension>
 				<groupId>com.google.code.maven-svn-wagon</groupId>
@@ -101,6 +173,7 @@
 				<version>1.4</version>
 			</extension>
 		</extensions>
+		-->
 	</build>
 	<scm>
 		<connection>scm:git:git@github.com:alp82/abmash.git</connection>

@@ -34,13 +34,17 @@ Installation
 -
 The recommended way of installing Abmash is using Maven. See below in section [`Maven`](#maven) and [`Eclipse Tutorial`](#eclipse-tutorial).
 
-You can also download the JAR file directly. The current version is 0.2.3-SNAPSHOT: [`abmash-0.2.3-SNAPSHOT.jar`](https://github.com/alp82/alp-mvn-repo/blob/master/snapshots/com/abmash/abmash/0.2.3-SNAPSHOT/abmash-0.2.3-SNAPSHOT.jar)
+You can also download the jar file directly. The current version is 0.2.4-SNAPSHOT:
+* [`Abmash 0.2.4-SNAPSHOT jar`](https://github.com/alp82/alp-mvn-repo/blob/master/snapshots/com/abmash/abmash/0.2.4-SNAPSHOT/abmash-0.2.4-20120612.152416-1.jar)
+* [`Abmash 0.2.4-SNAPSHOT jar with dependencies`](https://github.com/alp82/alp-mvn-repo/blob/master/snapshots/com/abmash/abmash/0.2.4-SNAPSHOT/abmash-0.2.4-20120612.152416-1-jar-with-dependencies.jar)
+* [`Abmash 0.2.4-SNAPSHOT sources jar`](https://github.com/alp82/alp-mvn-repo/blob/master/snapshots/com/abmash/abmash/0.2.4-SNAPSHOT/abmash-0.2.4-20120612.152416-1-sources.jar)
+* [`Abmash 0.2.4-SNAPSHOT javadoc jar`](https://github.com/alp82/alp-mvn-repo/blob/master/snapshots/com/abmash/abmash/0.2.4-SNAPSHOT/abmash-0.2.4-20120612.152416-1-javadoc.jar)
 
 Dependencies
 -
 If you chose to install Abmash via Maven, you can ignore this section because Maven automatically downloads all needed dependencies.
 
-In case you downloaded the [Abmash JAR file](https://github.com/alp82/alp-mvn-repo/blob/master/snapshots/com/abmash/abmash/0.2.3-SNAPSHOT/abmash-0.2.3-SNAPSHOT.jar), here is a list of all dependencies:
+In case you downloaded the [Abmash jar file without dependencies](https://github.com/alp82/alp-mvn-repo/blob/master/snapshots/com/abmash/abmash/0.2.4-SNAPSHOT/abmash-0.2.4-20120612.152416-1.jar), here is a list of all referenced libraries:
 * joda-time
 * slf4j
 * slf4j-simple
@@ -156,7 +160,7 @@ Then add this dependency:
 		<dependency>
 			<groupId>com.abmash</groupId>
 			<artifactId>abmash</artifactId>
-			<version>0.2.3-SNAPSHOT</version>
+			<version>0.2.4-SNAPSHOT</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
