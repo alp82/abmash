@@ -14,10 +14,11 @@ Table of Contents
 4. [Getting Started](#getting-started)
 5. [Color Queries](#color-queries)
 6. [Documentation](#documentation)
-7. [Implementation](#implementation)
-8. [Issues](#issues)
-9. [Maven](#maven)
-10. [Eclipse Tutorial](#eclipse-tutorial)
+7. [License](#license)
+8. [Implementation](#implementation)
+9. [Issues](#issues)
+10. [Maven](#maven)
+11. [Eclipse Tutorial](#eclipse-tutorial)
 
 Features
 -
