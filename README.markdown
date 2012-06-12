@@ -27,9 +27,9 @@ You can also download the JAR file directly. The current version is 0.2.3-SNAPSH
 
 Dependencies
 -----------
-If you choose to install Abmash via Maven, you can ignore this section because Maven automatically downloads all needed dependencies.
+If you chose to install Abmash via Maven, you can ignore this section because Maven automatically downloads all needed dependencies.
 
-In case you downloaded the JAR file, here is a list of all dependencies:
+In case you downloaded the [Abmash JAR file](https://github.com/alp82/alp-mvn-repo/blob/master/snapshots/com/abmash/abmash/0.2.3-SNAPSHOT/abmash-0.2.3-SNAPSHOT.jar), here is a list of all dependencies:
 * joda-time
 * slf4j
 * slf4j-simple
@@ -145,7 +145,7 @@ Then add this dependency:
 		<dependency>
 			<groupId>com.abmash</groupId>
 			<artifactId>abmash</artifactId>
-			<version>0.2.2-SNAPSHOT</version>
+			<version>0.2.3-SNAPSHOT</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
