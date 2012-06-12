@@ -19,6 +19,12 @@ Features
 * Searching for **specific colors** ("red button")
 * Complex **boolean queries** ("blue image or headline which is not clickable")
 
+Installation
+-----------
+The recommended way of installing Abmash is using Maven. See below in section [Maven](#maven) and [Eclipse Tutorial](#eclipse-tutorial).
+
+You can also download the JAR file directly. The current version is 0.2.3-SNAPSHOT: [abmash-0.2.3-SNAPSHOT.jar](https://github.com/alp82/alp-mvn-repo/blob/master/snapshots/com/abmash/abmash/0.2.3-SNAPSHOT/abmash-0.2.3-SNAPSHOT.jar)
+
 Getting Started
 -----------
 The goal of Abmash is that programmers do not need any knowledge about the HTML/CSS source code of web pages.
