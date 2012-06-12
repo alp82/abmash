@@ -148,5 +148,5 @@ Eclipse Tutorial
 4. Choose any group id, for example `com.myproject`
 5. Choose any artifact id, for example `myproject`
 6. The other fields are not mandatory, just click on `Finish`
-7. Open the newly created `pom.xml` and edit the XML source by adding the code as described in the last section `[Maven](#maven)`
+7. Open the newly created `pom.xml` and edit the XML source by adding the code as described in the last section [`Maven`](#maven)
 8. Save the file and you are done! Eclipse will now automatically download Abmash and all its dependencies 
