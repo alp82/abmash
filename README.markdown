@@ -25,6 +25,17 @@ The recommended way of installing Abmash is using Maven. See below in section [`
 
 You can also download the JAR file directly. The current version is 0.2.3-SNAPSHOT: [`abmash-0.2.3-SNAPSHOT.jar`](https://github.com/alp82/alp-mvn-repo/blob/master/snapshots/com/abmash/abmash/0.2.3-SNAPSHOT/abmash-0.2.3-SNAPSHOT.jar)
 
+Dependencies
+-----------
+If you choose to install Abmash via Maven, you can ignore this section because Maven automatically downloads all needed dependencies.
+
+In case you downloaded the JAR file, here is a list of all dependencies:
+* joda-time
+* slf4j
+* slf4j-simple
+* junit
+* hamcrest-library
+
 Getting Started
 -----------
 The goal of Abmash is that programmers do not need any knowledge about the HTML/CSS source code of web pages.
