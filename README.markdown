@@ -21,9 +21,9 @@ Features
 
 Installation
 -----------
-The recommended way of installing Abmash is using Maven. See below in section [Maven](#maven) and [Eclipse Tutorial](#eclipse-tutorial).
+The recommended way of installing Abmash is using Maven. See below in section `[Maven](#maven)` and `[Eclipse Tutorial](#eclipse-tutorial)`.
 
-You can also download the JAR file directly. The current version is 0.2.3-SNAPSHOT: [abmash-0.2.3-SNAPSHOT.jar](https://github.com/alp82/alp-mvn-repo/blob/master/snapshots/com/abmash/abmash/0.2.3-SNAPSHOT/abmash-0.2.3-SNAPSHOT.jar)
+You can also download the JAR file directly. The current version is 0.2.3-SNAPSHOT: `[abmash-0.2.3-SNAPSHOT.jar](https://github.com/alp82/alp-mvn-repo/blob/master/snapshots/com/abmash/abmash/0.2.3-SNAPSHOT/abmash-0.2.3-SNAPSHOT.jar)`
 
 Getting Started
 -----------
@@ -148,5 +148,5 @@ Eclipse Tutorial
 4. Choose any group id, for example `com.myproject`
 5. Choose any artifact id, for example `myproject`
 6. The other fields are not mandatory, just click on `Finish`
-7. Open the newly created `pom.xml` and edit the XML source by adding the code as described in the last section `Maven`
+7. Open the newly created `pom.xml` and edit the XML source by adding the code as described in the last section `[Maven](#maven)`
 8. Save the file and you are done! Eclipse will now automatically download Abmash and all its dependencies 
