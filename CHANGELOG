@@ -1,0 +1,7 @@
+0.2.5-SNAPSHOT
+==============
+Dependencies
+* Updated Selenium from 2.21.0 to 2.24.1
+
+Fixes
+* Fixed #2: HtmlElement.getTextWithSource() returned always null 

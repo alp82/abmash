@@ -574,7 +574,7 @@ public class HtmlElement extends Element {
 	 * <p>
 	 * Although the term sibling refers to the document source code, mostly it also reflects the visual siblings of this element.
 	 * 
-	 * @return the parent of this element
+	 * @return the siblings of this element
 	 */
 	public HtmlElements getSiblings() {
 		String script = "return jQuery(arguments[0]).siblings().get();";
@@ -585,6 +585,24 @@ public class HtmlElement extends Element {
 			siblings.add(new HtmlElement(browser, webElement));
 		}
 		return siblings;
+	}
+	
+	/**
+	 * Gets the children of this element in the document structure.
+	 * <p>
+	 * Although the term children refers to the document source code, mostly it also reflects the visual children of this element.
+	 * 
+	 * @return the children of this element
+	 */
+	public HtmlElements getChildren() {
+		String script = "return jQuery(arguments[0]).children().get();";
+		// TODO error handling if result is empty
+		ArrayList<RemoteWebElement> webElements =  (ArrayList<RemoteWebElement>) evaluateJavaScript(script);
+		HtmlElements children = new HtmlElements();
+		for (RemoteWebElement webElement: webElements) {
+			children.add(new HtmlElement(browser, webElement));
+		}
+		return children;
 	}
 	
 	// custom getters and setters
@@ -737,9 +755,11 @@ public class HtmlElement extends Element {
 		if(sourceText == null) {
 			switchToElementWindow();
 			try {
-				sourceText = (String) browser.javaScript("return jQuery(arguments[0]).html()").getReturnValue(); 
+				sourceText = (String) evaluateJavaScript("return jQuery(arguments[0]).html()");
+				System.out.println(sourceText);
 			} catch (Exception e) {
 				sourceText = "";
+				System.out.println(e);
 			}
 		}
 		return sourceText;
