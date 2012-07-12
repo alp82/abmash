@@ -1,3 +1,8 @@
+PENDING FOR NEXT SNAPSHOT
+=========================
+Fixes
+* Fixed #3: distinct elements did not return parent elements if they had a different inner text 
+
 0.2.5-SNAPSHOT
 ==============
 Dependencies

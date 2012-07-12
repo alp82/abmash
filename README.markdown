@@ -84,6 +84,9 @@ Instead, elements can be found by querying for visual attributes and visible tex
 	
 	// finally click it
 	firstResult.click();
+	
+	// close the browser
+	browser.close();
 
 *Explanation:*
 
