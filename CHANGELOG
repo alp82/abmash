@@ -1,12 +1,19 @@
 PENDING FOR NEXT SNAPSHOT
 =========================
-Fixes
-* Fixed #3: distinct elements did not return parent elements if they had a different inner text 
+
+Fixes:
+------
+* Fixed #3
+	* distinct elements did not return parent elements if they had a different inner text
+	* closeTo() distance calculation did not return the minimum distance between source and target elements 
 
 0.2.5-SNAPSHOT
 ==============
-Dependencies
+
+Dependencies:
+-------------
 * Updated Selenium from 2.21.0 to 2.24.1
 
-Fixes
+Fixes:
+------
 * Fixed #2: HtmlElement.getTextWithSource() returned always null 

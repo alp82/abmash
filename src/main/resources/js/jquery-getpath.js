@@ -100,17 +100,3 @@ jQuery.fn.distinctDescendants = function() {
 
     return jQuery(result);
 };
-
-//jQuery.fn.distinctDescendants = function() {
-//	var nodes = [];
-//	var result = this;
-//
-//	result.each(function() {
-//		var node = jQuery(this).get(0);
-//		if (jQuery(node).find(result).length == 0) {
-//			nodes.push(node);
-//		}
-//	});
-//
-//	return nodes;
-//};

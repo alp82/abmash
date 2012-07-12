@@ -71,6 +71,7 @@
 		BOTTOM: "BOTTOM",
 		BOTTOMRIGHT: "BOTTOMRIGHT",
 		AVERAGE: "AVERAGE",
+		DIRECT: "DIRECT",
 	};
 	// TODO calculation type
 	var calculationType = {
@@ -102,7 +103,7 @@
 		    	sources: jQuery(),
 		    	targets: jQuery(),
 		    	directionType: directionType.CLOSETO,
-		    	distanceType: distanceType.average,
+		    	distanceType: distanceType.DIRECT,
 		    	calculationType: calculationType.min,
 		    	minDistance: 0,
 		    	maxDistance: 0,
@@ -116,7 +117,7 @@
 			if(typeof options.distanceType == "undefined") {
 				switch (options.directionType) {
 					case directionType.CLOSETO:
-						options['distanceType'] = distanceType.AVERAGE;
+						options['distanceType'] = distanceType.DIRECT;
 						break;
 					case directionType.CLOSETOLABEL:
 						options['distanceType'] = distanceType.LEFT;
@@ -137,7 +138,7 @@
 						options['distanceType'] = distanceType.LEFT;
 						break;
 					default:
-						options['distanceType'] = distanceType.AVERAGE;
+						options['distanceType'] = distanceType.DIRECT;
 				}
 			}
 		    
@@ -426,6 +427,19 @@
 		var distanceBottom = euclideanDistance(coords.diffCenterX, coords.topSource - coords.bottomTarget);
 		var distanceBottomRight = euclideanDistance(coords.diffRight, coords.topSource - coords.bottomTarget);
 		
+		var distanceAverage = (distanceTopLeft + distanceCenter + distanceBottomRight) / 3;
+		var distanceDirect = Math.min(
+				distanceTopLeft,
+				distanceTop,
+				distanceTopRight,
+				distanceLeft,
+				distanceCenter,
+				distanceRight,
+				distanceBottomLeft,
+				distanceBottom,
+				distanceBottomRight
+		);
+		
 //		alert(coords.toSource());
 //		alert(options.toSource());
 		
@@ -438,7 +452,8 @@
 		else if(options.distanceType == distanceType.BOTTOMLEFT) return distanceBottomLeft;
 		else if(options.distanceType == distanceType.BOTTOM) return distanceBottom;
 		else if(options.distanceType == distanceType.BOTTOMRIGHT) return distanceBottomRight;
-		else if(options.distanceType == distanceType.AVERAGE) return (distanceTopLeft + distanceCenter + distanceBottomRight) / 3;
+		else if(options.distanceType == distanceType.AVERAGE) return distanceAverage;
+		else if(options.distanceType == distanceType.DIRECT) return distanceDirect;
 		
 		// we shouldn't reach this, throw an error
 		throw new Error('Distance calculation error: distanceType is ' + options.distanceType);
