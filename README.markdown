@@ -36,16 +36,16 @@ Installation
 The recommended way of installing Abmash is using Maven. See below in section [Maven](#maven) and [Eclipse Tutorial](#eclipse-tutorial).
 
 You can also download the jar file directly. The current version is 0.2.5-SNAPSHOT:
-* [`Abmash 0.2.5-SNAPSHOT jar`](https://github.com/alp82/alp-mvn-repo/blob/master/snapshots/com/abmash/abmash/0.2.5-SNAPSHOT/abmash-0.2.5-20120612.152416-1.jar)
-* [`Abmash 0.2.5-SNAPSHOT jar with dependencies`](https://github.com/alp82/alp-mvn-repo/blob/master/snapshots/com/abmash/abmash/0.2.5-SNAPSHOT/abmash-0.2.5-20120612.152416-1-jar-with-dependencies.jar)
-* [`Abmash 0.2.5-SNAPSHOT sources jar`](https://github.com/alp82/alp-mvn-repo/blob/master/snapshots/com/abmash/abmash/0.2.5-SNAPSHOT/abmash-0.2.5-20120612.152416-1-sources.jar)
-* [`Abmash 0.2.5-SNAPSHOT javadoc jar`](https://github.com/alp82/alp-mvn-repo/blob/master/snapshots/com/abmash/abmash/0.2.5-SNAPSHOT/abmash-0.2.5-20120612.152416-1-javadoc.jar)
+* [`Abmash 0.2.5-SNAPSHOT jar`](https://github.com/alp82/alp-mvn-repo/blob/master/snapshots/com/abmash/abmash/0.2.5-SNAPSHOT/abmash-0.2.5-20120707.111704-1.jar)
+* [`Abmash 0.2.5-SNAPSHOT jar with dependencies`](https://github.com/alp82/alp-mvn-repo/blob/master/snapshots/com/abmash/abmash/0.2.5-SNAPSHOT/abmash-0.2.5-20120707.111704-1-jar-with-dependencies.jar)
+* [`Abmash 0.2.5-SNAPSHOT sources jar`](https://github.com/alp82/alp-mvn-repo/blob/master/snapshots/com/abmash/abmash/0.2.5-SNAPSHOT/abmash-0.2.5-20120707.111704-1-sources.jar)
+* [`Abmash 0.2.5-SNAPSHOT javadoc jar`](https://github.com/alp82/alp-mvn-repo/blob/master/snapshots/com/abmash/abmash/0.2.5-SNAPSHOT/abmash-0.2.5-20120707.111704-1-javadoc.jar)
 
 Dependencies
 -
 If you chose to install Abmash via Maven, you can ignore this section because Maven automatically downloads all needed dependencies.
 
-In case you downloaded the [Abmash jar file without dependencies](https://github.com/alp82/alp-mvn-repo/blob/master/snapshots/com/abmash/abmash/0.2.5-SNAPSHOT/abmash-0.2.5-20120612.152416-1.jar), here is a list of all referenced libraries:
+In case you downloaded the [Abmash jar file without dependencies](https://github.com/alp82/alp-mvn-repo/blob/master/snapshots/com/abmash/abmash/0.2.5-SNAPSHOT/abmash-0.2.5-20120707.111704-1.jar), here is a list of all referenced libraries:
 * joda-time
 * slf4j
 * slf4j-simple
