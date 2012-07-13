@@ -55,7 +55,7 @@ In case you downloaded the [Abmash jar file without dependencies](https://github
 Getting Started
 -
 The goal of Abmash is that programmers do not need any knowledge about the HTML/CSS source code of web pages.
-Instead, elements can be found by querying for visual attributes and visible text.
+Instead, elements can be found by querying visual attributes and visible text.
 
 **Example:**
 
@@ -93,8 +93,8 @@ Instead, elements can be found by querying for visual attributes and visible tex
 Query predicates like `below()` are based on the visual representation of the web
 page, independently from the page source and DOM structure.
 
-Correspondingly, `isTitle()` not only selects `<h1>`, `<h2>`, ... elements, but also
-elements with a bigger font-size than the average on the current page.
+Correspondingly, `headline()` not only selects `<h1>`, `<h2>`, ... elements, but also
+elements with a bigger font size than the average on the current page.
 
 Color Queries
 -
