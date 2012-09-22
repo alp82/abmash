@@ -13,10 +13,15 @@ public class TextPredicate extends JQueryPredicate {
 	private String text;
 	
 	public TextPredicate(String text) {
-		this.text = text;
-		buildCommands();
+		this(text, 0);
 	}
 
+	public TextPredicate(String text, double weight) {
+		this.text = text;
+		this.weight = weight;
+		buildCommands();
+	}	
+	
 	@Override
 	public void buildCommands() {
 		List<String> textElementNames = Arrays.asList("strong", "em", "b", "i", "label", "span", "p", "div", "li", "td", "th");

@@ -20,22 +20,34 @@ public class ClickablePredicate extends LinkPredicate {
 	@Override
 	public void buildCommands() {
 		super.buildCommands();
-		List<String> clickableInputSelectors = Arrays.asList("input[type=checkbox]", "input[type=radio]", "input[type=submit]", "input[type=button]", "input[type=image]", "input[type=range]", "input[type=color]", "button", "*[onclick]");
+		List<String> clickablePrimarySelectors = Arrays.asList("input[type=checkbox]", "input[type=radio]", "input[type=submit]", "input[type=button]", "input[type=image]", "input[type=range]", "input[type=color]", "button");
+		List<String> clickableSecondarySelectors = Arrays.asList("*[onclick]");
 		
-		JQuery clickableQuery = JQueryFactory.select("'" + StringUtils.join(clickableInputSelectors, ',') + "'", 0); 
+		JQuery primaryQuery = JQueryFactory.select("'" + StringUtils.join(clickablePrimarySelectors, ',') + "'", 0); 
+		JQuery secondaryQuery = JQueryFactory.select("'" + StringUtils.join(clickableSecondarySelectors, ',') + "'", -500); 
 				
 		if(text != null) {
-			containsText(clickableQuery, text);
-			containsAttribute(clickableQuery, "*", text);
+			containsText(primaryQuery, text);
+			containsAttribute(primaryQuery, "*", text);
 			
+			containsText(secondaryQuery, text);
+			containsAttribute(secondaryQuery, "*", text);
+
 			// close to label
 			closeTo(
-				clickableQuery.setWeight(50),
+				primaryQuery.setWeight(50),
 				new DirectionOptions(DirectionType.CLOSETOCLICKABLELABEL).setLimitPerTarget(1).setMaxDistance(300),
-				QueryFactory.text(text)
+				new TextPredicate(text)
+			);
+			
+			closeTo(
+				secondaryQuery,
+				new DirectionOptions(DirectionType.CLOSETOCLICKABLELABEL).setLimitPerTarget(1).setMaxDistance(300),
+				new TextPredicate(text)
 			);
 		} else {
-			add(clickableQuery.setWeight(50));
+			add(primaryQuery.setWeight(100));
+			add(secondaryQuery);
 		}
 	}
 }

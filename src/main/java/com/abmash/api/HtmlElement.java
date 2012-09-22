@@ -756,10 +756,10 @@ public class HtmlElement extends Element {
 			switchToElementWindow();
 			try {
 				sourceText = (String) evaluateJavaScript("return jQuery(arguments[0]).html()");
-				System.out.println(sourceText);
+//				System.out.println(sourceText);
 			} catch (Exception e) {
 				sourceText = "";
-				System.out.println(e);
+//				System.out.println(e);
 			}
 		}
 		return sourceText;

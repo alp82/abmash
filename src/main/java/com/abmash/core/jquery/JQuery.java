@@ -289,7 +289,7 @@ public class JQuery {
 	}	
 	
 	public String toString(int intendationSpaces) {
-		String str = StringUtils.repeat(" ", intendationSpaces) + "jQuery(" + selector + ")";
+		String str = StringUtils.repeat(" ", intendationSpaces) + weight + ":" + "jQuery(" + selector + ")";
 		for(Command command: commands) {
 			str += "." + command.toString(intendationSpaces);
 		}

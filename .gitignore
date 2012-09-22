@@ -1,6 +1,7 @@
 .settings
 .classpath
 .project
+.pydevproject
 bin
 output
 target

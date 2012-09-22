@@ -1,15 +1,16 @@
 jQuery.fn.extend({
 
 	textMatch: function (compareType, text, options) {
-		var options = jQuery.extend({
-		}, options);
+		var options = jQuery.extend({}, options);
 		
 		var nodes = [];
 
+//		alert(text + ", " + compareType.toUpperCase());
 		this.each(function() {
 			var node = jQuery(this).get(0);
 			if(jQuery.inArray(node.tagName.toLowerCase(), ['html', 'head', 'script', 'meta', 'link']) < 0 &&
 				compareStrings((node.innerText || node.textContent || "").toLowerCase(), text.toLowerCase(), compareType.toUpperCase())) {
+//				abmash.highlight(this);
 				nodes.push(this);
 			}
 		});
@@ -18,8 +19,7 @@ jQuery.fn.extend({
 	},
 	
 	attrMatch: function (compareType, attributeName, text, options) {
-		var options = jQuery.extend({
-		}, options);
+		var options = jQuery.extend({}, options);
 		
 		var nodes = [];
 

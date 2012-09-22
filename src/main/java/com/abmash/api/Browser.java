@@ -28,10 +28,10 @@ import com.abmash.api.browser.WaitFor;
 import com.abmash.api.browser.Window;
 import com.abmash.api.query.Query;
 import com.abmash.api.query.QueryFactory;
-import com.abmash.core.Document;
 import com.abmash.core.browser.BrowserConfig;
 import com.abmash.core.browser.JavaScriptResult;
 import com.abmash.core.browser.interaction.OpenURL;
+import com.abmash.core.document.Document;
 import com.abmash.core.query.predicate.Predicate;
 import com.abmash.core.tools.IOTools;
 
@@ -71,7 +71,7 @@ import com.abmash.core.tools.IOTools;
  * @see HtmlElements
  * @author Alper Ortac
  */
-public class Browser implements Document {
+public class Browser {
 
 	/**
 	 * Logging instance to send messages to preconfigured devices.

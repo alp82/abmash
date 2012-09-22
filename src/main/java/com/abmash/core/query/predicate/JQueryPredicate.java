@@ -12,6 +12,8 @@ import com.abmash.core.query.DirectionType;
 
 public abstract class JQueryPredicate extends Predicate {
 
+	protected double weight = 0;
+
 	protected JQueryList jQueryList = new JQueryList();
 	
 	public abstract void buildCommands();
@@ -33,7 +35,7 @@ public abstract class JQueryPredicate extends Predicate {
 	}
 
 	protected void containsText(String selector, String text) {
-		containsText(JQueryFactory.select(selector, 0), text);
+		containsText(JQueryFactory.select(selector, weight), text);
 	}
 	
 	protected void containsText(JQuery jQuery, String text) {
@@ -46,7 +48,7 @@ public abstract class JQueryPredicate extends Predicate {
 	}
 
 	protected void containsAttribute(String selector, String attributeName, String text) {
-		containsAttribute(JQueryFactory.select(selector, 0), attributeName, text);
+		containsAttribute(JQueryFactory.select(selector, weight), attributeName, text);
 	}
 	
 	protected void containsAttribute(JQuery jQuery, String attributeName, String text) {

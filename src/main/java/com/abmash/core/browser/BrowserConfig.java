@@ -21,6 +21,9 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 
+/**
+ * Custom configuration of browser instance 
+ */
 public class BrowserConfig {
 
 	private static final String DEFAULT_PROPERTY_FILE = "/default.properties";
