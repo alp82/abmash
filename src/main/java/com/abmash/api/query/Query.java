@@ -1,23 +1,5 @@
 package com.abmash.api.query;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.TimeoutException;
-
-import javax.imageio.ImageIO;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.remote.RemoteWebElement;
-
 import com.abmash.api.Browser;
 import com.abmash.api.HtmlElement;
 import com.abmash.api.HtmlElements;
@@ -27,15 +9,24 @@ import com.abmash.core.jquery.JQuery;
 import com.abmash.core.jquery.command.Command;
 import com.abmash.core.jquery.command.CommandWithPredicates;
 import com.abmash.core.query.BooleanType;
-import com.abmash.core.query.predicate.BooleanPredicate;
-import com.abmash.core.query.predicate.ColorPredicate;
-import com.abmash.core.query.predicate.DirectionPredicate;
-import com.abmash.core.query.predicate.ElementPredicate;
-import com.abmash.core.query.predicate.JQueryPredicate;
-import com.abmash.core.query.predicate.Predicate;
-import com.abmash.core.query.predicate.Predicates;
-import com.abmash.core.query.predicate.RecursivePredicate;
+import com.abmash.core.query.predicate.*;
 import com.abmash.core.tools.DataTypeConversion;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.remote.RemoteWebElement;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Queries are used to find elements on the current web page. They contain {@link Predicates} which filter the elements
@@ -195,12 +186,17 @@ public class Query {
 		}
 		
 		String script = "return abmash.query(arguments[0], arguments[1], arguments[2]);";
-		ArrayList<Map<String, Object>> queryResult = (ArrayList<Map<String, Object>>) browser.javaScript(
-				script,
-				jsonPredicates.toString(),
-				referenceElements
+        Object result = browser.javaScript(
+                script,
+                jsonPredicates.toString(),
+                referenceElements
 //				limit
-		).getReturnValue();
+        ).getReturnValue();
+        if(result.getClass().toString().equals("class java.lang.String")) {
+            browser.log().error("Query returned: {}", result);
+            return new HtmlElements();
+        }
+        ArrayList<Map<String, Object>> queryResult = (ArrayList<Map<String, Object>>) result;
 		
 		// converting selenium elements to abmash elements
 		HtmlElements resultElements = new HtmlElements();

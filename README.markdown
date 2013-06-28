@@ -6,6 +6,8 @@ Abmash is a Java library that allows **interacting with a browser as humans woul
 
 Here is an introductory screencast: [**Abmash: Browser automation in Java**](http://www.youtube.com/watch?v=Il0191C8fg8)
 
+Notice: Abmash is still experimental. Advanced query features like directions, distance and colors are likely buggy and quite slow compared to usual selectors.
+
 Table of Contents
 -
 1. [Features](#features)
@@ -35,11 +37,11 @@ Installation
 -
 The recommended way of installing Abmash is using Maven. See below in section [Maven](#maven) and [Eclipse Tutorial](#eclipse-tutorial).
 
-You can also download the jar file directly. The current version is 0.2.6-SNAPSHOT:
-* [`Abmash 0.2.6-SNAPSHOT jar`](https://github.com/alp82/alp-mvn-repo/blob/master/snapshots/com/abmash/abmash/0.2.6-SNAPSHOT/abmash-0.2.6-20120713.170610-1.jar)
-* [`Abmash 0.2.6-SNAPSHOT jar with dependencies`](https://github.com/alp82/alp-mvn-repo/blob/master/snapshots/com/abmash/abmash/0.2.6-SNAPSHOT/abmash-0.2.6-20120713.170610-1-jar-with-dependencies.jar)
-* [`Abmash 0.2.6-SNAPSHOT sources jar`](https://github.com/alp82/alp-mvn-repo/blob/master/snapshots/com/abmash/abmash/0.2.6-SNAPSHOT/abmash-0.2.6-20120713.170610-1-sources.jar)
-* [`Abmash 0.2.6-SNAPSHOT javadoc jar`](https://github.com/alp82/alp-mvn-repo/blob/master/snapshots/com/abmash/abmash/0.2.6-SNAPSHOT/abmash-0.2.6-20120713.170610-1-javadoc.jar)
+You can also download the jar file directly. [`The current version is 0.2.9-SNAPSHOT`](https://github.com/alp82/alp-mvn-repo/blob/master/snapshots/com/abmash/abmash/0.2.9-SNAPSHOT) and is available in four different packages:
+* jar without dependencies
+* jar with dependencies
+* jar with sources only
+* jar with javadoc only
 
 Dependencies
 -
@@ -164,7 +166,7 @@ Then add this dependency:
 		<dependency>
 			<groupId>com.abmash</groupId>
 			<artifactId>abmash</artifactId>
-			<version>0.2.6-SNAPSHOT</version>
+			<version>0.2.9-SNAPSHOT</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>

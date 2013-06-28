@@ -1,11 +1,8 @@
 package com.abmash.core.query.predicate;
 
-import org.apache.commons.lang.StringUtils;
 
-import com.abmash.api.query.QueryFactory;
 import com.abmash.core.jquery.JQueryFactory;
 import com.abmash.core.query.DirectionOptions;
-import com.abmash.core.query.DirectionType;
 
 public class DirectionPredicate extends JQueryPredicate {
 	
