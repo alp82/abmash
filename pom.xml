@@ -28,7 +28,7 @@
             <url>http://maven.restlet.org</url> </repository> -->
     </repositories>
     <pluginRepositories>
-    </pluginRepositories>                            x
+    </pluginRepositories>
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
