@@ -1,6 +1,20 @@
 package com.abmash.test;
 
-import static org.junit.Assert.*;
+import com.abmash.api.Browser;
+import com.abmash.api.HtmlElement;
+import com.abmash.api.HtmlElements;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import java.util.Arrays;
+import java.util.HashSet;
+
+import static com.abmash.api.query.QueryFactory.*;
+import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 //import static org.hamcrest.core.Is.is;
 //import static org.hamcrest.core.IsNot.not;
@@ -10,20 +24,6 @@ import static org.junit.Assert.*;
 //import static org.hamcrest.core.IsNull.*;
 //import static org.hamcrest.core.AllOf.*;
 //import static org.hamcrest.core.AnyOf.*;
-import static org.hamcrest.Matchers.*;
-import java.util.Arrays;
-import java.util.HashSet;
-
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import static com.abmash.api.query.QueryFactory.*;
-
-import com.abmash.api.Browser;
-import com.abmash.api.HtmlElement;
-import com.abmash.api.HtmlElements;
-import com.abmash.core.browser.Popups;
 
 public class TestAbmashCore {
 

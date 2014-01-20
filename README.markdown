@@ -37,7 +37,7 @@ Installation
 -
 The recommended way of installing Abmash is using Maven. See below in section [Maven](#maven) and [Eclipse Tutorial](#eclipse-tutorial).
 
-You can also download the jar file directly. [`The current version is 0.2.9-SNAPSHOT`](https://github.com/alp82/alp-mvn-repo/blob/master/snapshots/com/abmash/abmash/0.2.9-SNAPSHOT) and is available in four different packages:
+You can also download the jar file directly. [`The current version is 0.2.10-SNAPSHOT`](https://github.com/alp82/alp-mvn-repo/blob/master/snapshots/com/abmash/abmash/0.2.10-SNAPSHOT) and is available in four different packages:
 * jar without dependencies
 * jar with dependencies
 * jar with sources only
@@ -166,7 +166,7 @@ Then add this dependency:
 		<dependency>
 			<groupId>com.abmash</groupId>
 			<artifactId>abmash</artifactId>
-			<version>0.2.9-SNAPSHOT</version>
+			<version>0.2.10-SNAPSHOT</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
