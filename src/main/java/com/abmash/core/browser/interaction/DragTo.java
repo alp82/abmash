@@ -3,15 +3,7 @@ package com.abmash.core.browser.interaction;
 
 import com.abmash.api.Browser;
 import com.abmash.api.HtmlElement;
-
-import org.openqa.selenium.HasInputDevices;
-import org.openqa.selenium.Keyboard;
-import org.openqa.selenium.Mouse;
-import org.openqa.selenium.interactions.Action;
-import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.interactions.ButtonReleaseAction;
-import org.openqa.selenium.interactions.ClickAndHoldAction;
-import org.openqa.selenium.interactions.MoveMouseAction;
+import org.openqa.selenium.interactions.*;
 import org.openqa.selenium.internal.Locatable;
 
 

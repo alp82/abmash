@@ -142,8 +142,8 @@
 				}
 			}
 		    
-		    options.sources = jQuery(options.sources).distinctDescendants();
-		    options.targets = jQuery(options.targets).distinctDescendants();
+		    options.sources = jQuery(options.sources).distinctDescendants(true);
+		    options.targets = jQuery(options.targets).distinctDescendants(true);
 		    
 //		    abmash.highlight(options.sources.get());
 //			abmash.highlight(options.targets.get());

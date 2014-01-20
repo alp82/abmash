@@ -74,7 +74,7 @@
 		var result = abmash.parsePredicates(JSON.parse(jsonPredicates), 'AND');
 		result = jQuery(result).distinctDescendants().get();
 		result = jQuery.unique(result).sort(sortByWeight);
-		
+
 		var elements = [];
 		jQuery.each(result, function() {
 			resultElement = this;
@@ -337,9 +337,18 @@
 	}
 	
     function sortByWeight(firstElement, secondElement) {
-    	var firstWeight = abmash.getElementWeight(firstElement);
-    	var secondWeight = abmash.getElementWeight(secondElement);
+    	var firstWeight = abmash.getElementWeight(firstElement) / elementChildrenDepth(firstElement);
+    	var secondWeight = abmash.getElementWeight(secondElement) / elementChildrenDepth(secondElement);
 		return secondWeight - firstWeight;
 	}
+
+    function elementChildrenDepth(element) {
+        var el = jQuery(element);
+        var i = 1;
+        while ((el = el.children()).length) {
+            i++;
+        }
+        return i;
+    }
     
 })(window.abmash = window.abmash || {});

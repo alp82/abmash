@@ -106,14 +106,14 @@ public class TestAbmashCore {
 		assertEquals(expctdAttributeNames, actualAttributeNames);
 	}
 	
-	@Test
-	public void popupsAreNotFocused() {
-		goToUrlAndDontReloadIfAlreadyOpen("http://jadranka.hr/");
-		Popups popups = browser.window().getPopups();
-		HtmlElements htmllinks = browser.query(select("a")).find();
-		assertThat(popups.size(), is(1));
-		assertThat(htmllinks.size(), greaterThan(1));
-	}
+//	@Test
+//	public void popupsAreNotFocused() {
+//		goToUrlAndDontReloadIfAlreadyOpen("http://jadranka.hr/");
+//		Popups popups = browser.window().getPopups();
+//		HtmlElements htmllinks = browser.query(select("a")).find();
+//		assertThat(popups.size(), is(1));
+//		assertThat(htmllinks.size(), greaterThan(1));
+//	}
 	
 	private void goToUrlAndDontReloadIfAlreadyOpen(String url) {
 		if(!browser.getCurrentUrl().equals(url)) {

@@ -42,9 +42,10 @@ jQuery.fn.extend({
 	}
 });
 
-jQuery.fn.distinctDescendants = function() {
+jQuery.fn.distinctDescendants = function(skipParents) {
     var nodes = [];
     var parents = [];
+    var allowParentsWithDifferentText = !skipParents;
 
     // First, copy over all matched elements to nodes and remove duplicates.
     jQuery(this).each(function(index, element) {
@@ -81,8 +82,8 @@ jQuery.fn.distinctDescendants = function() {
         // add to result if the element is a leaf node or has different contents than its child
         if (parents.indexOf(nodeToCheck) < 0) {
         	// the element is a leaf node
-            result.push(nodeToCheck);
-        } else {
+            result.unshift(nodeToCheck);
+        } else if(allowParentsWithDifferentText) {
             // check if parent has different text than its children
         	var isDifferent = true;
             jQuery(nodeToCheck).children().each(function() {
@@ -94,6 +95,7 @@ jQuery.fn.distinctDescendants = function() {
             });
             if(isDifferent) {
             	result.push(nodeToCheck);
+//                abmash.setElementWeight(nodeToCheck, abmash.getElementWeight(nodeToCheck) * 0.25);
             }
         }
     }

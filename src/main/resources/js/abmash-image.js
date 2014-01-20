@@ -96,7 +96,7 @@
 			}
 			jQuery(document.body).append('<canvas id="abmashCurrentPageScreenshot"></canvas>');
 	 		jQuery('canvas#abmashCurrentPageScreenshot').hide();
-    		
+
 			var canvas = jQuery('canvas#abmashCurrentPageScreenshot');
 			var ctx = canvas.get(0).getContext("2d");
 			canvas.attr('width', width);
@@ -129,7 +129,7 @@
     		var img = imgdata.data;
     		
     		var result = false;
-    		
+
     		if(type == 'is') {
     			result = isColor(img, color, tolerance);
     		} else if(type == 'has') {
