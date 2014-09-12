@@ -1,3 +1,7 @@
+Warning
+=
+Abmash is not production-ready and filled with bugs and performance issues. Sadly, i have currently no time to work on this project. Use it at your own risk! 
+
 Abmash
 =
 Abmash is a Java library that allows **interacting with a browser as humans would do**.
